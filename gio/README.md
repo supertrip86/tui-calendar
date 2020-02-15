@@ -1,11 +1,3 @@
-* saveNewSchedule in gio/js/init.js
-    |
-* event captured by Schedule constructor in src/js/model/schedule.js
-    |
-* the Schedule is automatically passed to Handlebars as model variable
-    |
-* pass the Schedule attributes to the desired Handlebars files in /src/js/view/template
-
 ## edited files in src\js folder:
 
 > src\js\controller\base.js
