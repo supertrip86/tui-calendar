@@ -8,6 +8,7 @@
     var ElementPrefix = 'tui-full-calendar-';
     var Calendar = tui.Calendar;
     var CalendarList = [];
+    var Schedules = [];
     var CalendarData = [
         {
             "Name": "EMC",
@@ -46,9 +47,13 @@
         }
     ];
 
-    createCalendarList();
-    createCalendar(window, Calendar);
-    createCalendarMenu();
+    SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function() {
+        createCalendarList();
+        createCalendar(window, Calendar);
+        createCalendarMenu();
+        getSchedules();
+    });
+    
 
     function createCalendarList() {
         var calendar;
@@ -74,6 +79,28 @@
             CalendarList.push(calendar);
         });
     };
+
+    function findCalendar(id) {
+        var found;
+        CalendarList.forEach(function(calendar) {
+            if (calendar.id === id) {
+                found = calendar;
+            }
+        });
+        return found || CalendarList[0];
+    }
+
+    function refreshScheduleVisibility() {
+        var calendarElements = Array.prototype.slice.call(document.querySelectorAll('#calendarList input'));
+        CalendarList.forEach(function(calendar) {
+            cal.toggleSchedules(calendar.id, !calendar.checked, false);
+        });
+        cal.render(true);
+        calendarElements.forEach(function(input) {
+            var span = input.nextElementSibling;
+            span.style.backgroundColor = input.checked ? span.style.borderColor : 'transparent';
+        });
+    }
 
     function createCalendar(window, Calendar) {
         var cal, resizeThrottled;
@@ -139,20 +166,6 @@
                 return true;
             }
         });
-
-        /**
-        * A listener for click the menu
-        * @param {Event} e - click event
-        */
-        function findCalendar(id) {
-            var found;
-            CalendarList.forEach(function(calendar) {
-                if (calendar.id === id) {
-                    found = calendar;
-                }
-            });
-            return found || CalendarList[0];
-        }
 
         function getTimeTemplate(schedule, isAllDay) {
             var html = [];
@@ -231,12 +244,6 @@
             cal.changeView(viewName, true);
             setDropdownCalendarType();
             setRenderRangeText();
-        }
-
-        function mergeSchedule(e) {
-            for (var i = 0; i < Object.keys(e.changes).length; i++) {
-                e.schedule[Object.keys(e.changes)[i]] = e.changes[Object.keys(e.changes)[i]];
-            }
         }
 
         function onClickNavi(e) {
@@ -322,80 +329,6 @@
             }
         }
 
-        function saveNewSchedule(scheduleData) {
-            var calendar = scheduleData.calendar || findCalendar(scheduleData.calendarId);
-            var attachments = [];
-            var attachmentsList = document.getElementById(ElementPrefix + 'input-attachment').files;
-            var dateA = scheduleData.start.getDate() + scheduleData.start.getMonth() + scheduleData.start.getFullYear();
-            var dateB = scheduleData.end.getDate() + scheduleData.end.getMonth() + scheduleData.end.getFullYear();
-            var isAllDay = dateA !== dateB ? true : (scheduleData.isAllDay ? true : false);
-            if (!!attachmentsList.length) {
-                for (var i = 0; i < attachmentsList.length; i++) {
-                    attachments.push(attachmentsList[i].name);
-                }
-            }
-            var schedule = {
-                id: String(chance.guid()),
-                spId: 2, // here
-                comments: scheduleData.comments,
-                title: scheduleData.title,
-                isAllDay: isAllDay,
-                start: scheduleData.start,
-                end: scheduleData.end,
-                category: isAllDay ? 'allday' : 'time',
-                dueDateClass: '',
-                color: calendar.color,
-                bgColor: calendar.bgColor,
-                dragBgColor: calendar.bgColor,
-                borderColor: calendar.borderColor,
-                attachments: attachments,
-                // location: scheduleData.location,
-                raw: {
-                    class: scheduleData.raw['class']
-                }
-                // state: scheduleData.state,
-            };
-            if (calendar) {
-                schedule.calendarId = calendar.id;
-                schedule.color = calendar.color;
-                schedule.bgColor = calendar.bgColor;
-                schedule.borderColor = calendar.borderColor;
-            }
-
-            // var spSchedule = {
-            //     Title: scheduleData.title,
-            //     EndDate: moment(scheduleData.end._date).format('YYYY-MM-DDT[00:00:00Z]'),
-            //     EventDate: moment(scheduleData.start._date).format('YYYY-MM-DDT[00:00:00Z]'),
-            //     Location: scheduleData.location,
-            //     Category: 'Meeting',
-            //     fAllDayEvent: scheduleData.isAllDay,
-            //     fRecurrence: false,
-            //     bgColor: calendar.bgColor,
-            //     borderColor: calendar.borderColor,
-            //     calendarId: calendar.id,
-            //     categoryType: scheduleData.isAllDay ? 'allday' : 'time',
-            //     color: calendar.color,
-            //     dragBgColor: calendar.bgColor,
-            //     dueDateClass: '', 
-            //     end: String(scheduleData.end._date.getTime()),
-            //     idChance: String(chance.guid()),
-            //     isAllDay: String(scheduleData.isAllDay),
-            //     // locationTask: scheduleData.location,
-            //     raw: JSON.stringify({class: scheduleData.raw['class']}),
-            //     start: String(scheduleData.start._date.getTime()),
-            //     // state: scheduleData.state,
-            //     title0: scheduleData.title,
-            //     __metadata: {
-            //         type: 'SP.Data.CalendarListItem'
-            //     }
-            // };
-            // here
-            console.log(schedule);
-            cal.createSchedules([schedule]);
-            // saveSchedule(spSchedule);
-            refreshScheduleVisibility();
-        }
-
         function onChangeCalendars(e) {
             var calendarId = e.target.value;
             var checked = e.target.checked;
@@ -424,18 +357,6 @@
                 }
             }
             refreshScheduleVisibility();
-        }
-
-        function refreshScheduleVisibility() {
-            var calendarElements = Array.prototype.slice.call(document.querySelectorAll('#calendarList input'));
-            CalendarList.forEach(function(calendar) {
-                cal.toggleSchedules(calendar.id, !calendar.checked, false);
-            });
-            cal.render(true);
-            calendarElements.forEach(function(input) {
-                var span = input.nextElementSibling;
-                span.style.backgroundColor = input.checked ? span.style.borderColor : 'transparent';
-            });
         }
 
         function setDropdownCalendarType() {
@@ -493,9 +414,9 @@
 
         function prepareToUpdate(e) {
             var schedule = e.schedule;
-            var comments = document.getElementById(ElementPrefix + 'schedule-comments').value;
-            var isAllDay = document.getElementById(ElementPrefix + 'schedule-allday').checked;
-            var newAttachments = document.getElementById(ElementPrefix + 'input-attachment').files;
+            var comments = document.getElementById(ElementPrefix + 'schedule-comments') && document.getElementById(ElementPrefix + 'schedule-comments').value;
+            var isAllDay = document.getElementById(ElementPrefix + 'schedule-allday') && document.getElementById(ElementPrefix + 'schedule-allday').checked;
+            var newAttachments = document.getElementById(ElementPrefix + 'input-attachment') && document.getElementById(ElementPrefix + 'input-attachment').files;
             if (schedule.comments !== '' && comments === '') {
                 if (!e.changes) {
                     e.changes = {};
@@ -509,7 +430,7 @@
                 e.changes["isAllDay"] = false;
                 schedule.category = 'time';
             }
-            if (!!newAttachments.length) {
+            if (newAttachments && !!newAttachments.length) {
                 if (!!schedule.attachments.length) {
                     for (var i = 0; i < newAttachments.length; i++) {
                         if (schedule.attachments.indexOf(newAttachments[i].name) == -1) {
@@ -525,7 +446,9 @@
             cal.updateSchedule(schedule.id, schedule.calendarId, e.changes);
             refreshScheduleVisibility();
             if (!!e.changes) {
-                mergeSchedule(e);
+                for (var i = 0; i < Object.keys(e.changes).length; i++) {
+                    e.schedule[Object.keys(e.changes)[i]] = e.changes[Object.keys(e.changes)[i]];
+                }
             }
         }
 
@@ -569,4 +492,277 @@
         });
         calendarList.innerHTML = html.join('\n');
     };
+
+    /* CRUD OPERATIONS via SharePoint REST API*/
+
+    function formatSchedules(data) {
+        for (var i = 0; i < data.length; i++) {
+            var schedule = {};
+            schedule['id'] = data[i].idChance;
+            schedule['spID'] = data[i].Id;
+            schedule['calendarId'] = data[i].calendarId;
+            schedule['title'] = data[i].Title;
+            schedule['isAllDay'] = (data[i].isAllDay == "true") ? true : false;
+            schedule['start'] = parseInt(data[i].start);
+            schedule['end'] = parseInt(data[i].end);
+            schedule['category'] = (data[i].isAllDay == "true") ? 'allday' : 'time';
+            schedule['dueDateClass'] = '';
+            schedule['comments'] = data[i].comments ? data[i].comments : '';
+            schedule['attachments'] = [];
+            schedule['color'] = data[i].color;
+            schedule['bgColor'] = data[i].bgColor;
+            schedule['dragBgColor'] = data[i].dragBgColor;
+            schedule['borderColor'] = data[i].borderColor;
+            schedule['raw'] = JSON.parse(data[i].raw);
+            if (data[i].Attachments) {
+                for (var d = 0; d < data[i].AttachmentFiles.results.length; d++) {
+                    schedule['attachments'].push(data[i].AttachmentFiles.results[d].FileName);
+                }
+            }
+            Schedules.push(schedule);
+        }
+    }
+
+    function formatSingleSchedule(item) {
+        var schedule = {};
+        schedule['id'] = item.idChance;
+        schedule['spID'] = item.Id;
+        schedule['calendarId'] = item.calendarId;
+        schedule['title'] = item.Title;
+        schedule['isAllDay'] = (item.isAllDay == "true") ? true : false;
+        schedule['start'] = parseInt(item.start);
+        schedule['end'] = parseInt(item.end);
+        schedule['category'] = (item.isAllDay == "true") ? 'allday' : 'time';
+        schedule['dueDateClass'] = '';
+        schedule['comments'] = item.comments ? item.comments : '';
+        schedule['attachments'] = [];
+        schedule['color'] = item.color;
+        schedule['bgColor'] = item.bgColor;
+        schedule['dragBgColor'] = item.dragBgColor;
+        schedule['borderColor'] = item.borderColor;
+        schedule['raw'] = JSON.parse(item.raw);
+        if (item.Attachments) {
+            for (var d = 0; d < item.AttachmentFiles.results.length; d++) {
+                schedule['attachments'].push(item.AttachmentFiles.results[d].FileName);
+            }
+        }
+        return schedule
+    }
+
+    function getSchedules() {
+        var spRequest = new XMLHttpRequest();
+        spRequest.open("GET", _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Calendar')/items?$expand=AttachmentFiles");
+        spRequest.setRequestHeader("Accept","application/json; odata=verbose");
+        spRequest.onreadystatechange = function() {
+            if (spRequest.readyState === 4 && spRequest.status === 200) {
+                var result = JSON.parse(spRequest.responseText);
+                formatSchedules(result.d.results);
+                console.log(result.d.results);
+                console.log(Schedules);
+                cal.createSchedules(Schedules);
+            }
+            else if (spRequest.readyState === 4 && spRequest.status !== 200) { 
+                console.log('lists not retrieved');
+            }
+        }
+        spRequest.send();
+    }
+
+    function getSingleSchedule(id) {
+        var spRequest = new XMLHttpRequest();
+        spRequest.open("GET", _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Calendar')/items(" + id + ")?$expand=AttachmentFiles");
+        spRequest.setRequestHeader("Accept","application/json; odata=verbose");
+        spRequest.onreadystatechange = function() {
+            if (spRequest.readyState === 4 && spRequest.status === 200) {
+                var result = JSON.parse(spRequest.responseText);
+                var schedule = formatSingleSchedule(result.d);
+                cal.createSchedules([schedule]);
+                refreshScheduleVisibility();
+                $(".spinner").remove();
+                $("#s4-workspace").removeClass("invisible");
+            }
+            else if (spRequest.readyState === 4 && spRequest.status !== 200) { 
+                console.log('lists not retrieved');
+            }
+        }
+        spRequest.send();
+    }
+
+    function saveNewSchedule(scheduleData) {
+        var calendar = scheduleData.calendar || findCalendar(scheduleData.calendarId);
+        if (calendar) {
+            var attachments = [];
+            var attachmentsList = document.getElementById(ElementPrefix + 'input-attachment').files;
+            var dateA = scheduleData.start.getDate() + scheduleData.start.getMonth() + scheduleData.start.getFullYear();
+            var dateB = scheduleData.end.getDate() + scheduleData.end.getMonth() + scheduleData.end.getFullYear();
+            var isAllDay = dateA !== dateB ? true : (scheduleData.isAllDay ? true : false);
+            if (!!attachmentsList.length) {
+                for (var i = 0; i < attachmentsList.length; i++) {
+                    attachments.push(attachmentsList[i].name);
+                }
+            }
+            var schedule = {
+                Title: scheduleData.title,
+                EndDate: moment(scheduleData.end._date).format('YYYY-MM-DDT[00:00:00Z]'),
+                EventDate: moment(scheduleData.start._date).format('YYYY-MM-DDT[00:00:00Z]'),
+                Category: 'Meeting',
+                comments: scheduleData.comments,
+                fAllDayEvent: scheduleData.isAllDay,
+                fRecurrence: false,
+                bgColor: calendar.bgColor,
+                borderColor: calendar.borderColor,
+                calendarId: calendar.id,
+                categoryType: scheduleData.isAllDay ? 'allday' : 'time',
+                color: calendar.color,
+                dragBgColor: calendar.bgColor,
+                dueDateClass: '', 
+                end: String(scheduleData.end._date.getTime()),
+                idChance: String(chance.guid()),
+                isAllDay: String(scheduleData.isAllDay),
+                raw: JSON.stringify({class: scheduleData.raw['class']}),
+                start: String(scheduleData.start._date.getTime()),
+                __metadata: {
+                    type: 'SP.Data.CalendarListItem'
+                }
+            };
+            $("#s4-workspace").addClass("invisible");
+            $("body").append('<div class="spinner"></div>');
+            $.ajax({
+                url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Calendar')/items",
+                type: "POST",
+                contentType: "application/json;odata=verbose",
+                data: JSON.stringify(schedule),
+                headers: {
+                    "Accept": "application/json;odata=verbose",
+                    "X-RequestDigest": $("#__REQUESTDIGEST").val()
+                }
+            }).done(function(data){
+                if ($("#" + ElementPrefix + "input-attachment") && !!$("#" + ElementPrefix + "input-attachment")[0].files.length) {
+                    AddAllAttachments(data.d.Id);
+                }
+                else {
+                    $(".spinner").remove();
+                    $("#s4-workspace").removeClass("invisible");
+                }
+            });
+        }
+    }
+
+    function AddAllAttachments(id) {
+        var data = [];
+        var fileArray = [];
+        $.each($("#" + ElementPrefix + "input-attachment")[0].files, function() {
+            fileArray.push({
+                "Attachment": $(this)[0]
+            });
+        });
+        data.push({
+            "Files": fileArray
+        });
+        var createItemWithAttachments = function(listName, listValues, id) {
+            var fileCountCheck = 0;
+            var fileNames;
+            var context = new SP.ClientContext.get_current();
+            var dfd = $.Deferred();
+            var targetList = context.get_web().get_lists().getByTitle(listName);
+            context.load(targetList);
+            var itemCreateInfo = new SP.ListItemCreationInformation();
+            context.executeQueryAsync(
+                function() {
+                    if (listValues[0].Files.length !== 0) {
+                        if (fileCountCheck <= listValues[0].Files.length - 1) {
+                            loopFileUpload(listName, id, listValues, fileCountCheck);
+                        }
+                    } else {
+                        dfd.resolve(fileCountCheck);
+                    }
+                },
+                function(sender, args) {
+                    throw new TypeError('Error occured' + args.get_message());
+                });
+            return dfd.promise();
+        };
+        createItemWithAttachments("Calendar", data, id);
+    }
+
+    function loopFileUpload(listName, id, listValues, fileCountCheck) {
+        var dfd = $.Deferred();
+        uploadFile(listName, id, listValues[0].Files[fileCountCheck].Attachment).then(
+            function(data) {
+                var objcontext = new SP.ClientContext();
+                var targetList = objcontext.get_web().get_lists().getByTitle(listName);
+                var listItem = targetList.getItemById(id);
+                objcontext.load(listItem);
+                objcontext.executeQueryAsync(function() {
+                    fileCountCheck++;
+                    if (fileCountCheck <= listValues[0].Files.length - 1) {
+                        loopFileUpload(listName, id, listValues, fileCountCheck);
+                    } else {
+                        getSingleSchedule(id);
+                    }
+                },
+                function(sender, args) {
+                    throw new TypeError("Reload List Item - Fail" + args.get_message());
+                });
+            },
+            function(sender, args) {
+                throw new TypeError("Not uploaded");
+                dfd.reject(sender, args);
+            }
+        );
+        return dfd.promise();
+    }
+
+    function uploadFile(listName, id, file) {
+        var deferred = $.Deferred();
+        var fileName = file.name;
+        getFileBuffer(file).then(
+            function(buffer) {
+                var bytes = new Uint8Array(buffer);
+                var binary = '';
+                for (var b = 0; b < bytes.length; b++) {
+                    binary += String.fromCharCode(bytes[b]);
+                }
+                $.getScript("/_layouts/15/SP.RequestExecutor.js", function() {
+                    var createitem = new SP.RequestExecutor(_spPageContextInfo.webServerRelativeUrl);
+                    createitem.executeAsync({
+                        url: _spPageContextInfo.webServerRelativeUrl + "/_api/web/lists/GetByTitle('" + listName + "')/items(" + id + ")/AttachmentFiles/add(FileName='" + file.name + "')",
+                        method: "POST",
+                        binaryStringRequestBody: true,
+                        body: binary,
+                        success: fsucc,
+                        error: ferr,
+                        state: "Update"
+                    });
+
+                    function fsucc(data) {
+                        deferred.resolve(data);
+                    }
+
+                    function ferr(data) {
+                        throw new TypeError(fileName + "not uploaded error");
+                        deferred.reject(data);
+                    }
+                });
+            },
+            function(err) {
+                deferred.reject(err);
+            }
+        );
+        return deferred.promise();
+    }
+
+    function getFileBuffer(file) {
+        var deferred = $.Deferred();
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            deferred.resolve(e.target.result);
+        };
+        reader.onerror = function(e) {
+            deferred.reject(e.target.error);
+        };
+        reader.readAsArrayBuffer(file);
+        return deferred.promise();
+    }
+
 // })();
