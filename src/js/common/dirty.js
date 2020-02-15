@@ -6,8 +6,8 @@
 
 var common = require('tui-code-snippet');
 var existy = common.isExisty,
-    pick = common.pick,
-    isFunc = common.isFunction;
+  pick = common.pick,
+  isFunc = common.isFunction;
 
 /**
  * Mixin module for dirty flagging on specific objects.
@@ -26,90 +26,90 @@ var existy = common.isExisty,
  * obj.isPropChanged('hello');    // false
  */
 var dirty = {
-    /**
+  /**
      * Set property value with dirty flagging.
      * @param {string} propName Property name.
      * @param {*} value Proprty value.
      */
-    set: function(propName, value) {
-        var originValue = this[propName];
+  set: function(propName, value) {
+    var originValue = this[propName];
 
-        if (originValue === value) {
-            return;
-        }
+    if (originValue === value) {
+      return;
+    }
 
-        this[propName] = value;
+    this[propName] = value;
 
-        if (!this._changed) {
-            /**
+    if (!this._changed) {
+      /**
              * Save changed properties.
              * @memberof dirty
              * @name _changed
              * @type {Object}
              */
-            this._changed = {};
-        }
+      this._changed = {};
+    }
 
-        this._changed[propName] = true;
+    this._changed[propName] = true;
 
-        /**
+    /**
          * Dirty flag
          * @type {Boolean}
          * @name _dirty
          * @memberof dirty
          */
-        this._dirty = true;
-    },
+    this._dirty = true;
+  },
 
-    /**
+  /**
      * Check dirty flag.
      * @returns {boolean} Property is changed.
      */
-    isDirty: function() {
-        return !!this._dirty;
-    },
+  isDirty: function() {
+    return !!this._dirty;
+  },
 
-    /**
+  /**
      * Set dirty flag manually.
      * @param {Boolean} [toDirty=true] This will set dirty flag directly.
      */
-    dirty: function(toDirty) {
-        toDirty = existy(toDirty) ? toDirty : true;
+  dirty: function(toDirty) {
+    toDirty = existy(toDirty) ? toDirty : true;
 
-        /* istanbul ignore else */
-        if (!toDirty) {
-            this._changed = {};
-        }
+    /* istanbul ignore else */
+    if (!toDirty) {
+      this._changed = {};
+    }
 
-        this._dirty = toDirty;
-    },
+    this._dirty = toDirty;
+  },
 
-    /**
+  /**
      * Delete property safety.
      * @param {String} propName The name of property.
      */
-    deleteProp: function(propName) {
-        delete this[propName];
+  deleteProp: function(propName) {
+    delete this[propName];
 
-        if (this._changed) {
-            delete this._changed[propName];
-        }
-    },
+    if (this._changed) {
+      delete this._changed[propName];
+    }
+  },
 
-    /**
+  /**
      * Check the changes with specific property.
      * @param {String} propName The name of property you want.
      * @returns {boolean} Is property changed?
      */
-    isPropChanged: function(propName) {
-        if (!this._changed) {
-            return false;
-        }
+  isPropChanged: function(propName) {
+    if (!this._changed) {
+      return false;
+    }
 
-        return this._changed[propName] === true;
-    },
+    return this._changed[propName] === true;
+  },
 
-    /**
+  /**
      * Mixin to specific objects.
      * @param {Object} target The object to mix this module.
      * @memberof module:util/dirty
@@ -117,17 +117,17 @@ var dirty = {
      * function Animal() {}
      * dirty.mixin(Animal.prototype);
      */
-    mixin: function(target) {
-        var methodFilterR = /(^_|mixin|wrap)/;
+  mixin: function(target) {
+    var methodFilterR = /(^_|mixin|wrap)/;
 
-        common.forEachOwnProperties(dirty, function(o, k) {
-            if (!methodFilterR.test(k)) {
-                target[k] = dirty[k];
-            }
-        });
-    },
+    common.forEachOwnProperties(dirty, function(o, k) {
+      if (!methodFilterR.test(k)) {
+        target[k] = dirty[k];
+      }
+    });
+  },
 
-    /**
+  /**
      * Wrapper method for dirty flagging.
      *
      * This method invoke after invoked specific method that added by you.
@@ -158,47 +158,47 @@ var dirty = {
      * });
      *
      */
-    wrap: function(target, methodName, flag) {
-        var wrap = dirty.wrap,
-            fn;
+  wrap: function(target, methodName, flag) {
+    var wrap = dirty.wrap,
+      fn;
 
-        if (common.isObject(methodName)) {
-            common.forEachOwnProperties(methodName, function(_flag, _name) {
-                wrap(target, _name, _flag);
-            });
+    if (common.isObject(methodName)) {
+      common.forEachOwnProperties(methodName, function(_flag, _name) {
+        wrap(target, _name, _flag);
+      });
 
-            return;
-        }
+      return;
+    }
 
-        flag = existy(flag) ? flag : true;
+    flag = existy(flag) ? flag : true;
 
-        if (!target._wrapper) {
-            /**
+    if (!target._wrapper) {
+      /**
              * @param {function} _fn Original method to wrap.
              * @param {boolean} flagToSet The boolean value to using dirty flagging.
              * @returns {*} The result value of original method.
              * @name _wrapper
              * @memberof dirty
              */
-            target._wrapper = function(_fn, flagToSet) {
-                return function() {
-                    var args = Array.prototype.slice.call(arguments);
+      target._wrapper = function(_fn, flagToSet) {
+        return function() {
+          var args = Array.prototype.slice.call(arguments);
                     var result = _fn.apply(this, args); // eslint-disable-line
                     this._dirty = flagToSet; // eslint-disable-line
 
-                    return result;
-                };
-            };
-        }
+          return result;
+        };
+      };
+    }
 
-        if (existy(pick(target, methodName)) &&
+    if (existy(pick(target, methodName)) &&
             isFunc(target[methodName]) &&
             !existy(pick(target, methodName, '_wrapped'))) {
-            fn = target[methodName];
-            target[methodName] = target._wrapper(fn, flag);
-            target[methodName]._wrapped = true;
-        }
+      fn = target[methodName];
+      target[methodName] = target._wrapper(fn, flag);
+      target[methodName]._wrapped = true;
     }
+  }
 };
 
 module.exports = dirty;

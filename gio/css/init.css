@@ -1,0 +1,432 @@
+.vanish {display: none;}
+.invisible{opacity: 0.1;}
+#sideNavBox, .ms-breadcrumb-top{display: none;}
+#contentBox{margin: 0;max-width: 1700px;}
+
+#ifadCalendar {
+  display: flex;
+  max-width: 1500px;
+  margin: auto;
+  font-size: .875rem;
+}
+#s4-bodyContainer {
+  max-width: none;
+}
+
+.tui-full-calendar-month-week-item .tui-full-calendar-today .tui-full-calendar-weekday-grid-date-decorator {
+  background-color: #587CA1;
+}
+
+input[type='checkbox'].tui-full-calendar-checkbox-round + span {
+  vertical-align: top;
+}
+
+/**  custom bootstrap - start */
+.bootstrapiso .btn {
+  border-radius: 25px;
+  border-color: #ddd;
+  font-size: .875rem;
+}
+.bootstrapiso b, .bootstrapiso strong {
+  font-weight: 700;
+}
+.btn:hover {
+  border: solid 1px #bbb;
+  background-color: #fff;
+}
+.ic-arrow-line-left, .ic-arrow-line-right {
+  margin-top: -3px;
+}
+.btn:active {
+  background-color: #f9f9f9;
+  border: solid 1px #bbb;
+  outline: none;
+}
+
+.btn:disabled {
+  background-color: #f9f9f9;
+  border: solid 1px #ddd;
+  color: #bbb;
+}
+
+.btn:focus:active, .btn:focus, .btn:active {
+  outline: none;
+}
+
+.open > .dropdown-toggle.btn-default {
+  background-color: #fff;
+}
+
+.bootstrapiso .dropdown-menu {
+  top: 30px;
+  padding: 3px 0;
+  border-radius: 2px;
+  border: 1px solid #bbb;
+  min-width: 14rem;
+}
+
+.dropdown-menu > li > a {
+  padding: 9px 12px;
+  font-size: 14px;
+  display: block;
+  cursor: pointer;
+}
+
+.dropdown-menu > li > a:hover {
+  background-color: rgba(81, 92, 230, 0.05);
+  color: #333;
+}
+
+.bi15 {
+  width: 15px;
+  height: 15px;
+}
+
+/** custom fontawesome - end */
+
+.calendar-icon {
+  width: 14px;
+  height: 14px;
+}
+
+#top {
+  height: 49px;
+  border-bottom: 1px solid #bbb;
+  padding: 16px;
+  font-size: 10px;
+}
+
+#lnb {
+  padding: 0 10px;
+  margin-top: -12px;
+  background: #fafafa;
+  min-width: 160px;
+}
+
+#lnb label {
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+#right {
+  width: 100%;
+  margin-left: 30px;
+}
+
+.lnb-new-schedule {
+  padding-top: 14px;
+  padding-bottom: 18px;
+}
+
+.lnb-new-schedule-btn {
+  height: 100%;
+  font-size: 14px;
+  background-color: #587CA1;
+  color: #ffffff;
+  border: 0;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-weight: bold;
+}
+.open > .dropdown-menu {
+  display: block;
+}
+.lnb-new-schedule-btn:hover {
+  background-color: #587CA1;
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+.lnb-new-schedule-btn:active {
+  background-color: #587CA1;
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+.lnb-calendars {
+  font-size: 14px;
+  user-select: none;
+}
+
+.lnb-calendars > div {
+  padding: 12px 16px;
+  font-weight: normal;
+}
+
+.lnb-calendars-d1 {
+  padding-left: 8px;
+}
+
+.lnb-calendars-d1 label {
+  font-weight: normal;
+}
+
+.lnb-calendars-item {
+  min-height: 14px;
+  line-height: 14px;
+  padding: 16px 0 0 16px;
+  user-select: none;
+}
+
+.lnb-footer {
+  color: #999;
+  font-size: 11px;
+  padding-left: 16px;
+}
+
+#menu {
+  margin-bottom: 50px;
+  user-select: none;
+}
+.bootstrapiso .btn-sm, .bootstrapiso .btn-group-sm>.btn {
+  line-height: 2;
+}
+#dropdownMenu-calendarType {
+  padding: 2px 8px 4px 10px;
+}
+
+#calendarTypeName {
+  min-width: 62px;
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
+#exportCalendar {
+  float: right;
+}
+
+#exportTitle {
+  min-width: 130px;
+  display: block;
+}
+
+.move-today {
+  padding: 4px 16px!important;
+  margin-right: 20px!important;
+}
+
+.move-day {
+  padding: 3px!important;
+  min-width: 3em;
+}
+
+#renderRange {
+  padding-left: 30px;
+  vertical-align: middle;
+  font-size: 1rem;
+}
+
+.bootstrapiso .dropdown {
+  padding-right: 12px;
+}
+
+.dropdown-menu-title .calendar-icon {
+  margin-right: 8px;
+}
+
+.calendar-bar {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  display: inline-block;
+  border: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.calendar-name {
+    font-size: 14px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.schedule-time {
+    color: #005aff;
+}
+
+/** custom fontawesome */
+.fa {
+    width: 12px;
+    height: 12px;
+    margin-right: 2px;
+}
+
+.weekday-grid-more-schedules {
+  float: right;
+  margin-top: 4px;
+  margin-right: 6px;
+  height: 18px;
+  line-height: 17px;
+  padding: 0 5px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  text-align: center;
+  color: #000;
+}
+
+#contentTable1 .tui-calendar-week td {
+  vertical-align: middle;
+}
+
+.tui-timepicker-select {
+  font-size: 12px!important;
+}
+
+input[type='checkbox'].tui-full-calendar-checkbox-square + span {
+  margin-top: -3px;
+}
+
+.tui-full-calendar-popup .tui-full-calendar-textarea {
+  border: 1px solid #d5d5d5;
+  width: 100%;
+  border-radius: 2px;
+  padding: 0 9px 0 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  height: 60px;
+  resize: none;
+}
+
+.tui-full-calendar-popup .tui-full-calendar-textarea:hover {
+  border-color: #bbb;
+}
+
+.tui-full-calendar-popup .tui-full-calendar-textarea textarea {
+  width: 400px;
+  resize: none;
+  border: none;
+  outline: none;
+  height: 100%;
+  padding-left: 8px;
+}
+
+.tui-full-calendar-button.tui-full-calendar-section-private {
+  padding: 0;
+  width: 32px;
+}
+
+#tui-full-calendar-attachment {
+  display: none;
+}
+
+.tui-full-calendar-popup .tui-full-calendar-textarea textarea::placeholder {
+  color: #bbb;
+  font-weight: 300;
+}
+
+.spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height:60px;
+  width:60px;
+  margin:0px auto;
+  -webkit-animation: rotation .6s infinite linear;
+  -moz-animation: rotation .6s infinite linear;
+  -o-animation: rotation .6s infinite linear;
+  animation: rotation .6s infinite linear;
+  border-left:4px solid rgba(0,174,239,.15);
+  border-right:4px solid rgba(0,174,239,.15);
+  border-bottom:4px solid rgba(0,174,239,.15);
+  border-top:4px solid #587CA1;
+  border-radius:100%;
+}
+
+@-webkit-keyframes rotation {
+  from {-webkit-transform: rotate(0deg);}
+  to {-webkit-transform: rotate(359deg);}
+}
+@-moz-keyframes rotation {
+  from {-moz-transform: rotate(0deg);}
+  to {-moz-transform: rotate(359deg);}
+}
+@-o-keyframes rotation {
+  from {-o-transform: rotate(0deg);}
+  to {-o-transform: rotate(359deg);}
+}
+@keyframes rotation {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(359deg);}
+}
+
+/* font icons */
+@font-face {
+  font-family: 'tui-calendar-font-icon';
+  src: url('../fonts/icon.eot') format('embedded-opentype'),
+       url('../fonts/icon.ttf') format('truetype'),
+       url('../fonts/icon.woff') format('woff'),
+       url('../fonts/icon.svg') format('svg');
+}
+
+.calendar-icon {
+width: 14px;
+height: 14px;
+display: inline-block;
+vertical-align: middle;
+}
+
+.calendar-font-icon {
+font-family: 'tui-calendar-font-icon';
+font-size: 10px;
+font-weight: normal;
+}
+
+.img-bi {
+background: url('../images/img-bi.png') no-repeat;
+width: 215px;
+height: 16px;
+}
+
+.ic_view_month {
+background: url('../images/ic-view-month.png') no-repeat;
+}
+
+.ic_view_week {
+background: url('../images/ic-view-week.png') no-repeat;
+}
+
+.ic_view_day {
+background: url('../images/ic-view-day.png') no-repeat;
+}
+
+.ic-arrow-line-left {
+background: url('../images/ic-arrow-line-left.png') no-repeat;
+}
+
+.ic-arrow-line-right {
+background: url('../images/ic-arrow-line-right.png') no-repeat;
+}
+
+.ic-travel-time {
+background: url('../images/ic-traveltime-w.png') no-repeat;
+}
+
+/* font icons */
+.ic-location-b:before {
+content: '\e900';
+}
+
+.ic-lock-b:before {
+content: '\e901';
+}
+
+.ic-milestone-b:before {
+content: '\e902';
+}
+
+.ic-readonly-b:before {
+content: '\e903';
+}
+
+.ic-repeat-b:before {
+content: '\e904';
+}
+
+.ic-state-b:before {
+content: '\e905';
+}
+
+.ic-user-b:before {
+content: '\e906';
+}

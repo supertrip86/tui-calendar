@@ -15,47 +15,47 @@ var reqAnimFrame = require('../../common/reqAnimFrame');
  * @param {DayGridResize} resizeHandler - instance of DayGridResize
  */
 function DayGridResizeGuide(resizeHandler) {
-    /**
+  /**
      * @type {DayGridResize}
      */
-    this.resizeHandler = resizeHandler;
+  this.resizeHandler = resizeHandler;
 
-    /**
+  /**
      * The element that actually contains the event element
      * @type {HTMLDIVElement}
      */
-    this.scheduleContainer = null;
+  this.scheduleContainer = null;
 
-    /**
+  /**
      * @type {function}
      */
-    this.getScheduleDataFunc = null;
+  this.getScheduleDataFunc = null;
 
-    /**
+  /**
      * @type {HTMLDIVElement}
      */
-    this.guideElement = null;
+  this.guideElement = null;
 
-    /**
+  /**
      * @type {HTMLDIVElement}
      */
-    this.scheduleBlockElement = null;
+  this.scheduleBlockElement = null;
 
-    resizeHandler.on({
-        'dragstart': this._onDragStart,
-        'drag': this._onDrag,
-        'dragend': this._clearGuideElement,
-        'click': this._clearGuideElement
-    }, this);
+  resizeHandler.on({
+    'dragstart': this._onDragStart,
+    'drag': this._onDrag,
+    'dragend': this._clearGuideElement,
+    'click': this._clearGuideElement
+  }, this);
 }
 
 /**
  * Destroy method
  */
 DayGridResizeGuide.prototype.destroy = function() {
-    this._clearGuideElement();
-    this.resizeHandler.off(this);
-    this.resizeHandler = this.scheduleContainer = this.getScheduleDataFunc =
+  this._clearGuideElement();
+  this.resizeHandler.off(this);
+  this.resizeHandler = this.scheduleContainer = this.getScheduleDataFunc =
         this.guideElement = this.scheduleBlockElement = null;
 };
 
@@ -63,17 +63,17 @@ DayGridResizeGuide.prototype.destroy = function() {
  * Clear guide element.
  */
 DayGridResizeGuide.prototype._clearGuideElement = function() {
-    domutil.remove(this.guideElement);
+  domutil.remove(this.guideElement);
 
-    if (!util.browser.msie) {
-        domutil.removeClass(global.document.body, config.classname('resizing-x'));
-    }
+  if (!util.browser.msie) {
+    domutil.removeClass(global.document.body, config.classname('resizing-x'));
+  }
 
-    if (this.scheduleBlockElement) {
-        domutil.removeClass(this.scheduleBlockElement, config.classname('weekday-schedule-block-dragging-dim'));
-    }
+  if (this.scheduleBlockElement) {
+    domutil.removeClass(this.scheduleBlockElement, config.classname('weekday-schedule-block-dragging-dim'));
+  }
 
-    this.getScheduleDataFunc = null;
+  this.getScheduleDataFunc = null;
 };
 
 /**
@@ -81,11 +81,11 @@ DayGridResizeGuide.prototype._clearGuideElement = function() {
  * @param {number} newWidth - new width percentage value to resize guide element.
  */
 DayGridResizeGuide.prototype.refreshGuideElement = function(newWidth) {
-    var guideElement = this.guideElement;
+  var guideElement = this.guideElement;
 
-    reqAnimFrame.requestAnimFrame(function() {
-        guideElement.style.width = newWidth + '%';
-    });
+  reqAnimFrame.requestAnimFrame(function() {
+    guideElement.style.width = newWidth + '%';
+  });
 };
 
 /**
@@ -94,27 +94,27 @@ DayGridResizeGuide.prototype.refreshGuideElement = function(newWidth) {
  * @returns {function} return function that calculate guide element new width percentage.
  */
 DayGridResizeGuide.prototype.getGuideElementWidthFunc = function(dragStartEventData) {
-    var model = dragStartEventData.model,
-        viewOptions = this.resizeHandler.view.options,
-        fromLeft = Math.ceil(
-            (model.start - viewOptions.renderStartDate) / datetime.MILLISECONDS_PER_DAY
-        ) || 0,
-        grids = dragStartEventData.grids;
+  var model = dragStartEventData.model,
+    viewOptions = this.resizeHandler.view.options,
+    fromLeft = Math.ceil(
+      (model.start - viewOptions.renderStartDate) / datetime.MILLISECONDS_PER_DAY
+    ) || 0,
+    grids = dragStartEventData.grids;
 
-    return function(xIndex) {
-        var width = 0;
-        var i = 0;
-        var length = grids.length;
-        width += grids[fromLeft] ? grids[fromLeft].width : 0;
+  return function(xIndex) {
+    var width = 0;
+    var i = 0;
+    var length = grids.length;
+    width += grids[fromLeft] ? grids[fromLeft].width : 0;
 
-        for (; i < length; i += 1) {
-            if (i > fromLeft && i <= xIndex) {
-                width += grids[i] ? grids[i].width : 0;
-            }
-        }
+    for (; i < length; i += 1) {
+      if (i > fromLeft && i <= xIndex) {
+        width += grids[i] ? grids[i].width : 0;
+      }
+    }
 
-        return width;
-    };
+    return width;
+  };
 };
 
 /**
@@ -122,22 +122,22 @@ DayGridResizeGuide.prototype.getGuideElementWidthFunc = function(dragStartEventD
  * @param {object} dragStartEventData - schedule data.
  */
 DayGridResizeGuide.prototype._onDragStart = function(dragStartEventData) {
-    var container = this.resizeHandler.view.container,
-        scheduleBlockElement = this.scheduleBlockElement = dragStartEventData.scheduleBlockElement,
-        guideElement = this.guideElement = scheduleBlockElement.cloneNode(true),
-        scheduleContainer;
+  var container = this.resizeHandler.view.container,
+    scheduleBlockElement = this.scheduleBlockElement = dragStartEventData.scheduleBlockElement,
+    guideElement = this.guideElement = scheduleBlockElement.cloneNode(true),
+    scheduleContainer;
 
-    if (!util.browser.msie) {
-        domutil.addClass(global.document.body, config.classname('resizing-x'));
-    }
+  if (!util.browser.msie) {
+    domutil.addClass(global.document.body, config.classname('resizing-x'));
+  }
 
-    scheduleContainer = domutil.find(config.classname('.weekday-schedules'), container);
-    domutil.addClass(guideElement, config.classname('daygrid-guide-move'));
-    domutil.addClass(scheduleBlockElement, config.classname('weekday-schedule-block-dragging-dim'));
+  scheduleContainer = domutil.find(config.classname('.weekday-schedules'), container);
+  domutil.addClass(guideElement, config.classname('daygrid-guide-move'));
+  domutil.addClass(scheduleBlockElement, config.classname('weekday-schedule-block-dragging-dim'));
 
-    scheduleContainer.appendChild(guideElement);
+  scheduleContainer.appendChild(guideElement);
 
-    this.getScheduleDataFunc = this.getGuideElementWidthFunc(dragStartEventData);
+  this.getScheduleDataFunc = this.getGuideElementWidthFunc(dragStartEventData);
 };
 
 /**
@@ -145,13 +145,13 @@ DayGridResizeGuide.prototype._onDragStart = function(dragStartEventData) {
  * @param {object} dragEventData - schedule data.
  */
 DayGridResizeGuide.prototype._onDrag = function(dragEventData) {
-    var func = this.getScheduleDataFunc;
+  var func = this.getScheduleDataFunc;
 
-    if (!func) {
-        return;
-    }
+  if (!func) {
+    return;
+  }
 
-    this.refreshGuideElement(func(dragEventData.xIndex));
+  this.refreshGuideElement(func(dragEventData.xIndex));
 };
 
 module.exports = DayGridResizeGuide;

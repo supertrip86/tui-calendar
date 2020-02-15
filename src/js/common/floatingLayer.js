@@ -6,8 +6,8 @@
 
 var util = require('tui-code-snippet');
 var config = require('../config'),
-    domutil = require('../common/domutil'),
-    View = require('../view/view');
+  domutil = require('../common/domutil'),
+  View = require('../view/view');
 
 /**
  * @constructor
@@ -16,37 +16,37 @@ var config = require('../config'),
  * @param {HTMLElement} container - parent continer for floating layer
  */
 function FloatingLayer(options, container) {
-    var sibling = container[FloatingLayer.PROP_KEY],
-        layerContainer;
+  var sibling = container[FloatingLayer.PROP_KEY],
+    layerContainer;
 
-    if (!sibling) {
-        sibling = container[FloatingLayer.PROP_KEY] = [];
-    }
+  if (!sibling) {
+    sibling = container[FloatingLayer.PROP_KEY] = [];
+  }
 
-    sibling.push(this);
+  sibling.push(this);
 
-    /**
+  /**
      * @type {Collection}
      */
-    this.sibling = sibling;
+  this.sibling = sibling;
 
-    /**
+  /**
      * @type {number}
      */
-    this.zIndex = this.getLargestZIndex() || FloatingLayer.INIT_ZINDEX;
+  this.zIndex = this.getLargestZIndex() || FloatingLayer.INIT_ZINDEX;
 
-    layerContainer = document.createElement('div');
-    layerContainer.style.display = 'none';
-    layerContainer.style.position = 'absolute';
-    domutil.addClass(layerContainer, config.classname('floating-layer'));
-    container.appendChild(layerContainer);
+  layerContainer = document.createElement('div');
+  layerContainer.style.display = 'none';
+  layerContainer.style.position = 'absolute';
+  domutil.addClass(layerContainer, config.classname('floating-layer'));
+  container.appendChild(layerContainer);
 
-    View.call(this, layerContainer);
+  View.call(this, layerContainer);
 
-    /**
+  /**
      * @type {HTMLElement}
      */
-    this.parent = container;
+  this.parent = container;
 }
 
 util.inherit(FloatingLayer, View);
@@ -67,39 +67,39 @@ FloatingLayer.INIT_ZINDEX = 999;
  * remove instance cache property in container element
  */
 FloatingLayer.prototype.destroy = function() {
-    var parent = this.parent,
-        sibling = this.sibling,
-        i = 0, cnt = sibling.length;
+  var parent = this.parent,
+    sibling = this.sibling,
+    i = 0, cnt = sibling.length;
 
-    for (; i < cnt; i += 1) {
-        if (sibling[i] === this) {
-            sibling.splice(i, 1);
-            break;
-        }
+  for (; i < cnt; i += 1) {
+    if (sibling[i] === this) {
+      sibling.splice(i, 1);
+      break;
+    }
+  }
+
+  if (!sibling.length) {
+    try {
+      delete parent[FloatingLayer.PROP_KEY];
+    } catch (e) {
+      parent[FloatingLayer.PROP_KEY] = null;
     }
 
-    if (!sibling.length) {
-        try {
-            delete parent[FloatingLayer.PROP_KEY];
-        } catch (e) {
-            parent[FloatingLayer.PROP_KEY] = null;
-        }
+    parent.style.position = '';
+  }
 
-        parent.style.position = '';
-    }
+  domutil.remove(this.container);
 
-    domutil.remove(this.container);
+  this.sibling = null;
 
-    this.sibling = null;
-
-    View.prototype.destroy.call(this);
+  View.prototype.destroy.call(this);
 };
 
 /**
  * @returns {boolean} whether layer is visible?
  */
 FloatingLayer.prototype.isVisible = function() {
-    return this.container.style.display !== 'none';
+  return this.container.style.display !== 'none';
 };
 
 /**
@@ -108,7 +108,7 @@ FloatingLayer.prototype.isVisible = function() {
  * @param {number} y - y coordinate of layer
  */
 FloatingLayer.prototype.setPosition = function(x, y) {
-    domutil.setPosition(this.container, x, y);
+  domutil.setPosition(this.container, x, y);
 };
 
 /**
@@ -120,7 +120,7 @@ FloatingLayer.prototype.setPosition = function(x, y) {
  * @param {number} [ltrb.bottom] bottom pixel value.
  */
 FloatingLayer.prototype.setLTRB = function(ltrb) {
-    domutil.setLTRB(this.container, ltrb);
+  domutil.setLTRB(this.container, ltrb);
 };
 
 /**
@@ -129,13 +129,13 @@ FloatingLayer.prototype.setLTRB = function(ltrb) {
  * @param {number|string} h - layer height
  */
 FloatingLayer.prototype.setSize = function(w, h) {
-    var container = this.container;
+  var container = this.container;
 
-    w = util.isNumber(w) ? w + 'px' : w;
-    h = util.isNumber(h) ? h + 'px' : h;
+  w = util.isNumber(w) ? w + 'px' : w;
+  h = util.isNumber(h) ? h + 'px' : h;
 
-    container.style.width = w;
-    container.style.height = h;
+  container.style.width = w;
+  container.style.height = h;
 };
 
 /**
@@ -143,7 +143,7 @@ FloatingLayer.prototype.setSize = function(w, h) {
  * @param {string} html - html string
  */
 FloatingLayer.prototype.setContent = function(html) {
-    this.container.innerHTML = html;
+  this.container.innerHTML = html;
 };
 
 /**
@@ -151,34 +151,34 @@ FloatingLayer.prototype.setContent = function(html) {
  * @returns {number} largest z-index value
  */
 FloatingLayer.prototype.getLargestZIndex = function() {
-    var zIndexes = util.map(this.sibling, function(layer) {
-        return layer.zIndex;
-    });
+  var zIndexes = util.map(this.sibling, function(layer) {
+    return layer.zIndex;
+  });
 
-    return Math.max.apply(null, zIndexes);
+  return Math.max.apply(null, zIndexes);
 };
 
 /**
  * Set focus to layer
  */
 FloatingLayer.prototype.focus = function() {
-    var zIndexForShow = this.getLargestZIndex() + 1;
-    this.container.style.zIndex = this.zIndex = zIndexForShow;
+  var zIndexForShow = this.getLargestZIndex() + 1;
+  this.container.style.zIndex = this.zIndex = zIndexForShow;
 };
 
 /**
  * Show layer
  */
 FloatingLayer.prototype.show = function() {
-    this.focus();
-    this.container.style.display = 'block';
+  this.focus();
+  this.container.style.display = 'block';
 };
 
 /**
  * Hide layer
  */
 FloatingLayer.prototype.hide = function() {
-    this.container.style.display = 'none';
+  this.container.style.display = 'none';
 };
 
 module.exports = FloatingLayer;

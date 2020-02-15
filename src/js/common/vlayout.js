@@ -6,12 +6,12 @@
 
 var util = require('tui-code-snippet');
 var config = require('../config'),
-    common = require('./common'),
-    domutil = require('./domutil'),
-    domevent = require('./domevent'),
-    View = require('../view/view'),
-    VPanel = require('./vpanel'),
-    Drag = require('../handler/drag');
+  common = require('./common'),
+  domutil = require('./domutil'),
+  domevent = require('./domevent'),
+  View = require('../view/view'),
+  VPanel = require('./vpanel'),
+  Drag = require('../handler/drag');
 
 var mAbs = Math.abs;
 
@@ -35,69 +35,69 @@ var mAbs = Math.abs;
  * @param {Theme} theme - theme instance
  */
 function VLayout(options, container, theme) {
-    var opt, tempHeights;
+  var opt, tempHeights;
 
-    if (!(this instanceof VLayout)) {
-        return new VLayout(options, container);
-    }
+  if (!(this instanceof VLayout)) {
+    return new VLayout(options, container);
+  }
 
-    View.call(this, container);
+  View.call(this, container);
 
-    domutil.addClass(container, config.classname('vlayout-container'));
+  domutil.addClass(container, config.classname('vlayout-container'));
 
-    /**
+  /**
      * @type {object}
      */
-    opt = this.options = util.extend({
-        panels: [],
-        panelHeights: []
-    }, options);
+  opt = this.options = util.extend({
+    panels: [],
+    panelHeights: []
+  }, options);
 
-    /**
+  /**
      * @type {VPanel[]}
      */
-    this.panels = [];
+  this.panels = [];
 
-    /**
+  /**
      * @type {Drag}
      */
-    this._drag = new Drag({
-        distance: 10,
-        exclude: function(target) {
-            return !domutil.hasClass(target, config.classname('splitter'));
-        }
-    }, container);
+  this._drag = new Drag({
+    distance: 10,
+    exclude: function(target) {
+      return !domutil.hasClass(target, config.classname('splitter'));
+    }
+  }, container);
 
-    this._drag.on({
-        dragStart: this._onDragStart,
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this._drag.on({
+    dragStart: this._onDragStart,
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    /**
+  /**
      * @type {object}
      */
-    this._dragData = null;
+  this._dragData = null;
 
-    /**
+  /**
      * @type {Theme}
      */
-    this.theme = theme;
+  this.theme = theme;
 
-    if (opt.panels.length) {
-        if (opt.panelHeights.length) {
-            tempHeights = opt.panelHeights.slice();
-            util.forEach(opt.panels, function(panelOpt) {
-                if (!panelOpt.isSplitter && !panelOpt.autoHeight) {
-                    panelOpt.height = tempHeights.shift();
-                }
-            });
+  if (opt.panels.length) {
+    if (opt.panelHeights.length) {
+      tempHeights = opt.panelHeights.slice();
+      util.forEach(opt.panels, function(panelOpt) {
+        if (!panelOpt.isSplitter && !panelOpt.autoHeight) {
+          panelOpt.height = tempHeights.shift();
         }
-
-        this.addPanels(opt.panels, this.container);
+      });
     }
 
-    this.refresh();
+    this.addPanels(opt.panels, this.container);
+  }
+
+  this.refresh();
 }
 
 util.inherit(VLayout, View);
@@ -107,17 +107,17 @@ util.inherit(VLayout, View);
  * @returns {number[]} height of panels with `autoHeight` false
  */
 VLayout.prototype.getLayoutData = function() {
-    var heightList = [];
+  var heightList = [];
 
-    util.forEach(this.panels, function(panel) {
-        if (panel.isSplitter() || panel.options.autoHeight) {
-            return;
-        }
+  util.forEach(this.panels, function(panel) {
+    if (panel.isSplitter() || panel.options.autoHeight) {
+      return;
+    }
 
-        heightList.push(panel.getHeight());
-    });
+    heightList.push(panel.getHeight());
+  });
 
-    return heightList;
+  return heightList;
 };
 
 /**
@@ -125,19 +125,19 @@ VLayout.prototype.getLayoutData = function() {
  * @param {number[]} heightList of panels with `autoHeight` false
  */
 VLayout.prototype.setLayoutData = function(heightList) {
-    if (!heightList.length) {
-        return;
+  if (!heightList.length) {
+    return;
+  }
+
+  util.forEach(this.panels, function(panel) {
+    if (panel.isSplitter() || panel.options.autoHeight) {
+      return;
     }
 
-    util.forEach(this.panels, function(panel) {
-        if (panel.isSplitter() || panel.options.autoHeight) {
-            return;
-        }
+    panel.setHeight(null, heightList.shift());
+  });
 
-        panel.setHeight(null, heightList.shift());
-    });
-
-    this.refresh();
+  this.refresh();
 };
 
 /**
@@ -146,7 +146,7 @@ VLayout.prototype.setLayoutData = function(heightList) {
  * @returns {VPanel} next panel
  */
 VLayout.prototype.nextPanel = function(panel) {
-    return this.panels[panel.index + 1];
+  return this.panels[panel.index + 1];
 };
 
 /**
@@ -155,7 +155,7 @@ VLayout.prototype.nextPanel = function(panel) {
  * @returns {VPanel} previous panel
  */
 VLayout.prototype.prevPanel = function(panel) {
-    return this.panels[panel.index - 1];
+  return this.panels[panel.index - 1];
 };
 
 /**
@@ -165,13 +165,13 @@ VLayout.prototype.prevPanel = function(panel) {
  * @returns {HTMLElement} cloned element == guide element
  */
 VLayout.prototype._initializeGuideElement = function(element, top) {
-    var cloned = element.cloneNode(true);
+  var cloned = element.cloneNode(true);
 
-    domutil.addClass(cloned, config.classname('splitter-guide'));
-    this._refreshGuideElement(cloned, top);
-    this.container.appendChild(cloned);
+  domutil.addClass(cloned, config.classname('splitter-guide'));
+  this._refreshGuideElement(cloned, top);
+  this.container.appendChild(cloned);
 
-    return cloned;
+  return cloned;
 };
 
 /**
@@ -180,7 +180,7 @@ VLayout.prototype._initializeGuideElement = function(element, top) {
  * @param {number} top - top pixel value for guide element
  */
 VLayout.prototype._refreshGuideElement = function(element, top) {
-    element.style.top = top + 'px';
+  element.style.top = top + 'px';
 };
 
 /**
@@ -188,7 +188,7 @@ VLayout.prototype._refreshGuideElement = function(element, top) {
  * @param {HTMLElement} element - guide element
  */
 VLayout.prototype._clearGuideElement = function(element) {
-    domutil.remove(element);
+  domutil.remove(element);
 };
 
 /**
@@ -198,34 +198,34 @@ VLayout.prototype._clearGuideElement = function(element) {
  * @param {number} mouseY - dragend Y position
  */
 VLayout.prototype._resize = function(splPanel, startY, mouseY) {
-    var diffY = startY - mouseY,
-        resizedHeight = mAbs(diffY),
-        resizeMap = [],
-        toDown = mouseY > startY,
-        backwardMethod = toDown ? 'prevPanel' : 'nextPanel',
-        forwardMethod = toDown ? 'nextPanel' : 'prevPanel',
-        cursor, resizeInfo;
+  var diffY = startY - mouseY,
+    resizedHeight = mAbs(diffY),
+    resizeMap = [],
+    toDown = mouseY > startY,
+    backwardMethod = toDown ? 'prevPanel' : 'nextPanel',
+    forwardMethod = toDown ? 'nextPanel' : 'prevPanel',
+    cursor, resizeInfo;
 
-    cursor = this[backwardMethod](splPanel);
-    resizeInfo = cursor.getResizeInfoByGrowth(resizedHeight);
-    resizeMap.push([cursor, resizeInfo[0]]);
+  cursor = this[backwardMethod](splPanel);
+  resizeInfo = cursor.getResizeInfoByGrowth(resizedHeight);
+  resizeMap.push([cursor, resizeInfo[0]]);
 
-    for (cursor = this[forwardMethod](cursor);
-        util.isExisty(cursor);
-        cursor = this[forwardMethod](cursor)) {
-        if (cursor.isSplitter()) {
-            continue;
-        }
-
-        resizeInfo = cursor.getResizeInfoByGrowth(-resizedHeight);
-        resizeMap.push([cursor, resizeInfo[0]]);
-        resizedHeight -= resizeInfo[1];
+  for (cursor = this[forwardMethod](cursor);
+    util.isExisty(cursor);
+    cursor = this[forwardMethod](cursor)) {
+    if (cursor.isSplitter()) {
+      continue;
     }
 
-    util.forEach(resizeMap, function(pair) {
-        pair[0].setHeight(null, pair[1], true);
-        pair[0].fire('resize');
-    });
+    resizeInfo = cursor.getResizeInfoByGrowth(-resizedHeight);
+    resizeMap.push([cursor, resizeInfo[0]]);
+    resizedHeight -= resizeInfo[1];
+  }
+
+  util.forEach(resizeMap, function(pair) {
+    pair[0].setHeight(null, pair[1], true);
+    pair[0].fire('resize');
+  });
 };
 
 /**
@@ -234,30 +234,30 @@ VLayout.prototype._resize = function(splPanel, startY, mouseY) {
  * @returns {number[]} upper and below splitter's height and panel minimum height summation.
  */
 VLayout.prototype._getMouseYAdditionalLimit = function(splPanel) {
-    var upper = 0,
-        below = 0,
-        cursor,
-        func = function(panel) {
-            if (panel.isSplitter()) {
-                return panel.getHeight();
-            }
+  var upper = 0,
+    below = 0,
+    cursor,
+    func = function(panel) {
+      if (panel.isSplitter()) {
+        return panel.getHeight();
+      }
 
-            return panel.options.minHeight;
-        };
+      return panel.options.minHeight;
+    };
 
-    for (cursor = this.prevPanel(splPanel);
-        util.isExisty(cursor);
-        cursor = this.prevPanel(cursor)) {
-        upper += func(cursor);
-    }
+  for (cursor = this.prevPanel(splPanel);
+    util.isExisty(cursor);
+    cursor = this.prevPanel(cursor)) {
+    upper += func(cursor);
+  }
 
-    for (cursor = this.nextPanel(splPanel);
-        util.isExisty(cursor);
-        cursor = this.nextPanel(cursor)) {
-        below += func(cursor);
-    }
+  for (cursor = this.nextPanel(splPanel);
+    util.isExisty(cursor);
+    cursor = this.nextPanel(cursor)) {
+    below += func(cursor);
+  }
 
-    return [upper, below];
+  return [upper, below];
 };
 
 /**********
@@ -269,29 +269,29 @@ VLayout.prototype._getMouseYAdditionalLimit = function(splPanel) {
  * @param {object} e - drag start schedule data
  */
 VLayout.prototype._onDragStart = function(e) {
-    var oEvent = e.originEvent,
-        target = e.target,
-        splIndex = domutil.getData(target, 'panelIndex'),
-        splPanel = this.panels[splIndex],
-        splHeight = splPanel.getHeight(),
-        splOffsetY = domevent.getMousePosition(oEvent, target)[1],
-        mouseY = domevent.getMousePosition(oEvent, this.container)[1],
-        guideElement = this._initializeGuideElement(target, mouseY);
+  var oEvent = e.originEvent,
+    target = e.target,
+    splIndex = domutil.getData(target, 'panelIndex'),
+    splPanel = this.panels[splIndex],
+    splHeight = splPanel.getHeight(),
+    splOffsetY = domevent.getMousePosition(oEvent, target)[1],
+    mouseY = domevent.getMousePosition(oEvent, this.container)[1],
+    guideElement = this._initializeGuideElement(target, mouseY);
 
-    splPanel.addClass(config.classname('splitter-focused'));
+  splPanel.addClass(config.classname('splitter-focused'));
 
-    this._dragData = {
-        splPanel: splPanel,
-        splOffsetY: splOffsetY,
-        guideElement: guideElement,
-        startY: mouseY - splOffsetY,
-        minY: 0,
-        maxY: this.getViewBound().height - splHeight
-    };
+  this._dragData = {
+    splPanel: splPanel,
+    splOffsetY: splOffsetY,
+    guideElement: guideElement,
+    startY: mouseY - splOffsetY,
+    minY: 0,
+    maxY: this.getViewBound().height - splHeight
+  };
 
-    if (!util.browser.msie) {
-        domutil.addClass(document.body, config.classname('resizing'));
-    }
+  if (!util.browser.msie) {
+    domutil.addClass(document.body, config.classname('resizing'));
+  }
 };
 
 /**
@@ -299,12 +299,12 @@ VLayout.prototype._onDragStart = function(e) {
  * @param {object} e - drag schedule data
  */
 VLayout.prototype._onDrag = function(e) {
-    var dragData = this._dragData,
-        mouseY = domevent.getMousePosition(e.originEvent, this.container)[1];
+  var dragData = this._dragData,
+    mouseY = domevent.getMousePosition(e.originEvent, this.container)[1];
 
-    mouseY = common.limit(mouseY - dragData.splOffsetY, [dragData.minY], [dragData.maxY]);
+  mouseY = common.limit(mouseY - dragData.splOffsetY, [dragData.minY], [dragData.maxY]);
 
-    this._refreshGuideElement(dragData.guideElement, mouseY);
+  this._refreshGuideElement(dragData.guideElement, mouseY);
 };
 
 /**
@@ -313,32 +313,32 @@ VLayout.prototype._onDrag = function(e) {
  * @param {object} e - dragend schedule data
  */
 VLayout.prototype._onDragEnd = function(e) {
-    var dragData = this._dragData,
-        asideMinMax = this._getMouseYAdditionalLimit(dragData.splPanel),
-        mouseY = domevent.getMousePosition(e.originEvent, this.container)[1];
+  var dragData = this._dragData,
+    asideMinMax = this._getMouseYAdditionalLimit(dragData.splPanel),
+    mouseY = domevent.getMousePosition(e.originEvent, this.container)[1];
 
-    // mouseY value can't exceed summation of splitter height and panel's minimum height based on target splitter.
-    mouseY = common.limit(
-        mouseY - dragData.splOffsetY,
-        [dragData.minY + asideMinMax[0]],
-        [dragData.maxY - asideMinMax[1]]
-    );
+  // mouseY value can't exceed summation of splitter height and panel's minimum height based on target splitter.
+  mouseY = common.limit(
+    mouseY - dragData.splOffsetY,
+    [dragData.minY + asideMinMax[0]],
+    [dragData.maxY - asideMinMax[1]]
+  );
 
-    this._resize(dragData.splPanel, dragData.startY, mouseY);
+  this._resize(dragData.splPanel, dragData.startY, mouseY);
 
-    /**
+  /**
      * @event VLayout#resize
      * @type {object}
      * @property {number[]} layoutData - layout data after resized
      */
-    this.fire('resize', {
-        layoutData: this.getLayoutData()
-    });
+  this.fire('resize', {
+    layoutData: this.getLayoutData()
+  });
 
-    this._dragData = null;
-    this._clearGuideElement(dragData.guideElement);
-    dragData.splPanel.removeClass(config.classname('splitter-focused'));
-    domutil.removeClass(document.body, config.classname('resizing'));
+  this._dragData = null;
+  this._clearGuideElement(dragData.guideElement);
+  dragData.splPanel.removeClass(config.classname('splitter-focused'));
+  domutil.removeClass(document.body, config.classname('resizing'));
 };
 
 /**********
@@ -349,28 +349,28 @@ VLayout.prototype._onDragEnd = function(e) {
  * refresh each panels
  */
 VLayout.prototype.refresh = function() {
-    var panelToFillHeight = [];
-    var layoutHeight = this.getViewBound().height;
-    var usedHeight = 0;
-    var remainHeight;
+  var panelToFillHeight = [];
+  var layoutHeight = this.getViewBound().height;
+  var usedHeight = 0;
+  var remainHeight;
 
-    if (!layoutHeight) {
-        return;
+  if (!layoutHeight) {
+    return;
+  }
+
+  util.forEach(this.panels, function(panel) {
+    if (panel.options.autoHeight) {
+      panelToFillHeight.push(panel);
+    } else {
+      usedHeight += panel.getHeight();
     }
+  });
 
-    util.forEach(this.panels, function(panel) {
-        if (panel.options.autoHeight) {
-            panelToFillHeight.push(panel);
-        } else {
-            usedHeight += panel.getHeight();
-        }
-    });
+  remainHeight = (layoutHeight - usedHeight) / panelToFillHeight.length;
 
-    remainHeight = (layoutHeight - usedHeight) / panelToFillHeight.length;
-
-    util.forEach(panelToFillHeight, function(panel) {
-        panel.setHeight(null, remainHeight);
-    });
+  util.forEach(panelToFillHeight, function(panel) {
+    panel.setHeight(null, remainHeight);
+  });
 };
 
 /**
@@ -379,17 +379,17 @@ VLayout.prototype.refresh = function() {
  * @param {container} [container] - container element
  */
 VLayout.prototype.addPanel = function(options, container) {
-    var element = document.createElement('div'),
-        panels = this.panels,
-        index = panels.length;
+  var element = document.createElement('div'),
+    panels = this.panels,
+    index = panels.length;
 
-    options = util.extend({
-        index: index
-    }, options);
+  options = util.extend({
+    index: index
+  }, options);
 
-    panels.push(new VPanel(options, element, this.theme));
+  panels.push(new VPanel(options, element, this.theme));
 
-    container.appendChild(element);
+  container.appendChild(element);
 };
 
 /**
@@ -398,14 +398,14 @@ VLayout.prototype.addPanel = function(options, container) {
  * @param {HTMLElement} container - container element
  */
 VLayout.prototype.addPanels = function(options, container) {
-    var self = this,
-        frag = document.createDocumentFragment();
+  var self = this,
+    frag = document.createDocumentFragment();
 
-    util.forEach(options, function(option) {
-        self.addPanel(option, frag);
-    });
+  util.forEach(options, function(option) {
+    self.addPanel(option, frag);
+  });
 
-    container.appendChild(frag);
+  container.appendChild(frag);
 };
 
 /**
@@ -414,14 +414,14 @@ VLayout.prototype.addPanels = function(options, container) {
  * @returns {VPanel}
  */
 VLayout.prototype.getPanelByName = function(name) {
-    var found;
-    util.forEach(this.panels, function(panel) {
-        if (panel.name === name) {
-            found = panel;
-        }
-    });
+  var found;
+  util.forEach(this.panels, function(panel) {
+    if (panel.name === name) {
+      found = panel;
+    }
+  });
 
-    return found;
+  return found;
 };
 
 module.exports = VLayout;

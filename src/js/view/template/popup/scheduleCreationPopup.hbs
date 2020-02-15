@@ -1,7 +1,7 @@
 <div class="{{CSS_PREFIX}}popup">
     <div class="{{CSS_PREFIX}}popup-container">
         <div class="{{CSS_PREFIX}}popup-section {{CSS_PREFIX}}dropdown {{CSS_PREFIX}}close {{CSS_PREFIX}}section-calendar{{#unless calendars.length}} {{CSS_PREFIX}}hide{{/unless}}">
-            <button class="{{CSS_PREFIX}}button {{CSS_PREFIX}}dropdown-button {{CSS_PREFIX}}popup-section-item">
+            <button type="button" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}dropdown-button {{CSS_PREFIX}}popup-section-item">
                 <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}calendar-dot" style="background-color: {{selectedCal.bgColor}}"></span>
                 <span id="{{CSS_PREFIX}}schedule-calendar" class="{{CSS_PREFIX}}content">{{selectedCal.name}}</span>
                 <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}dropdown-arrow"></span>
@@ -21,16 +21,22 @@
             <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-title"></span>
             <input id="{{CSS_PREFIX}}schedule-title" class="{{CSS_PREFIX}}content" placeholder="{{titlePlaceholder-tmpl}}" value="{{title}}"></span>
             </div>
-            <button id="{{CSS_PREFIX}}schedule-private" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}section-private{{#unless isPrivate}} {{CSS_PREFIX}}public{{/unless}}">
-            <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-private"></span>
+
+            {{!-- <button type="button" id="{{CSS_PREFIX}}schedule-private" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}section-private{{#unless isPrivate}} {{CSS_PREFIX}}public{{/unless}}">
+                <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-private"></span>
+            </button> --}}
+            
+            <button type="button" id="{{CSS_PREFIX}}schedule-attachment" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}section-attachment">
+                <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-attachment"></span>
+                <input type="file" id="{{CSS_PREFIX}}input-attachment" multiple="multiple">
             </button>
         </div>
-        <div class="{{CSS_PREFIX}}popup-section">
+        {{!-- <div class="{{CSS_PREFIX}}popup-section">
             <div class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}section-location">
             <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-location"></span>
                 <input id="{{CSS_PREFIX}}schedule-location" class="{{CSS_PREFIX}}content" placeholder="{{locationPlaceholder-tmpl}}" value="{{location}}"></span>
             </div>
-        </div>
+        </div> --}}
         <div class="{{CSS_PREFIX}}popup-section">
             <div class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}section-start-date">
                 <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-date"></span>
@@ -46,11 +52,11 @@
             <div class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}section-allday">
                 <input id="{{CSS_PREFIX}}schedule-allday" type="checkbox" class="{{CSS_PREFIX}}checkbox-square"{{#if isAllDay}} checked{{/if}}></input>
                 <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-checkbox"></span>
-                <span class="{{CSS_PREFIX}}content">{{{popupIsAllDay-tmpl}}}</span>
+                <span class="{{CSS_PREFIX}}content {{CSS_PREFIX}}allday-title">{{{popupIsAllDay-tmpl}}}</span>
             </div>
         </div>
-        <div class="{{CSS_PREFIX}}popup-section {{CSS_PREFIX}}dropdown {{CSS_PREFIX}}close {{CSS_PREFIX}}section-state">
-            <button class="{{CSS_PREFIX}}button {{CSS_PREFIX}}dropdown-button {{CSS_PREFIX}}popup-section-item">
+        {{!-- <div class="{{CSS_PREFIX}}popup-section {{CSS_PREFIX}}dropdown {{CSS_PREFIX}}close {{CSS_PREFIX}}section-state">
+            <button type="button" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}dropdown-button {{CSS_PREFIX}}popup-section-item">
                 <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-state"></span>
                 <span id="{{CSS_PREFIX}}schedule-state" class="{{CSS_PREFIX}}content">{{#if state}}{{state}}{{else}}{{{popupStateBusy-tmpl}}}{{/if}}</span>
                 <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}dropdown-arrow"></span>
@@ -65,9 +71,17 @@
                 <span class="{{CSS_PREFIX}}content">{{{popupStateFree-tmpl}}}</span>
                 </li>
             </ul>
+        </div> --}}
+        
+        <div class="{{CSS_PREFIX}}popup-section">
+            <div class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}section-comments">
+                <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-comments"></span>
+                <textarea id="{{CSS_PREFIX}}schedule-comments" class="{{CSS_PREFIX}}content" placeholder="{{commentsPlaceholder-tmpl}}" value="{{comments}}">{{comments}}</textarea>
+            </div>
         </div>
-        <button class="{{CSS_PREFIX}}button {{CSS_PREFIX}}popup-close"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-close"></span></button>
-        <div class="{{CSS_PREFIX}}section-button-save"><button class="{{CSS_PREFIX}}button {{CSS_PREFIX}}confirm {{CSS_PREFIX}}popup-save"><span>{{#if isEditMode}}{{{popupUpdate-tmpl}}}{{else}}{{{popupSave-tmpl}}}{{/if}}</span></button></div>
+
+        <button type="button" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}popup-close"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-close"></span></button>
+        <div class="{{CSS_PREFIX}}section-button-save"><button type="button" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}confirm {{CSS_PREFIX}}popup-save"><span>{{#if isEditMode}}{{{popupUpdate-tmpl}}}{{else}}{{{popupSave-tmpl}}}{{/if}}</span></button></div>
     </div>
     <div id="{{CSS_PREFIX}}popup-arrow" class="{{CSS_PREFIX}}popup-arrow {{CSS_PREFIX}}arrow-bottom">
         <div class="{{CSS_PREFIX}}popup-arrow-border">

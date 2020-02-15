@@ -6,9 +6,9 @@
 
 var util = require('tui-code-snippet');
 var Base = require('../controller/base'),
-    Core = require('../controller/viewMixin/core'),
-    Week = require('../controller/viewMixin/week'),
-    Month = require('../controller/viewMixin/month');
+  Core = require('../controller/viewMixin/core'),
+  Week = require('../controller/viewMixin/week'),
+  Month = require('../controller/viewMixin/month');
 
 /**
  * Mixin object. create object property to target and mix to that
@@ -17,11 +17,11 @@ var Base = require('../controller/base'),
  * @param {string} propertyName - property name
  */
 function mixin(from, to, propertyName) {
-    var obj = to[propertyName] = {};
+  var obj = to[propertyName] = {};
 
-    util.forEach(from, function(method, methodName) {
-        obj[methodName] = util.bind(method, to);
-    });
+  util.forEach(from, function(method, methodName) {
+    obj[methodName] = util.bind(method, to);
+  });
 }
 
 /**
@@ -30,16 +30,16 @@ function mixin(from, to, propertyName) {
  * @returns {Base} The controller instance.
  */
 module.exports = function(options) {
-    var controller = new Base(options);
+  var controller = new Base(options);
 
-    mixin(Core, controller, 'Core');
-    mixin(Week, controller, 'Week');
-    mixin(Month, controller, 'Month');
+  mixin(Core, controller, 'Core');
+  mixin(Week, controller, 'Week');
+  mixin(Month, controller, 'Month');
 
-    // for Theme
-    controller.Core.theme = controller.theme;
-    controller.Week.theme = controller.theme;
-    controller.Month.theme = controller.theme;
+  // for Theme
+  controller.Core.theme = controller.theme;
+  controller.Week.theme = controller.theme;
+  controller.Month.theme = controller.theme;
 
-    return controller;
+  return controller;
 };

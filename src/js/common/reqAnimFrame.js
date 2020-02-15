@@ -6,7 +6,7 @@
 
 var util = require('tui-code-snippet');
 var requestFn,
-    cancelFn;
+  cancelFn;
 
 /**
  * Get name with vendor prefix
@@ -14,13 +14,13 @@ var requestFn,
  * @returns {string} vendor prefixed name
  */
 function getPrefixed(name) {
-    return global['webkit' + name] || global['moz' + name] || global['ms' + name];
+  return global['webkit' + name] || global['moz' + name] || global['ms' + name];
 }
 
 requestFn = global.requestAnimationFrame ||
     getPrefixed('RequestAnimationFrame') ||
     function(fn, context) {
-        fn.call(context);
+      fn.call(context);
     };
 
 cancelFn = global.cancelAnimationFrame ||
@@ -33,25 +33,25 @@ cancelFn = global.cancelAnimationFrame ||
  */
 
 module.exports = {
-    /**
+  /**
      * Shim of requestAnimationFrame
      * @param {function} fn callback function
      * @param {*} context context for callback
      * @returns {number} Unique id
      */
-    requestAnimFrame: function(fn, context) {
-        return requestFn.call(global, util.bind(fn, context));
-    },
+  requestAnimFrame: function(fn, context) {
+    return requestFn.call(global, util.bind(fn, context));
+  },
 
-    /**
+  /**
      * Shim of cancelAnimationFrame
      * @param {number} id requestAnimationFrame id
      */
-    cancelAnimFrame: function(id) {
-        if (!id) {
-            return;
-        }
-
-        cancelFn.call(global, id);
+  cancelAnimFrame: function(id) {
+    if (!id) {
+      return;
     }
+
+    cancelFn.call(global, id);
+  }
 };

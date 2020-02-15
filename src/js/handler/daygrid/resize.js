@@ -23,47 +23,47 @@ var TZDate = require('../../common/timezone').Date;
  * @param {Base} [controller] - Base controller instance.
  */
 function DayGridResize(dragHandler, view, controller) {
-    /**
+  /**
      * Drag handler instance.
      * @type {Drag}
      */
-    this.dragHandler = dragHandler;
+  this.dragHandler = dragHandler;
 
-    /**
+  /**
      * view instance.
      * @type {DayGrid}
      */
-    this.view = view;
+  this.view = view;
 
-    /**
+  /**
      * Base controller instance.
      * @type {Base}
      */
-    this.controller = controller;
+  this.controller = controller;
 
-    /**
+  /**
      * Temporary variable for dragStart event data.
      * @type {object}
      */
-    this._dragStart = null;
+  this._dragStart = null;
 
-    dragHandler.on({
-        dragStart: this._onDragStart
-    }, this);
+  dragHandler.on({
+    dragStart: this._onDragStart
+  }, this);
 
-    /**
+  /**
      * @type {DayGridResizeGuide}
      */
-    this.guide = new DayGridResizeGuide(this);
+  this.guide = new DayGridResizeGuide(this);
 }
 
 /**
  * Destroy method
  */
 DayGridResize.prototype.destroy = function() {
-    this.guide.destroy();
-    this.dragHandler.off(this);
-    this.dragHandler = this.view = this.controller =
+  this.guide.destroy();
+  this.dragHandler.off(this);
+  this.dragHandler = this.view = this.controller =
         this.guide = this._dragStart = null;
 };
 
@@ -73,27 +73,27 @@ DayGridResize.prototype.destroy = function() {
  * @returns {boolean|WeekdayInWeek} return WeekdayInWeek view instance when satiate condition.
  */
 DayGridResize.prototype.checkExpectedCondition = function(target) {
-    var cssClass = domutil.getClass(target),
-        matches;
+  var cssClass = domutil.getClass(target),
+    matches;
 
-    if (!~cssClass.indexOf(config.classname('weekday-resize-handle'))) {
-        return false;
-    }
+  if (!~cssClass.indexOf(config.classname('weekday-resize-handle'))) {
+    return false;
+  }
 
-    target = domutil.closest(target, config.classname('.weekday'));
+  target = domutil.closest(target, config.classname('.weekday'));
 
-    if (!target) {
-        return false;
-    }
+  if (!target) {
+    return false;
+  }
 
-    cssClass = domutil.getClass(target);
-    matches = cssClass.match(config.daygrid.getViewIDRegExp);
+  cssClass = domutil.getClass(target);
+  matches = cssClass.match(config.daygrid.getViewIDRegExp);
 
-    if (!matches || matches.length < 2) {
-        return false;
-    }
+  if (!matches || matches.length < 2) {
+    return false;
+  }
 
-    return util.pick(this.view.children.items, matches[1]);
+  return util.pick(this.view.children.items, matches[1]);
 };
 
 /**
@@ -102,43 +102,43 @@ DayGridResize.prototype.checkExpectedCondition = function(target) {
  * @param {object} dragStartEventData - schedule data.
  */
 DayGridResize.prototype._onDragStart = function(dragStartEventData) {
-    var target = dragStartEventData.target,
-        result = this.checkExpectedCondition(target),
-        controller = this.controller,
-        scheduleBlockElement,
-        modelID,
-        targetModel,
-        getScheduleDataFunc,
-        scheduleData;
+  var target = dragStartEventData.target,
+    result = this.checkExpectedCondition(target),
+    controller = this.controller,
+    scheduleBlockElement,
+    modelID,
+    targetModel,
+    getScheduleDataFunc,
+    scheduleData;
 
-    if (!result) {
-        return;
-    }
+  if (!result) {
+    return;
+  }
 
-    scheduleBlockElement = domutil.closest(target, config.classname('.weekday-schedule-block'));
-    modelID = domutil.getData(scheduleBlockElement, 'id');
-    targetModel = controller.schedules.items[modelID];
+  scheduleBlockElement = domutil.closest(target, config.classname('.weekday-schedule-block'));
+  modelID = domutil.getData(scheduleBlockElement, 'id');
+  targetModel = controller.schedules.items[modelID];
 
-    if (!targetModel) {
-        return;
-    }
+  if (!targetModel) {
+    return;
+  }
 
-    getScheduleDataFunc = this._retriveScheduleData(this.view, dragStartEventData.originEvent);
-    this.getScheduleDataFunc = getScheduleDataFunc;
-    scheduleData = this._dragStart = getScheduleDataFunc(dragStartEventData.originEvent);
+  getScheduleDataFunc = this._retriveScheduleData(this.view, dragStartEventData.originEvent);
+  this.getScheduleDataFunc = getScheduleDataFunc;
+  scheduleData = this._dragStart = getScheduleDataFunc(dragStartEventData.originEvent);
 
-    util.extend(scheduleData, {
-        scheduleBlockElement: scheduleBlockElement,
-        model: targetModel
-    });
+  util.extend(scheduleData, {
+    scheduleBlockElement: scheduleBlockElement,
+    model: targetModel
+  });
 
-    this.dragHandler.on({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd,
-        click: this._onClick
-    }, this);
+  this.dragHandler.on({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd,
+    click: this._onClick
+  }, this);
 
-    /**
+  /**
      * @event DayGridResize#dragstart
      * @type {object}
      * @property {View} relatedView - view instance.
@@ -148,7 +148,7 @@ DayGridResize.prototype._onDragStart = function(dragStartEventData) {
      * @property {Schedule} model - data object of model isntance.
      * @property {HTMLDivElement} scheduleBlockElement - target schedule block element.
      */
-    this.fire('dragstart', scheduleData);
+  this.fire('dragstart', scheduleData);
 };
 
 /**
@@ -157,13 +157,13 @@ DayGridResize.prototype._onDragStart = function(dragStartEventData) {
  * @param {object} dragEventData - Drag#drag event handler scheduledata.
  */
 DayGridResize.prototype._onDrag = function(dragEventData) {
-    var getScheduleDataFunc = this.getScheduleDataFunc;
+  var getScheduleDataFunc = this.getScheduleDataFunc;
 
-    if (!getScheduleDataFunc) {
-        return;
-    }
+  if (!getScheduleDataFunc) {
+    return;
+  }
 
-    /**
+  /**
      * @event DayGridResize#drag
      * @type {object}
      * @property {View} relatedView - view instance.
@@ -171,7 +171,7 @@ DayGridResize.prototype._onDrag = function(dragEventData) {
      * @property {number} dragStartXIndex - index number of dragstart grid index.
      * @property {number} xIndex - index number of mouse positions.
      */
-    this.fire('drag', getScheduleDataFunc(dragEventData.originEvent));
+  this.fire('drag', getScheduleDataFunc(dragEventData.originEvent));
 };
 
 /**
@@ -180,21 +180,21 @@ DayGridResize.prototype._onDrag = function(dragEventData) {
  * @param {object} scheduleData - schedule data from DayGridResize handler.
  */
 DayGridResize.prototype._updateSchedule = function(scheduleData) {
-    var schedule = scheduleData.targetModel,
-        dateOffset = scheduleData.xIndex - scheduleData.dragStartXIndex,
-        newEnds = new TZDate(schedule.end);
-    var changes;
+  var schedule = scheduleData.targetModel,
+    dateOffset = scheduleData.xIndex - scheduleData.dragStartXIndex,
+    newEnds = new TZDate(schedule.end);
+  var changes;
 
-    newEnds = newEnds.addDate(dateOffset);
-    newEnds = new TZDate(common.maxDate(datetime.end(schedule.start), newEnds));
+  newEnds = newEnds.addDate(dateOffset);
+  newEnds = new TZDate(common.maxDate(datetime.end(schedule.start), newEnds));
 
-    changes = common.getScheduleChanges(
-        schedule,
-        ['end'],
-        {end: newEnds}
-    );
+  changes = common.getScheduleChanges(
+    schedule,
+    ['end'],
+    {end: newEnds}
+  );
 
-    /**
+  /**
      * @event DayGridResize#beforeUpdateSchedule
      * @type {object}
      * @property {Schedule} schedule - The original schedule instance
@@ -203,12 +203,12 @@ DayGridResize.prototype._updateSchedule = function(scheduleData) {
      * @property {object} changes - end time to update
      *  @property {date} end - end time to update
      */
-    this.fire('beforeUpdateSchedule', {
-        schedule: schedule,
-        changes: changes,
-        start: schedule.getStarts(),
-        end: newEnds
-    });
+  this.fire('beforeUpdateSchedule', {
+    schedule: schedule,
+    changes: changes,
+    start: schedule.getStarts(),
+    end: newEnds
+  });
 };
 
 /**
@@ -219,30 +219,30 @@ DayGridResize.prototype._updateSchedule = function(scheduleData) {
  * @param {?boolean} skipUpdate - true then skip update schedule model.
  */
 DayGridResize.prototype._onDragEnd = function(dragEndEventData, overrideEventName, skipUpdate) {
-    var getScheduleDataFunc = this.getScheduleDataFunc,
-        dragStart = this._dragStart,
-        scheduleData;
+  var getScheduleDataFunc = this.getScheduleDataFunc,
+    dragStart = this._dragStart,
+    scheduleData;
 
-    if (!getScheduleDataFunc || !dragStart) {
-        return;
-    }
+  if (!getScheduleDataFunc || !dragStart) {
+    return;
+  }
 
-    this.dragHandler.off({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd,
-        click: this._onClick
-    }, this);
+  this.dragHandler.off({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd,
+    click: this._onClick
+  }, this);
 
-    scheduleData = getScheduleDataFunc(dragEndEventData.originEvent);
-    util.extend(scheduleData, {
-        targetModel: dragStart.model
-    });
+  scheduleData = getScheduleDataFunc(dragEndEventData.originEvent);
+  util.extend(scheduleData, {
+    targetModel: dragStart.model
+  });
 
-    if (!skipUpdate) {
-        this._updateSchedule(scheduleData);
-    }
+  if (!skipUpdate) {
+    this._updateSchedule(scheduleData);
+  }
 
-    /**
+  /**
      * @event DayGridResize#dragend
      * @type {object}
      * @property {View} relatedView - view instance.
@@ -250,9 +250,9 @@ DayGridResize.prototype._onDragEnd = function(dragEndEventData, overrideEventNam
      * @property {number} dragStartXIndex - index number of dragstart grid index.
      * @property {number} xIndex - index number of mouse positions.
      */
-    this.fire(overrideEventName || 'dragend', scheduleData);
+  this.fire(overrideEventName || 'dragend', scheduleData);
 
-    this.getScheduleDataFunc = this._dragStart = null;
+  this.getScheduleDataFunc = this._dragStart = null;
 };
 
 /**
@@ -261,7 +261,7 @@ DayGridResize.prototype._onDragEnd = function(dragEndEventData, overrideEventNam
  * @param {object} clickEventData - Drag#Click event handler data.
  */
 DayGridResize.prototype._onClick = function(clickEventData) {
-    /**
+  /**
      * @event DayGridResize#click
      * @type {object}
      * @property {View} relatedView - view instance.
@@ -269,7 +269,7 @@ DayGridResize.prototype._onClick = function(clickEventData) {
      * @property {number} dragStartXIndex - index number of dragstart grid index.
      * @property {number} xIndex - index number of mouse positions.
      */
-    this._onDragEnd(clickEventData, 'click', true);
+  this._onDragEnd(clickEventData, 'click', true);
 };
 
 common.mixin(dayGridCore, DayGridResize);

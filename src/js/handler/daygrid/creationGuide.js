@@ -14,45 +14,45 @@ var reqAnimFrame = require('../../common/reqAnimFrame');
  * @param {DayGridCreation} creation - instance of DayGridCreation.
  */
 function DayGridCreationGuide(creation) {
-    /**
+  /**
      * @type {DayGridCreation}
      */
-    this.creation = creation;
+  this.creation = creation;
 
-    /**
+  /**
      * @type {HTMLDIVElement}
      */
-    this.scheduleContainer = null;
+  this.scheduleContainer = null;
 
-    /**
+  /**
      * @type {HTMLDIVElement}
      */
-    this.guideElement = document.createElement('div');
+  this.guideElement = document.createElement('div');
 
-    this.initializeGuideElement();
-    this.applyTheme(creation.controller.theme);
+  this.initializeGuideElement();
+  this.applyTheme(creation.controller.theme);
 
-    creation.on({
-        dragstart: this._createGuideElement,
-        drag: this._onDrag,
-        click: this._createGuideElement
-    }, this);
+  creation.on({
+    dragstart: this._createGuideElement,
+    drag: this._onDrag,
+    click: this._createGuideElement
+  }, this);
 }
 
 /**
  * Destroy method
  */
 DayGridCreationGuide.prototype.destroy = function() {
-    this.clearGuideElement();
-    this.creation.off(this);
-    this.creation = this.scheduleContainer = this.guideElement = null;
+  this.clearGuideElement();
+  this.creation.off(this);
+  this.creation = this.scheduleContainer = this.guideElement = null;
 };
 
 /**
  * initialize guide element's default style.
  */
 DayGridCreationGuide.prototype.initializeGuideElement = function() {
-    domutil.addClass(this.guideElement, config.classname('daygrid-guide-creation-block'));
+  domutil.addClass(this.guideElement, config.classname('daygrid-guide-creation-block'));
 };
 
 /**
@@ -60,7 +60,7 @@ DayGridCreationGuide.prototype.initializeGuideElement = function() {
  * @param {object} scheduleData - schedule data from DayGrid.Creation handler.
  */
 DayGridCreationGuide.prototype._onDrag = function(scheduleData) {
-    this._refreshGuideElement(scheduleData, true);
+  this._refreshGuideElement(scheduleData, true);
 };
 
 /**
@@ -71,13 +71,13 @@ DayGridCreationGuide.prototype._onDrag = function(scheduleData) {
  * @returns {number} element width
  */
 DayGridCreationGuide.prototype._getGuideWidth = function(dragStartIndex, dragEndIndex, grids) {
-    var width = 0;
-    var i = dragStartIndex;
-    for (; i <= dragEndIndex; i += 1) {
-        width += grids[i] ? grids[i].width : 0;
-    }
+  var width = 0;
+  var i = dragStartIndex;
+  for (; i <= dragEndIndex; i += 1) {
+    width += grids[i] ? grids[i].width : 0;
+  }
 
-    return width;
+  return width;
 };
 
 /**
@@ -86,41 +86,41 @@ DayGridCreationGuide.prototype._getGuideWidth = function(dragStartIndex, dragEnd
  * @param {boolean} defer - If set to true, set style in the next frame
  */
 DayGridCreationGuide.prototype._refreshGuideElement = function(scheduleData, defer) {
-    var guideElement = this.guideElement,
-        data = scheduleData,
-        dragStartXIndex = data.dragStartXIndex < data.xIndex ? data.dragStartXIndex : data.xIndex,
-        dragEndXIndex = data.dragStartXIndex < data.xIndex ? data.xIndex : data.dragStartXIndex,
-        leftPercent,
-        widthPercent;
+  var guideElement = this.guideElement,
+    data = scheduleData,
+    dragStartXIndex = data.dragStartXIndex < data.xIndex ? data.dragStartXIndex : data.xIndex,
+    dragEndXIndex = data.dragStartXIndex < data.xIndex ? data.xIndex : data.dragStartXIndex,
+    leftPercent,
+    widthPercent;
 
-    leftPercent = data.grids[dragStartXIndex] ? data.grids[dragStartXIndex].left : 0;
-    widthPercent = this._getGuideWidth(dragStartXIndex, dragEndXIndex, data.grids);
+  leftPercent = data.grids[dragStartXIndex] ? data.grids[dragStartXIndex].left : 0;
+  widthPercent = this._getGuideWidth(dragStartXIndex, dragEndXIndex, data.grids);
 
-    /** eslint-disable require-jsdoc */
-    function setStyle() {
-        guideElement.style.display = 'block';
-        guideElement.style.left = leftPercent + '%';
-        guideElement.style.width = widthPercent + '%';
-    }
+  /** eslint-disable require-jsdoc */
+  function setStyle() {
+    guideElement.style.display = 'block';
+    guideElement.style.left = leftPercent + '%';
+    guideElement.style.width = widthPercent + '%';
+  }
 
-    if (defer) {
-        reqAnimFrame.requestAnimFrame(setStyle);
-    } else {
-        setStyle();
-    }
+  if (defer) {
+    reqAnimFrame.requestAnimFrame(setStyle);
+  } else {
+    setStyle();
+  }
 };
 
 /**
  * Clear guide element.
  */
 DayGridCreationGuide.prototype.clearGuideElement = function() {
-    var guideElement = this.guideElement;
+  var guideElement = this.guideElement;
 
-    domutil.remove(guideElement);
+  domutil.remove(guideElement);
 
-    guideElement.style.display = 'none';
-    guideElement.style.left = '';
-    guideElement.style.width = '';
+  guideElement.style.display = 'none';
+  guideElement.style.left = '';
+  guideElement.style.width = '';
 };
 
 /**
@@ -128,13 +128,13 @@ DayGridCreationGuide.prototype.clearGuideElement = function() {
  * @param {object} dragStartEventData - schedule data object of DayGrid.Creation.
  */
 DayGridCreationGuide.prototype._createGuideElement = function(dragStartEventData) {
-    var creation = this.creation,
-        view = creation.view,
-        container = view.container,
-        scheduleContainer = domutil.find(config.classname('.weekday-grid'), container);
+  var creation = this.creation,
+    view = creation.view,
+    container = view.container,
+    scheduleContainer = domutil.find(config.classname('.weekday-grid'), container);
 
-    scheduleContainer.appendChild(this.guideElement);
-    this._refreshGuideElement(dragStartEventData);
+  scheduleContainer.appendChild(this.guideElement);
+  this._refreshGuideElement(dragStartEventData);
 };
 
 /**
@@ -142,14 +142,14 @@ DayGridCreationGuide.prototype._createGuideElement = function(dragStartEventData
  * @param {object} dragEventData - event data object of DayGrid.Creation.
  */
 DayGridCreationGuide.prototype._onDrag = function(dragEventData) {
-    this._refreshGuideElement(dragEventData);
+  this._refreshGuideElement(dragEventData);
 };
 
 DayGridCreationGuide.prototype.applyTheme = function(theme) {
-    var style = this.guideElement.style;
+  var style = this.guideElement.style;
 
-    style.backgroundColor = theme.common.creationGuide.backgroundColor;
-    style.border = theme.common.creationGuide.border;
+  style.backgroundColor = theme.common.creationGuide.backgroundColor;
+  style.border = theme.common.creationGuide.border;
 };
 
 module.exports = DayGridCreationGuide;

@@ -28,36 +28,36 @@ var SCHEDULE_MIN_DURATION = datetime.MILLISECONDS_SCHEDULE_MIN_DURATION;
  * @param {Theme} theme - theme instance
  */
 function Time(options, container, theme) {
-    View.call(this, container);
+  View.call(this, container);
 
-    this.options = util.extend({
-        index: 0,
-        width: 0,
-        ymd: '',
-        isToday: false,
-        pending: false,
-        hourStart: 0,
-        hourEnd: 24,
-        defaultMarginBottom: 2,
-        minHeight: 18.5,
-        isReadOnly: false
-    }, options);
+  this.options = util.extend({
+    index: 0,
+    width: 0,
+    ymd: '',
+    isToday: false,
+    pending: false,
+    hourStart: 0,
+    hourEnd: 24,
+    defaultMarginBottom: 2,
+    minHeight: 18.5,
+    isReadOnly: false
+  }, options);
 
-    this.timeTmpl = timeTmpl;
+  this.timeTmpl = timeTmpl;
 
-    /**
+  /**
      * @type {Theme}
      */
-    this.theme = theme;
+  this.theme = theme;
 
-    container.style.width = options.width + '%';
-    container.style.left = options.left + '%';
+  container.style.width = options.width + '%';
+  container.style.left = options.left + '%';
 
-    if (this.options.isToday) {
-        domutil.addClass(this.container, config.classname('today'));
-    }
+  if (this.options.isToday) {
+    domutil.addClass(this.container, config.classname('today'));
+  }
 
-    this.applyTheme();
+  this.applyTheme();
 }
 
 util.inherit(Time, View);
@@ -68,14 +68,14 @@ util.inherit(Time, View);
  * @returns {Date} start of date.
  */
 Time.prototype._parseDateGroup = function(str) {
-    var y = parseInt(str.substr(0, 4), 10),
-        m = parseInt(str.substr(4, 2), 10),
-        d = parseInt(str.substr(6, 2), 10);
-    var date = datetime.start();
+  var y = parseInt(str.substr(0, 4), 10),
+    m = parseInt(str.substr(4, 2), 10),
+    d = parseInt(str.substr(6, 2), 10);
+  var date = datetime.start();
 
-    date.setFullYear(y, m - 1, d);
+  date.setFullYear(y, m - 1, d);
 
-    return datetime.start(date);
+  return datetime.start(date);
 };
 
 /**
@@ -85,17 +85,17 @@ Time.prototype._parseDateGroup = function(str) {
  * @returns {object} - left and width
  */
 Time.prototype._getScheduleViewBoundX = function(viewModel, options) {
-    var width = options.baseWidth * (viewModel.extraSpace + 1);
+  var width = options.baseWidth * (viewModel.extraSpace + 1);
 
-    // set width auto when has no collisions.
-    if (!viewModel.hasCollide) {
-        width = null;
-    }
+  // set width auto when has no collisions.
+  if (!viewModel.hasCollide) {
+    width = null;
+  }
 
-    return {
-        left: options.baseLeft[options.columnIndex],
-        width: width
-    };
+  return {
+    left: options.baseLeft[options.columnIndex],
+    width: width
+  };
 };
 
 /**
@@ -105,52 +105,52 @@ Time.prototype._getScheduleViewBoundX = function(viewModel, options) {
  * @returns {object} - left and width
  */
 Time.prototype._getScheduleViewBoundY = function(viewModel, options) {
-    var baseMS = options.baseMS;
-    var baseHeight = options.baseHeight;
-    var croppedStart = false;
-    var croppedEnd = false;
-    var goingDuration = datetime.millisecondsFrom('minutes', viewModel.valueOf().goingDuration);
-    var comingDuration = datetime.millisecondsFrom('minutes', viewModel.valueOf().comingDuration);
-    var offsetStart = viewModel.valueOf().start - goingDuration - options.todayStart;
-    // containerHeight : milliseconds in day = x : schedule's milliseconds
-    var top = (baseHeight * offsetStart) / baseMS;
-    var modelDuration = viewModel.duration();
-    var height;
-    var duration;
-    var goingDurationHeight;
-    var modelDurationHeight;
-    var comingDurationHeight;
+  var baseMS = options.baseMS;
+  var baseHeight = options.baseHeight;
+  var croppedStart = false;
+  var croppedEnd = false;
+  var goingDuration = datetime.millisecondsFrom('minutes', viewModel.valueOf().goingDuration);
+  var comingDuration = datetime.millisecondsFrom('minutes', viewModel.valueOf().comingDuration);
+  var offsetStart = viewModel.valueOf().start - goingDuration - options.todayStart;
+  // containerHeight : milliseconds in day = x : schedule's milliseconds
+  var top = (baseHeight * offsetStart) / baseMS;
+  var modelDuration = viewModel.duration();
+  var height;
+  var duration;
+  var goingDurationHeight;
+  var modelDurationHeight;
+  var comingDurationHeight;
 
-    modelDuration = modelDuration > SCHEDULE_MIN_DURATION ? modelDuration : SCHEDULE_MIN_DURATION;
-    duration = modelDuration + goingDuration + comingDuration;
-    height = (baseHeight * duration) / baseMS;
+  modelDuration = modelDuration > SCHEDULE_MIN_DURATION ? modelDuration : SCHEDULE_MIN_DURATION;
+  duration = modelDuration + goingDuration + comingDuration;
+  height = (baseHeight * duration) / baseMS;
 
-    goingDurationHeight = (baseHeight * goingDuration) / baseMS; // common.ratio(duration, goingDuration, 100);
-    modelDurationHeight = (baseHeight * modelDuration) / baseMS; // common.ratio(duration, modelDuration, 100);
-    comingDurationHeight = (baseHeight * comingDuration) / baseMS; // common.ratio(duration, comingDuration, 100);
+  goingDurationHeight = (baseHeight * goingDuration) / baseMS; // common.ratio(duration, goingDuration, 100);
+  modelDurationHeight = (baseHeight * modelDuration) / baseMS; // common.ratio(duration, modelDuration, 100);
+  comingDurationHeight = (baseHeight * comingDuration) / baseMS; // common.ratio(duration, comingDuration, 100);
 
-    if (offsetStart < 0) {
-        top = 0;
-        height += ((baseHeight * offsetStart) / baseMS);
-        croppedStart = true;
-    }
+  if (offsetStart < 0) {
+    top = 0;
+    height += ((baseHeight * offsetStart) / baseMS);
+    croppedStart = true;
+  }
 
-    if (height + top > baseHeight) {
-        height = baseHeight - top;
-        croppedEnd = true;
-    }
+  if (height + top > baseHeight) {
+    height = baseHeight - top;
+    croppedEnd = true;
+  }
 
-    return {
-        top: top,
-        height: Math.max(height, this.options.minHeight) - this.options.defaultMarginBottom,
-        modelDurationHeight: modelDurationHeight,
-        goingDurationHeight: goingDurationHeight,
-        comingDurationHeight: comingDurationHeight,
-        hasGoingDuration: goingDuration > 0,
-        hasComingDuration: comingDuration > 0,
-        croppedStart: croppedStart,
-        croppedEnd: croppedEnd
-    };
+  return {
+    top: top,
+    height: Math.max(height, this.options.minHeight) - this.options.defaultMarginBottom,
+    modelDurationHeight: modelDurationHeight,
+    goingDurationHeight: goingDurationHeight,
+    comingDurationHeight: comingDurationHeight,
+    hasGoingDuration: goingDuration > 0,
+    hasComingDuration: comingDuration > 0,
+    croppedStart: croppedStart,
+    croppedEnd: croppedEnd
+  };
 };
 
 /**
@@ -166,19 +166,19 @@ Time.prototype._getScheduleViewBoundY = function(viewModel, options) {
  * @returns {object} bound object for supplied view model.
  */
 Time.prototype.getScheduleViewBound = function(viewModel, options) {
-    var boundX = this._getScheduleViewBoundX(viewModel, options);
-    var boundY = this._getScheduleViewBoundY(viewModel, options);
-    var schedule = viewModel.model;
-    var isReadOnly = util.pick(schedule, 'isReadOnly') || false;
-    var travelBorderColor = schedule.isFocused ? '#ffffff' : schedule.borderColor;
-    if (travelBorderColor === schedule.bgColor) {
-        travelBorderColor = null; // follow text color
-    }
+  var boundX = this._getScheduleViewBoundX(viewModel, options);
+  var boundY = this._getScheduleViewBoundY(viewModel, options);
+  var schedule = viewModel.model;
+  var isReadOnly = util.pick(schedule, 'isReadOnly') || false;
+  var travelBorderColor = schedule.isFocused ? '#ffffff' : schedule.borderColor;
+  if (travelBorderColor === schedule.bgColor) {
+    travelBorderColor = null; // follow text color
+  }
 
-    return util.extend({
-        isReadOnly: isReadOnly,
-        travelBorderColor: travelBorderColor
-    }, boundX, boundY);
+  return util.extend({
+    isReadOnly: isReadOnly,
+    travelBorderColor: travelBorderColor
+  }, boundX, boundY);
 };
 
 /**
@@ -188,69 +188,69 @@ Time.prototype.getScheduleViewBound = function(viewModel, options) {
  * @param {number} containerHeight - container's height
  */
 Time.prototype._getBaseViewModel = function(ymd, matrices, containerHeight) {
-    var self = this,
-        options = this.options,
-        hourStart = options.hourStart,
-        hourEnd = options.hourEnd,
-        isReadOnly = options.isReadOnly,
-        todayStart,
-        baseMS;
+  var self = this,
+    options = this.options,
+    hourStart = options.hourStart,
+    hourEnd = options.hourEnd,
+    isReadOnly = options.isReadOnly,
+    todayStart,
+    baseMS;
 
-    /**
+  /**
      * Calculate each schedule element bounds relative with rendered hour milliseconds and
      * wrap each schedule model to viewmodels.
      */
-    containerHeight = containerHeight || this.getViewBound().height;
-    todayStart = this._parseDateGroup(ymd);
-    todayStart.setHours(hourStart);
-    baseMS = datetime.millisecondsFrom('hour', (hourEnd - hourStart));
+  containerHeight = containerHeight || this.getViewBound().height;
+  todayStart = this._parseDateGroup(ymd);
+  todayStart.setHours(hourStart);
+  baseMS = datetime.millisecondsFrom('hour', (hourEnd - hourStart));
 
-    forEachArr(matrices, function(matrix) {
-        var maxRowLength,
-            widthPercent,
-            leftPercents,
-            i;
+  forEachArr(matrices, function(matrix) {
+    var maxRowLength,
+      widthPercent,
+      leftPercents,
+      i;
 
-        maxRowLength = Math.max.apply(null, util.map(matrix, function(row) {
-            return row.length;
-        }));
+    maxRowLength = Math.max.apply(null, util.map(matrix, function(row) {
+      return row.length;
+    }));
 
-        widthPercent = 100 / maxRowLength;
+    widthPercent = 100 / maxRowLength;
 
-        leftPercents = [];
-        for (i = 0; i < maxRowLength; i += 1) {
-            leftPercents[i] = widthPercent * i;
+    leftPercents = [];
+    for (i = 0; i < maxRowLength; i += 1) {
+      leftPercents[i] = widthPercent * i;
+    }
+
+    forEachArr(matrix, function(row) {
+      forEachArr(row, function(viewModel, col) {
+        var viewBound;
+
+        if (!viewModel) {
+          return;
         }
 
-        forEachArr(matrix, function(row) {
-            forEachArr(row, function(viewModel, col) {
-                var viewBound;
-
-                if (!viewModel) {
-                    return;
-                }
-
-                viewBound = self.getScheduleViewBound(viewModel, {
-                    todayStart: todayStart,
-                    baseMS: baseMS,
-                    baseLeft: leftPercents,
-                    baseWidth: widthPercent,
-                    baseHeight: containerHeight,
-                    columnIndex: col,
-                    isReadOnly: isReadOnly
-                });
-
-                util.extend(viewModel, viewBound);
-            });
+        viewBound = self.getScheduleViewBound(viewModel, {
+          todayStart: todayStart,
+          baseMS: baseMS,
+          baseLeft: leftPercents,
+          baseWidth: widthPercent,
+          baseHeight: containerHeight,
+          columnIndex: col,
+          isReadOnly: isReadOnly
         });
+
+        util.extend(viewModel, viewBound);
+      });
     });
+  });
 };
 
 /**
  * @returns {Date} - Date of this view.
  */
 Time.prototype.getDate = function() {
-    return this._parseDateGroup(this.options.ymd);
+  return this._parseDateGroup(this.options.ymd);
 };
 
 /**
@@ -260,12 +260,12 @@ Time.prototype.getDate = function() {
  * @param {number} containerHeight - container's height
  */
 Time.prototype.render = function(ymd, matrices, containerHeight) {
-    this._getBaseViewModel(ymd, matrices, containerHeight);
-    this.container.innerHTML = this.timeTmpl({
-        matrices: matrices,
-        styles: this._getStyles(this.theme),
-        isReadOnly: this.options.isReadOnly
-    });
+  this._getBaseViewModel(ymd, matrices, containerHeight);
+  this.container.innerHTML = this.timeTmpl({
+    matrices: matrices,
+    styles: this._getStyles(this.theme),
+    isReadOnly: this.options.isReadOnly
+  });
 };
 
 /**
@@ -274,26 +274,26 @@ Time.prototype.render = function(ymd, matrices, containerHeight) {
  * @returns {object} styles - styles object
  */
 Time.prototype._getStyles = function(theme) {
-    var styles = {};
-    var options = this.options;
+  var styles = {};
+  var options = this.options;
 
-    if (theme) {
-        styles.borderRight = theme.week.timegrid.borderRight || theme.common.border;
-        styles.marginRight = theme.week.timegrid.paddingRight;
-        styles.borderRadius = theme.week.timegridSchedule.borderRadius;
-        styles.paddingLeft = theme.week.timegridSchedule.paddingLeft;
-        styles.backgroundColor = options.isToday ? theme.week.today.backgroundColor : 'inherit';
-    }
+  if (theme) {
+    styles.borderRight = theme.week.timegrid.borderRight || theme.common.border;
+    styles.marginRight = theme.week.timegrid.paddingRight;
+    styles.borderRadius = theme.week.timegridSchedule.borderRadius;
+    styles.paddingLeft = theme.week.timegridSchedule.paddingLeft;
+    styles.backgroundColor = options.isToday ? theme.week.today.backgroundColor : 'inherit';
+  }
 
-    return styles;
+  return styles;
 };
 
 Time.prototype.applyTheme = function() {
-    var style = this.container.style;
-    var styles = this._getStyles(this.theme);
+  var style = this.container.style;
+  var styles = this._getStyles(this.theme);
 
-    style.borderRight = styles.borderRight;
-    style.backgroundColor = styles.backgroundColor;
+  style.borderRight = styles.borderRight;
+  style.backgroundColor = styles.backgroundColor;
 };
 
 module.exports = Time;

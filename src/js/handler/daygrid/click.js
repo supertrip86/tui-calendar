@@ -18,32 +18,32 @@ var DayGridMove = require('./move');
  * @param {Base} [controller] - Base controller instance.
  */
 function DayGridClick(dragHandler, view, controller) {
-    /**
+  /**
      * @type {Drag}
      */
-    this.dragHandler = dragHandler;
+  this.dragHandler = dragHandler;
 
-    /**
+  /**
      * @type {DayGrid}
      */
-    this.view = view;
+  this.view = view;
 
-    /**
+  /**
      * @type {Base}
      */
-    this.controller = controller;
+  this.controller = controller;
 
-    dragHandler.on({
-        'click': this._onClick
-    }, this);
+  dragHandler.on({
+    'click': this._onClick
+  }, this);
 }
 
 /**
  * Destroy handler module
  */
 DayGridClick.prototype.destroy = function() {
-    this.dragHandler.off(this);
-    this.view = this.controller = this.dragHandler = null;
+  this.dragHandler.off(this);
+  this.view = this.controller = this.dragHandler = null;
 };
 
 /**
@@ -61,69 +61,69 @@ DayGridClick.prototype.checkExpectCondition = DayGridMove.prototype.checkExpecte
  * @emits DayGridClick#expand
  */
 DayGridClick.prototype._onClick = function(clickEvent) {
-    var self = this,
-        target = clickEvent.target,
-        dayGridScheduleView = this.checkExpectCondition(target),
-        scheduleCollection = this.controller.schedules,
-        collapseBtnElement = domutil.closest(
-            target,
-            config.classname('.weekday-collapse-btn')
-        ),
-        expandBtnElement = domutil.closest(
-            target,
-            config.classname('.weekday-exceed-in-week')
-        ),
-        containsTarget = this.view.container.contains(target);
-    var blockElement, scheduleElement;
+  var self = this,
+    target = clickEvent.target,
+    dayGridScheduleView = this.checkExpectCondition(target),
+    scheduleCollection = this.controller.schedules,
+    collapseBtnElement = domutil.closest(
+      target,
+      config.classname('.weekday-collapse-btn')
+    ),
+    expandBtnElement = domutil.closest(
+      target,
+      config.classname('.weekday-exceed-in-week')
+    ),
+    containsTarget = this.view.container.contains(target);
+  var blockElement, scheduleElement;
 
-    if (!containsTarget) {
-        return;
-    }
+  if (!containsTarget) {
+    return;
+  }
 
-    if (collapseBtnElement) {
-        /**
+  if (collapseBtnElement) {
+    /**
          * click collpase btn event
          * @events DayGridClick#collapse
          */
-        self.fire('collapse');
+    self.fire('collapse');
 
-        return;
-    }
+    return;
+  }
 
-    if (expandBtnElement) {
-        this.view.setState({
-            clickedExpandBtnIndex: parseInt(domutil.getData(expandBtnElement, 'index'), 10)
-        });
+  if (expandBtnElement) {
+    this.view.setState({
+      clickedExpandBtnIndex: parseInt(domutil.getData(expandBtnElement, 'index'), 10)
+    });
 
-        /**
+    /**
          * click expand btn event
          * @events DayGridClick#expand
          */
-        self.fire('expand');
+    self.fire('expand');
 
-        return;
-    }
+    return;
+  }
 
-    if (!dayGridScheduleView) {
-        return;
-    }
+  if (!dayGridScheduleView) {
+    return;
+  }
 
-    scheduleElement = domutil.closest(target, config.classname('.weekday-schedule'));
-    if (scheduleElement) {
-        blockElement = domutil.closest(target, config.classname('.weekday-schedule-block'));
-        scheduleCollection.doWhenHas(domutil.getData(blockElement, 'id'), function(schedule) {
-            /**
+  scheduleElement = domutil.closest(target, config.classname('.weekday-schedule'));
+  if (scheduleElement) {
+    blockElement = domutil.closest(target, config.classname('.weekday-schedule-block'));
+    scheduleCollection.doWhenHas(domutil.getData(blockElement, 'id'), function(schedule) {
+      /**
              * @events DayGridClick#clickSchedule
              * @type {object}
              * @property {Schedule} schedule - schedule instance
              * @property {MouseEvent} event - MouseEvent object
              */
-            self.fire('clickSchedule', {
-                schedule: schedule,
-                event: clickEvent.originEvent
-            });
-        });
-    }
+      self.fire('clickSchedule', {
+        schedule: schedule,
+        event: clickEvent.originEvent
+      });
+    });
+  }
 };
 
 util.CustomEvents.mixin(DayGridClick);

@@ -19,51 +19,51 @@ var Theme = require('../theme/theme');
  * @mixes util.CustomEvents
  */
 function Base(options) {
-    options = options || {};
+  options = options || {};
 
-    /**
+  /**
      * function for group each schedule models.
      * @type {function}
      * @param {ScheduleViewModel} viewModel - view model instance
      * @returns {string} group key
      */
-    this.groupFunc = options.groupFunc || function(viewModel) {
-        var model = viewModel.model;
+  this.groupFunc = options.groupFunc || function(viewModel) {
+    var model = viewModel.model;
 
-        if (viewModel.model.isAllDay) {
-            return 'allday';
-        }
+    if (viewModel.model.isAllDay) {
+      return 'allday';
+    }
 
-        if (model.category === 'time' && (model.end - model.start > datetime.MILLISECONDS_PER_DAY)) {
-            return 'allday';
-        }
+    if (model.category === 'time' && (model.end - model.start > datetime.MILLISECONDS_PER_DAY)) {
+      return 'allday';
+    }
 
-        return model.category;
-    };
+    return model.category;
+  };
 
-    /**
+  /**
      * schedules collection.
      * @type {Collection}
      */
-    this.schedules = common.createScheduleCollection();
+  this.schedules = common.createScheduleCollection();
 
-    /**
+  /**
      * Matrix for multidate schedules.
      * @type {object.<string, array>}
      */
-    this.dateMatrix = {};
+  this.dateMatrix = {};
 
-    /**
+  /**
      * Theme
      * @type {Theme}
      */
-    this.theme = new Theme(options.theme);
+  this.theme = new Theme(options.theme);
 
-    /**
+  /**
      * Calendar list
      * @type {Array.<Calendar>}
      */
-    this.calendars = [];
+  this.calendars = [];
 }
 
 /**
@@ -73,19 +73,19 @@ function Base(options) {
  * @returns {array} contain dates.
  */
 Base.prototype._getContainDatesInSchedule = function(schedule) {
-    var scheduleStart = schedule.getStarts();
-    var scheduleEnd = schedule.getEnds();
-    var start = datetime.start(scheduleStart);
-    var equalStartEnd = datetime.compare(scheduleStart, scheduleEnd) === 0;
-    var endDate = equalStartEnd ? scheduleEnd : datetime.convertStartDayToLastDay(scheduleEnd);
-    var end = datetime.end(endDate);
-    var range = datetime.range(
-        start,
-        end,
-        datetime.MILLISECONDS_PER_DAY
-    );
+  var scheduleStart = schedule.getStarts();
+  var scheduleEnd = schedule.getEnds();
+  var start = datetime.start(scheduleStart);
+  var equalStartEnd = datetime.compare(scheduleStart, scheduleEnd) === 0;
+  var endDate = equalStartEnd ? scheduleEnd : datetime.convertStartDayToLastDay(scheduleEnd);
+  var end = datetime.end(endDate);
+  var range = datetime.range(
+    start,
+    end,
+    datetime.MILLISECONDS_PER_DAY
+  );
 
-    return range;
+  return range;
 };
 
 /****************
@@ -101,30 +101,30 @@ Base.prototype._getContainDatesInSchedule = function(schedule) {
  * @returns {Schedule} The instance of Schedule that created.
  */
 Base.prototype.createSchedule = function(options, silent) {
-    var schedule,
-        scheduleData = {
-            data: options
-        };
+  var schedule,
+    scheduleData = {
+      data: options
+    };
 
-    /**
+  /**
      * @event Base#beforeCreateSchedule
      * @type {Calendar~Schedule[]}
      */
-    if (!this.invoke('beforeCreateSchedule', scheduleData)) {
-        return null;
-    }
+  if (!this.invoke('beforeCreateSchedule', scheduleData)) {
+    return null;
+  }
 
-    schedule = this.addSchedule(Schedule.create(options));
+  schedule = this.addSchedule(Schedule.create(options));
 
-    if (!silent) {
-        /**
+  if (!silent) {
+    /**
          * @event Base#createdSchedule
          * @type {Schedule}
          */
-        this.fire('createdSchedule', schedule);
-    }
+    this.fire('createdSchedule', schedule);
+  }
 
-    return schedule;
+  return schedule;
 };
 
 /**
@@ -135,11 +135,11 @@ Base.prototype.createSchedule = function(options, silent) {
  * @returns {Schedule[]} The instance list of Schedule that created.
  */
 Base.prototype.createSchedules = function(dataList, silent) {
-    var self = this;
+  var self = this;
 
-    return util.map(dataList, function(data) {
-        return self.createSchedule(data, silent);
-    });
+  return util.map(dataList, function(data) {
+    return self.createSchedule(data, silent);
+  });
 };
 
 /**
@@ -150,80 +150,93 @@ Base.prototype.createSchedules = function(dataList, silent) {
  * @returns {Schedule} updated schedule instance
  */
 Base.prototype.updateSchedule = function(schedule, options) {
-    var start = options.start || schedule.start;
-    var end = options.end || schedule.end;
+  var start = options.start || schedule.start;
+  var end = options.end || schedule.end;
+  var dateA = start.getDate() + start.getMonth() + start.getFullYear();
+  var dateB = end.getDate() + end.getMonth() + end.getFullYear();
 
-    options = options || {};
+  options = options || {};
 
-    if (options.category === 'allday') {
-        options.isAllDay = true;
+  if (options.category === 'allday' || dateA !== dateB) {
+    options.isAllDay = true;
+  }
+
+  if (!util.isUndefined(options.isAllDay)) {
+    schedule.set('isAllDay', options.isAllDay);
+    schedule.set('category', 'allday');
+  }
+
+  if (!options.isAllDay) {
+    schedule.set('category', 'time');
+  }
+
+  if (!util.isUndefined(options.calendarId)) {
+    schedule.set('calendarId', options.calendarId);
+  }
+
+  if (options.title) {
+    schedule.set('title', options.title);
+  }
+
+  if (options.body) {
+    schedule.set('body', options.body);
+  }
+
+  if (options.comments) {
+    schedule.set('comments', options.comments);
+  } else if (options.comments === '') {
+    schedule.set('comments', '');
+  }
+
+  if (options.start || options.end) {
+    if (schedule.isAllDay) {
+      schedule.setAllDayPeriod(start, end);
+    } else {
+      schedule.setTimePeriod(start, end);
     }
+  }
 
-    if (!util.isUndefined(options.isAllDay)) {
-        schedule.set('isAllDay', options.isAllDay);
-    }
+  if (options.color) {
+    schedule.set('color', options.color);
+  }
 
-    if (!util.isUndefined(options.calendarId)) {
-        schedule.set('calendarId', options.calendarId);
-    }
+  if (options.bgColor) {
+    schedule.set('bgColor', options.bgColor);
+  }
 
-    if (options.title) {
-        schedule.set('title', options.title);
-    }
+  if (options.borderColor) {
+    schedule.set('borderColor', options.borderColor);
+  }
 
-    if (options.body) {
-        schedule.set('body', options.body);
-    }
+  if (options.origin) {
+    schedule.set('origin', options.origin);
+  }
 
-    if (options.start || options.end) {
-        if (schedule.isAllDay) {
-            schedule.setAllDayPeriod(start, end);
-        } else {
-            schedule.setTimePeriod(start, end);
-        }
-    }
+  if (!util.isUndefined(options.isPending)) {
+    schedule.set('isPending', options.isPending);
+  }
 
-    if (options.color) {
-        schedule.set('color', options.color);
-    }
+  if (!util.isUndefined(options.isFocused)) {
+    schedule.set('isFocused', options.isFocused);
+  }
 
-    if (options.bgColor) {
-        schedule.set('bgColor', options.bgColor);
-    }
+  if (options.location) {
+    schedule.set('location', options.location);
+  }
 
-    if (options.borderColor) {
-        schedule.set('borderColor', options.borderColor);
-    }
+  if (options.state) {
+    schedule.set('state', options.state);
+  }
 
-    if (options.origin) {
-        schedule.set('origin', options.origin);
-    }
+  this._removeFromMatrix(schedule);
+  this._addToMatrix(schedule);
 
-    if (!util.isUndefined(options.isPending)) {
-        schedule.set('isPending', options.isPending);
-    }
-
-    if (!util.isUndefined(options.isFocused)) {
-        schedule.set('isFocused', options.isFocused);
-    }
-
-    if (options.location) {
-        schedule.set('location', options.location);
-    }
-
-    if (options.state) {
-        schedule.set('state', options.state);
-    }
-
-    this._removeFromMatrix(schedule);
-    this._addToMatrix(schedule);
-
-    /**
+  /**
      * @event Base#updateSchedule
      */
-    this.fire('updateSchedule');
+  this.fire('updateSchedule');
 
-    return schedule;
+  return schedule;
 };
 
 /**
@@ -232,10 +245,10 @@ Base.prototype.updateSchedule = function(schedule, options) {
  * @returns {Schedule} deleted model instance.
  */
 Base.prototype.deleteSchedule = function(schedule) {
-    this._removeFromMatrix(schedule);
-    this.schedules.remove(schedule);
+  this._removeFromMatrix(schedule);
+  this.schedules.remove(schedule);
 
-    return schedule;
+  return schedule;
 };
 
 /**
@@ -243,15 +256,15 @@ Base.prototype.deleteSchedule = function(schedule) {
  * @param {Schedule} schedule - instance of schedule.
  */
 Base.prototype._addToMatrix = function(schedule) {
-    var ownMatrix = this.dateMatrix;
-    var containDates = this._getContainDatesInSchedule(schedule);
+  var ownMatrix = this.dateMatrix;
+  var containDates = this._getContainDatesInSchedule(schedule);
 
-    util.forEach(containDates, function(date) {
-        var ymd = datetime.format(date, 'YYYYMMDD'),
-            matrix = ownMatrix[ymd] = ownMatrix[ymd] || [];
+  util.forEach(containDates, function(date) {
+    var ymd = datetime.format(date, 'YYYYMMDD'),
+      matrix = ownMatrix[ymd] = ownMatrix[ymd] || [];
 
-        matrix.push(util.stamp(schedule));
-    });
+    matrix.push(util.stamp(schedule));
+  });
 };
 
 /**
@@ -259,15 +272,15 @@ Base.prototype._addToMatrix = function(schedule) {
  * @param {Schedule} schedule - instance of schedule
  */
 Base.prototype._removeFromMatrix = function(schedule) {
-    var modelID = util.stamp(schedule);
+  var modelID = util.stamp(schedule);
 
-    util.forEach(this.dateMatrix, function(matrix) {
-        var index = util.inArray(modelID, matrix);
+  util.forEach(this.dateMatrix, function(matrix) {
+    var index = util.inArray(modelID, matrix);
 
-        if (~index) {
-            matrix.splice(index, 1);
-        }
-    }, this);
+    if (~index) {
+      matrix.splice(index, 1);
+    }
+  }, this);
 };
 
 /**
@@ -278,18 +291,18 @@ Base.prototype._removeFromMatrix = function(schedule) {
  * @returns {Schedule} The instance of Schedule that added.
  */
 Base.prototype.addSchedule = function(schedule, silent) {
-    this.schedules.add(schedule);
-    this._addToMatrix(schedule);
+  this.schedules.add(schedule);
+  this._addToMatrix(schedule);
 
-    if (!silent) {
-        /**
+  if (!silent) {
+    /**
          * @event Base#addedSchedule
          * @type {object}
          */
-        this.fire('addedSchedule', schedule);
-    }
+    this.fire('addedSchedule', schedule);
+  }
 
-    return schedule;
+  return schedule;
 };
 
 /**
@@ -300,31 +313,31 @@ Base.prototype.addSchedule = function(schedule, silent) {
  * @returns {object.<string, Collection>} splitted schedule model collections.
  */
 Base.prototype.splitScheduleByDateRange = function(start, end, scheduleCollection) {
-    var range = datetime.range(
-            datetime.start(start),
-            datetime.end(end),
-            datetime.MILLISECONDS_PER_DAY
-        ),
-        ownMatrix = this.dateMatrix,
-        result = {};
+  var range = datetime.range(
+      datetime.start(start),
+      datetime.end(end),
+      datetime.MILLISECONDS_PER_DAY
+    ),
+    ownMatrix = this.dateMatrix,
+    result = {};
 
-    util.forEachArray(range, function(date) {
-        var ymd = datetime.format(date, 'YYYYMMDD'),
-            matrix = ownMatrix[ymd],
-            collection;
+  util.forEachArray(range, function(date) {
+    var ymd = datetime.format(date, 'YYYYMMDD'),
+      matrix = ownMatrix[ymd],
+      collection;
 
-        collection = result[ymd] = common.createScheduleCollection();
+    collection = result[ymd] = common.createScheduleCollection();
 
-        if (matrix && matrix.length) {
-            util.forEachArray(matrix, function(id) {
-                scheduleCollection.doWhenHas(id, function(schedule) {
-                    collection.add(schedule);
-                });
-            });
-        }
-    });
+    if (matrix && matrix.length) {
+      util.forEachArray(matrix, function(id) {
+        scheduleCollection.doWhenHas(id, function(schedule) {
+          collection.add(schedule);
+        });
+      });
+    }
+  });
 
-    return result;
+  return result;
 };
 
 /**
@@ -336,43 +349,43 @@ Base.prototype.splitScheduleByDateRange = function(start, end, scheduleCollectio
  * @returns {object.<string, Collection>} schedule collection grouped by dates.
  */
 Base.prototype.findByDateRange = function(start, end) {
-    var range = datetime.range(
-            datetime.start(start),
-            datetime.end(end),
-            datetime.MILLISECONDS_PER_DAY
-        ),
-        ownSchedules = this.schedules.items,
-        ownMatrix = this.dateMatrix,
-        dformat = datetime.format,
-        result = {},
-        matrix,
-        ymd,
-        viewModels;
+  var range = datetime.range(
+      datetime.start(start),
+      datetime.end(end),
+      datetime.MILLISECONDS_PER_DAY
+    ),
+    ownSchedules = this.schedules.items,
+    ownMatrix = this.dateMatrix,
+    dformat = datetime.format,
+    result = {},
+    matrix,
+    ymd,
+    viewModels;
 
-    util.forEachArray(range, function(date) {
-        ymd = dformat(date, 'YYYYMMDD');
-        matrix = ownMatrix[ymd];
-        viewModels = result[ymd] = common.createScheduleCollection();
+  util.forEachArray(range, function(date) {
+    ymd = dformat(date, 'YYYYMMDD');
+    matrix = ownMatrix[ymd];
+    viewModels = result[ymd] = common.createScheduleCollection();
 
-        if (matrix && matrix.length) {
-            viewModels.add.apply(viewModels, util.map(matrix, function(id) {
-                return ScheduleViewModel.create(ownSchedules[id]);
-            }));
-        }
-    });
+    if (matrix && matrix.length) {
+      viewModels.add.apply(viewModels, util.map(matrix, function(id) {
+        return ScheduleViewModel.create(ownSchedules[id]);
+      }));
+    }
+  });
 
-    return result;
+  return result;
 };
 
 Base.prototype.clearSchedules = function() {
-    this.dateMatrix = {};
-    this.schedules.clear();
-    /**
+  this.dateMatrix = {};
+  this.schedules.clear();
+  /**
      * for inner view when clear schedules
      * @event Base#clearSchedules
      * @type {Schedule}
      */
-    this.fire('clearSchedules');
+  this.fire('clearSchedules');
 };
 
 /**
@@ -381,7 +394,7 @@ Base.prototype.clearSchedules = function() {
  * @returns {Array.<string>} keys - error keys not predefined.
  */
 Base.prototype.setTheme = function(theme) {
-    return this.theme.setStyles(theme);
+  return this.theme.setStyles(theme);
 };
 
 /**
@@ -389,7 +402,7 @@ Base.prototype.setTheme = function(theme) {
  * @param {Array.<Calendar>} calendars - calendar list
  */
 Base.prototype.setCalendars = function(calendars) {
-    this.calendars = calendars;
+  this.calendars = calendars;
 };
 
 // mixin

@@ -6,9 +6,9 @@
 
 var util = require('tui-code-snippet');
 var config = require('../config'),
-    common = require('./common'),
-    domutil = require('./domutil'),
-    View = require('../view/view');
+  common = require('./common'),
+  domutil = require('./domutil'),
+  View = require('../view/view');
 
 /**
  * @constructor
@@ -24,40 +24,40 @@ var config = require('../config'),
  * @param {Theme} theme - theme instance
  */
 function VPanel(options, container, theme) {
-    View.call(this, container);
+  View.call(this, container);
 
-    /**
+  /**
      * @type {object}
      */
-    this.options = util.extend({
-        index: 0,
-        name: '0',
-        minHeight: 0,
-        maxHeight: null,
-        height: null,
-        isSplitter: false,
-        autoHeight: false,
-        className: ''
-    }, options);
+  this.options = util.extend({
+    index: 0,
+    name: '0',
+    minHeight: 0,
+    maxHeight: null,
+    height: null,
+    isSplitter: false,
+    autoHeight: false,
+    className: ''
+  }, options);
 
-    /**
+  /**
      * @type {number}
      */
-    this.index = this.options.index;
+  this.index = this.options.index;
 
-    /**
+  /**
      * @type {string}
      */
-    this.name = this.options.name || String(this.index);
+  this.name = this.options.name || String(this.index);
 
-    this.isHeightForcedSet = false;
+  this.isHeightForcedSet = false;
 
-    /**
+  /**
      * @type {Theme}
      */
-    this.theme = theme;
+  this.theme = theme;
 
-    this._initPanel(this.options, container);
+  this._initPanel(this.options, container);
 }
 
 util.inherit(VPanel, View);
@@ -67,7 +67,7 @@ util.inherit(VPanel, View);
  * @returns {boolean} panel is splitter?
  */
 VPanel.prototype.isSplitter = function() {
-    return this.options.isSplitter;
+  return this.options.isSplitter;
 };
 
 /**
@@ -75,9 +75,9 @@ VPanel.prototype.isSplitter = function() {
  * @param {number} maxHeight - maxHeight
  */
 VPanel.prototype.setMaxHeight = function(maxHeight) {
-    if (!this.options.autoHeight) {
-        this.options.maxHeight = maxHeight;
-    }
+  if (!this.options.autoHeight) {
+    this.options.maxHeight = maxHeight;
+  }
 };
 
 /**
@@ -85,7 +85,7 @@ VPanel.prototype.setMaxHeight = function(maxHeight) {
  * @param {boolean} set - enable or not
  */
 VPanel.prototype.setHeightForcedSet = function(set) {
-    this.isHeightForcedSet = set;
+  this.isHeightForcedSet = set;
 };
 
 /**
@@ -93,7 +93,7 @@ VPanel.prototype.setHeightForcedSet = function(set) {
  * @returns {boolean} set - enable or not
  */
 VPanel.prototype.getHeightForcedSet = function() {
-    return this.isHeightForcedSet;
+  return this.isHeightForcedSet;
 };
 
 /**
@@ -103,24 +103,24 @@ VPanel.prototype.getHeightForcedSet = function() {
  * @param {boolean} force - whether ignore max-length
  */
 VPanel.prototype.setHeight = function(container, newHeight, force) {
-    var maxHeight = this.options.maxHeight;
-    var minHeight = this.options.minHeight;
-    var autoHeight = this.options.autoHeight;
-    container = container || this.container;
+  var maxHeight = this.options.maxHeight;
+  var minHeight = this.options.minHeight;
+  var autoHeight = this.options.autoHeight;
+  container = container || this.container;
 
-    // 한번 force 호출이 일어난 이후에는 force 호출만 허용한다
-    if (!force && this.isHeightForcedSet && !autoHeight) {
-        return;
-    }
+  // 한번 force 호출이 일어난 이후에는 force 호출만 허용한다
+  if (!force && this.isHeightForcedSet && !autoHeight) {
+    return;
+  }
 
-    if (force) {
-        this.isHeightForcedSet = true;
-    } else if (maxHeight) {
-        newHeight = Math.min(newHeight, maxHeight);
-    }
-    newHeight = Math.max(minHeight, newHeight);
+  if (force) {
+    this.isHeightForcedSet = true;
+  } else if (maxHeight) {
+    newHeight = Math.min(newHeight, maxHeight);
+  }
+  newHeight = Math.max(minHeight, newHeight);
 
-    container.style.height = newHeight + 'px';
+  container.style.height = newHeight + 'px';
 };
 
 /**
@@ -129,11 +129,11 @@ VPanel.prototype.setHeight = function(container, newHeight, force) {
  * @returns {number[]} newHeight, remainHeight
  */
 VPanel.prototype.getResizeInfoByGrowth = function(growth) {
-    var height = this.getHeight(),
-        newHeight = height + growth,
-        resizeTo = Math.max(0, newHeight, this.options.minHeight);
+  var height = this.getHeight(),
+    newHeight = height + growth,
+    resizeTo = Math.max(0, newHeight, this.options.minHeight);
 
-    return [resizeTo, height - resizeTo];
+  return [resizeTo, height - resizeTo];
 };
 
 /**
@@ -141,7 +141,7 @@ VPanel.prototype.getResizeInfoByGrowth = function(growth) {
  * @returns {number} outer height of panel element
  */
 VPanel.prototype.getHeight = function() {
-    return domutil.getSize(this.container)[1];
+  return domutil.getSize(this.container)[1];
 };
 
 /**
@@ -149,7 +149,7 @@ VPanel.prototype.getHeight = function() {
  * @param {string} className - classname string
  */
 VPanel.prototype.addClass = function(className) {
-    domutil.addClass(this.container, className);
+  domutil.addClass(this.container, className);
 };
 
 /**
@@ -157,7 +157,7 @@ VPanel.prototype.addClass = function(className) {
  * @param {string} className - classname string
  */
 VPanel.prototype.removeClass = function(className) {
-    domutil.removeClass(this.container, className);
+  domutil.removeClass(this.container, className);
 };
 
 /**
@@ -166,45 +166,45 @@ VPanel.prototype.removeClass = function(className) {
  * @param {HTMLDivElement} container - panel element
  */
 VPanel.prototype._initPanel = function(options, container) {
-    var height;
+  var height;
 
-    domutil.setData(container, 'panelIndex', options.index);
+  domutil.setData(container, 'panelIndex', options.index);
 
-    if (options.isSplitter) {
-        domutil.addClass(container, config.classname('splitter'));
-        this.applyTheme();
+  if (options.isSplitter) {
+    domutil.addClass(container, config.classname('splitter'));
+    this.applyTheme();
 
-        return;
-    }
+    return;
+  }
 
-    if (options.className) {
-        domutil.addClass(container, options.className);
-    }
+  if (options.className) {
+    domutil.addClass(container, options.className);
+  }
 
-    if (options.autoHeight) {
-        domutil.setData(container, 'autoHeight', true);
-    } else {
-        height = common.limit(options.height || 0,
-            [options.minHeight],
-            [options.maxHeight || options.height]
-        );
+  if (options.autoHeight) {
+    domutil.setData(container, 'autoHeight', true);
+  } else {
+    height = common.limit(options.height || 0,
+      [options.minHeight],
+      [options.maxHeight || options.height]
+    );
 
-        options.height = height;
-        this.setHeight(container, height);
-    }
+    options.height = height;
+    this.setHeight(container, height);
+  }
 };
 
 VPanel.prototype.applyTheme = function() {
-    var style = this.container.style;
-    var theme = this.theme;
+  var style = this.container.style;
+  var theme = this.theme;
 
-    if (!theme) {
-        return;
-    }
+  if (!theme) {
+    return;
+  }
 
-    style.borderTop = theme.week.vpanelSplitter.border || theme.common.border;
-    style.borderBottom = theme.week.vpanelSplitter.border || theme.common.border;
-    style.height = theme.week.vpanelSplitter.height;
+  style.borderTop = theme.week.vpanelSplitter.border || theme.common.border;
+  style.borderBottom = theme.week.vpanelSplitter.border || theme.common.border;
+  style.height = theme.week.vpanelSplitter.height;
 };
 
 module.exports = VPanel;

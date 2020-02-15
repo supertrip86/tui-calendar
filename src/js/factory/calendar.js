@@ -7,18 +7,18 @@
 var GA_TRACKING_ID = 'UA-129951699-1';
 
 var util = require('tui-code-snippet'),
-    Handlebars = require('handlebars-template-loader/runtime');
+  Handlebars = require('handlebars-template-loader/runtime');
 var dw = require('../common/dw'),
-    datetime = require('../common/datetime'),
-    Layout = require('../view/layout'),
-    Drag = require('../handler/drag'),
-    controllerFactory = require('./controller'),
-    weekViewFactory = require('./weekView'),
-    monthViewFactory = require('./monthView'),
-    TZDate = require('../common/timezone').Date,
-    config = require('../config'),
-    timezone = require('../common/timezone'),
-    reqAnimFrame = require('../common/reqAnimFrame');
+  datetime = require('../common/datetime'),
+  Layout = require('../view/layout'),
+  Drag = require('../handler/drag'),
+  controllerFactory = require('./controller'),
+  weekViewFactory = require('./weekView'),
+  monthViewFactory = require('./monthView'),
+  TZDate = require('../common/timezone').Date,
+  config = require('../config'),
+  timezone = require('../common/timezone'),
+  reqAnimFrame = require('../common/reqAnimFrame');
 
 var mmin = Math.min;
 
@@ -439,7 +439,7 @@ var mmin = Math.min;
  * @property {boolean} [disableDblClick=false] - Disable double click to create a schedule. The default value is false.
  * @property {boolean} [disableClick=false] - Disable click to create a schedule. The default value is false.
  * @property {boolean} [isReadOnly=false] - {@link Calendar} is read-only mode and a user can't create and modify any schedule. The default value is false.
- * @property {boolean} [usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+ * @property {boolean} [usageStatistics=false] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  */
 
 /**
@@ -511,140 +511,140 @@ var mmin = Math.min;
  * });
  */
 function Calendar(container, options) {
-    options = util.extend({
-        usageStatistics: true
-    }, options);
+  options = util.extend({
+    usageStatistics: false
+  }, options);
 
-    if (options.usageStatistics === true && util.sendHostname) {
-        util.sendHostname('calendar', GA_TRACKING_ID);
-    }
+  if (options.usageStatistics === true && util.sendHostname) {
+    util.sendHostname('calendar', GA_TRACKING_ID);
+  }
 
-    if (util.isString(container)) {
-        container = document.querySelector(container);
-    }
+  if (util.isString(container)) {
+    container = document.querySelector(container);
+  }
 
-    /**
+  /**
      * Calendar color map
      * @type {object}
      * @private
      */
-    this._calendarColor = {};
+  this._calendarColor = {};
 
-    /**
+  /**
      * Current rendered date
      * @type {TZDate}
      * @private
      */
-    this._renderDate = datetime.start();
+  this._renderDate = datetime.start();
 
-    /**
+  /**
      * start and end date of weekly, monthly
      * @type {object}
      * @private
      */
-    this._renderRange = {
-        start: null,
-        end: null
-    };
+  this._renderRange = {
+    start: null,
+    end: null
+  };
 
-    /**
+  /**
      * base controller
      * @type {Base}
      * @private
      */
-    this._controller = _createController(options);
-    this._controller.setCalendars(options.calendars);
+  this._controller = _createController(options);
+  this._controller.setCalendars(options.calendars);
 
-    /**
+  /**
      * layout view (layout manager)
      * @type {Layout}
      * @private
      */
-    this._layout = new Layout(container, this._controller.theme);
+  this._layout = new Layout(container, this._controller.theme);
 
-    /**
+  /**
      * global drag handler
      * @type {Drag}
      * @private
      */
-    this._dragHandler = new Drag({distance: 10}, this._layout.container);
+  this._dragHandler = new Drag({distance: 10}, this._layout.container);
 
-    /**
+  /**
      * current rendered view name. ('day', 'week', 'month')
      * @type {string}
      * @default 'week'
      * @private
      */
-    this._viewName = options.defaultView || 'week';
+  this._viewName = options.defaultView || 'week';
 
-    /**
+  /**
      * Refresh method. it can be ref different functions for each view modes.
      * @type {function}
      * @private
      */
-    this._refreshMethod = null;
+  this._refreshMethod = null;
 
-    /**
+  /**
      * Scroll to now. It can be called for 'week', 'day' view modes.
      * @type {function}
      * @private
      */
-    this._scrollToNowMethod = null;
+  this._scrollToNowMethod = null;
 
-    /**
+  /**
      * It's true if Calendar.prototype.scrollToNow() is called.
      * @type {boolean}
      * @private
      */
-    this._requestScrollToNow = false;
+  this._requestScrollToNow = false;
 
-    /**
+  /**
      * Open schedule creation popup
      * @type {function}
      * @private
      */
-    this._openCreationPopup = null;
+  this._openCreationPopup = null;
 
-    /**
+  /**
      * Hide the more view
      * @type {function}
      * @private
      */
-    this._hideMoreView = null;
+  this._hideMoreView = null;
 
-    /**
+  /**
      * Unique id for requestAnimFrame()
      * @type {number}
      * @private
      */
-    this._requestRender = 0;
+  this._requestRender = 0;
 
-    /**
+  /**
      * calendar options
      * @type {Options}
      * @private
      */
-    this._options = {};
+  this._options = {};
 
-    this._initialize(options);
+  this._initialize(options);
 }
 
 /**
  * destroy calendar instance.
  */
 Calendar.prototype.destroy = function() {
-    this._dragHandler.destroy();
-    this._controller.off();
-    this._layout.clear();
-    this._layout.destroy();
+  this._dragHandler.destroy();
+  this._controller.off();
+  this._layout.clear();
+  this._layout.destroy();
 
-    util.forEach(this._options.template, function(func, name) {
-        if (func) {
-            Handlebars.unregisterHelper(name + '-tmpl');
-        }
-    });
+  util.forEach(this._options.template, function(func, name) {
+    if (func) {
+      Handlebars.unregisterHelper(name + '-tmpl');
+    }
+  });
 
-    this._options = this._renderDate = this._controller =
+  this._options = this._renderDate = this._controller =
         this._layout = this._dragHandler = this._viewName =
         this._refreshMethod = this._scrollToNowMethod = null;
 };
@@ -655,51 +655,51 @@ Calendar.prototype.destroy = function() {
  * @private
  */
 Calendar.prototype._initialize = function(options) {
-    var controller = this._controller,
-        viewName = this._viewName;
+  var controller = this._controller,
+    viewName = this._viewName;
 
-    this._options = util.extend({
-        defaultView: viewName,
-        taskView: true,
-        scheduleView: true,
-        template: util.extend({
-            allday: null,
-            time: null
-        }, util.pick(options, 'template') || {}),
-        week: util.extend({}, util.pick(options, 'week') || {}),
-        month: util.extend({}, util.pick(options, 'month') || {}),
-        calendars: [],
-        useCreationPopup: false,
-        useDetailPopup: false,
-        timezones: options.timezones || [],
-        disableDblClick: false,
-        disableClick: false,
-        isReadOnly: false
-    }, options);
+  this._options = util.extend({
+    defaultView: viewName,
+    taskView: true,
+    scheduleView: true,
+    template: util.extend({
+      allday: null,
+      time: null
+    }, util.pick(options, 'template') || {}),
+    week: util.extend({}, util.pick(options, 'week') || {}),
+    month: util.extend({}, util.pick(options, 'month') || {}),
+    calendars: [],
+    useCreationPopup: false,
+    useDetailPopup: false,
+    timezones: options.timezones || [],
+    disableDblClick: false,
+    disableClick: false,
+    isReadOnly: false
+  }, options);
 
-    this._options.week = util.extend({
-        startDayOfWeek: 0,
-        workweek: false
-    }, util.pick(this._options, 'week') || {});
+  this._options.week = util.extend({
+    startDayOfWeek: 0,
+    workweek: false
+  }, util.pick(this._options, 'week') || {});
 
-    this._options.month = util.extend({
-        startDayOfWeek: 0,
-        workweek: false,
-        scheduleFilter: function(schedule) {
-            return Boolean(schedule.isVisible) &&
+  this._options.month = util.extend({
+    startDayOfWeek: 0,
+    workweek: false,
+    scheduleFilter: function(schedule) {
+      return Boolean(schedule.isVisible) &&
               (schedule.category === 'allday' || schedule.category === 'time');
-        }
-    }, util.pick(options, 'month') || {});
-
-    if (this._options.isReadOnly) {
-        this._options.useCreationPopup = false;
     }
+  }, util.pick(options, 'month') || {});
 
-    this._layout.controller = controller;
+  if (this._options.isReadOnly) {
+    this._options.useCreationPopup = false;
+  }
 
-    this._setAdditionalInternalOptions(options);
+  this._layout.controller = controller;
 
-    this.changeView(viewName, true);
+  this._setAdditionalInternalOptions(options);
+
+  this.changeView(viewName, true);
 };
 
 /**
@@ -711,21 +711,21 @@ Calendar.prototype._initialize = function(options) {
  * @private
  */
 Calendar.prototype._setAdditionalInternalOptions = function(options) {
-    var timezones = options.timezones || [];
+  var timezones = options.timezones || [];
 
-    util.forEach(options.template, function(func, name) {
-        if (func) {
-            Handlebars.registerHelper(name + '-tmpl', func);
-        }
-    });
-
-    util.forEach(options.calendars || [], function(calendar) {
-        this.setCalendarColor(calendar.id, calendar, true);
-    }, this);
-
-    if (timezones.length) {
-        timezone.setOffsetByTimezoneOption(timezones[0].timezoneOffset);
+  util.forEach(options.template, function(func, name) {
+    if (func) {
+      Handlebars.registerHelper(name + '-tmpl', func);
     }
+  });
+
+  util.forEach(options.calendars || [], function(calendar) {
+    this.setCalendarColor(calendar.id, calendar, true);
+  }, this);
+
+  if (timezones.length) {
+    timezone.setOffsetByTimezoneOption(timezones[0].timezoneOffset);
+  }
 };
 
 /**********
@@ -759,15 +759,15 @@ Calendar.prototype._setAdditionalInternalOptions = function(options) {
  * ]);
  */
 Calendar.prototype.createSchedules = function(schedules, silent) {
-    util.forEach(schedules, function(obj) {
-        this._setScheduleColor(obj.calendarId, obj);
-    }, this);
+  util.forEach(schedules, function(obj) {
+    this._setScheduleColor(obj.calendarId, obj);
+  }, this);
 
-    this._controller.createSchedules(schedules, silent);
+  this._controller.createSchedules(schedules, silent);
 
-    if (!silent) {
-        this.render();
-    }
+  if (!silent) {
+    this.render();
+  }
 };
 
 /**
@@ -780,9 +780,9 @@ Calendar.prototype.createSchedules = function(schedules, silent) {
  * console.log(schedule.title);
  */
 Calendar.prototype.getSchedule = function(scheduleId, calendarId) {
-    return this._controller.schedules.single(function(model) {
-        return model.id === scheduleId && model.calendarId === calendarId;
-    });
+  return this._controller.schedules.single(function(model) {
+    return model.id === scheduleId && model.calendarId === calendarId;
+  });
 };
 
 /**
@@ -800,47 +800,47 @@ Calendar.prototype.getSchedule = function(scheduleId, calendarId) {
  * });
  */
 Calendar.prototype.updateSchedule = function(scheduleId, calendarId, changes, silent) {
-    var ctrl = this._controller,
-        ownSchedules = ctrl.schedules,
-        schedule = ownSchedules.single(function(model) {
-            return model.id === scheduleId && model.calendarId === calendarId;
-        });
-    var hasChangedCalendar = false;
+  var ctrl = this._controller,
+    ownSchedules = ctrl.schedules,
+    schedule = ownSchedules.single(function(model) {
+      return model.id === scheduleId && model.calendarId === calendarId;
+    });
+  var hasChangedCalendar = false;
 
-    if (!changes || !schedule) {
-        return;
-    }
+  if (!changes || !schedule) {
+    return;
+  }
 
-    hasChangedCalendar = this._hasChangedCalendar(schedule, changes);
-    changes = hasChangedCalendar ?
-        this._setScheduleColor(changes.calendarId, changes) :
-        changes;
+  hasChangedCalendar = this._hasChangedCalendar(schedule, changes);
+  changes = hasChangedCalendar ?
+    this._setScheduleColor(changes.calendarId, changes) :
+    changes;
 
-    ctrl.updateSchedule(schedule, changes);
+  ctrl.updateSchedule(schedule, changes);
 
-    if (!silent) {
-        this.render();
-    }
+  if (!silent) {
+    this.render();
+  }
 };
 
 Calendar.prototype._hasChangedCalendar = function(schedule, changes) {
-    return schedule &&
+  return schedule &&
         changes.calendarId &&
         schedule.calendarId !== changes.calendarId;
 };
 
 Calendar.prototype._setScheduleColor = function(calendarId, schedule) {
-    var calColor = this._calendarColor;
-    var color = calColor[calendarId];
+  var calColor = this._calendarColor;
+  var color = calColor[calendarId];
 
-    if (color) {
-        schedule.color = schedule.color || color.color;
-        schedule.bgColor = schedule.bgColor || color.bgColor;
-        schedule.borderColor = schedule.borderColor || color.borderColor;
-        schedule.dragBgColor = schedule.dragBgColor || color.dragBgColor;
-    }
+  if (color) {
+    schedule.color = schedule.color || color.color;
+    schedule.bgColor = schedule.bgColor || color.bgColor;
+    schedule.borderColor = schedule.borderColor || color.borderColor;
+    schedule.dragBgColor = schedule.dragBgColor || color.dragBgColor;
+  }
 
-    return schedule;
+  return schedule;
 };
 
 /**
@@ -850,20 +850,20 @@ Calendar.prototype._setScheduleColor = function(calendarId, schedule) {
  * @param {boolean} [silent=false] - No auto render after creation when set true
  */
 Calendar.prototype.deleteSchedule = function(scheduleId, calendarId, silent) {
-    var ctrl = this._controller,
-        ownSchedules = ctrl.schedules,
-        schedule = ownSchedules.single(function(model) {
-            return model.id === scheduleId && model.calendarId === calendarId;
-        });
+  var ctrl = this._controller,
+    ownSchedules = ctrl.schedules,
+    schedule = ownSchedules.single(function(model) {
+      return model.id === scheduleId && model.calendarId === calendarId;
+    });
 
-    if (!schedule) {
-        return;
-    }
+  if (!schedule) {
+    return;
+  }
 
-    ctrl.deleteSchedule(schedule);
-    if (!silent) {
-        this.render();
-    }
+  ctrl.deleteSchedule(schedule);
+  if (!silent) {
+    this.render();
+  }
 };
 
 /**********
@@ -878,44 +878,44 @@ Calendar.prototype.deleteSchedule = function(scheduleId, calendarId, silent) {
  * @private
  */
 Calendar.prototype._getWeekDayRange = function(date, startDayOfWeek, workweek) {
-    var day;
-    var start;
-    var end;
-    var range;
+  var day;
+  var start;
+  var end;
+  var range;
 
     startDayOfWeek = (startDayOfWeek || 0); // eslint-disable-line
-    date = util.isDate(date) ? date : new TZDate(date);
-    day = date.getDay();
+  date = util.isDate(date) ? date : new TZDate(date);
+  day = date.getDay();
 
-    // calculate default render range first.
-    start = new TZDate(date).addDate(-day + startDayOfWeek);
+  // calculate default render range first.
+  start = new TZDate(date).addDate(-day + startDayOfWeek);
 
-    end = new TZDate(start).addDate(6);
+  end = new TZDate(start).addDate(6);
 
-    if (day < startDayOfWeek) {
-        start = new TZDate(start).addDate(-7);
-        end = new TZDate(end).addDate(-7);
-    }
+  if (day < startDayOfWeek) {
+    start = new TZDate(start).addDate(-7);
+    end = new TZDate(end).addDate(-7);
+  }
 
-    if (workweek) {
-        range = datetime.range(
-            datetime.start(start),
-            datetime.end(end),
-            datetime.MILLISECONDS_PER_DAY
-        );
+  if (workweek) {
+    range = datetime.range(
+      datetime.start(start),
+      datetime.end(end),
+      datetime.MILLISECONDS_PER_DAY
+    );
 
-        range = util.filter(range, function(weekday) {
-            return !datetime.isWeekend(weekday.getDay());
-        });
+    range = util.filter(range, function(weekday) {
+      return !datetime.isWeekend(weekday.getDay());
+    });
 
-        start = range[0];
-        end = range[range.length - 1];
-    }
+    start = range[0];
+    end = range[range.length - 1];
+  }
 
-    start = datetime.start(start);
-    end = datetime.start(end);
+  start = datetime.start(start);
+  end = datetime.start(end);
 
-    return [start, end];
+  return [start, end];
 };
 
 /**
@@ -925,20 +925,20 @@ Calendar.prototype._getWeekDayRange = function(date, startDayOfWeek, workweek) {
  * @param {boolean} [render=true] - set true then render after change visible property each models
  */
 Calendar.prototype.toggleSchedules = function(calendarId, toHide, render) {
-    var ownSchedules = this._controller.schedules;
+  var ownSchedules = this._controller.schedules;
 
-    render = util.isExisty(render) ? render : true;
-    calendarId = util.isArray(calendarId) ? calendarId : [calendarId];
+  render = util.isExisty(render) ? render : true;
+  calendarId = util.isArray(calendarId) ? calendarId : [calendarId];
 
-    ownSchedules.each(function(schedule) {
-        if (~util.inArray(schedule.calendarId, calendarId)) {
-            schedule.set('isVisible', !toHide);
-        }
-    });
-
-    if (render) {
-        this.render();
+  ownSchedules.each(function(schedule) {
+    if (~util.inArray(schedule.calendarId, calendarId)) {
+      schedule.set('isVisible', !toHide);
     }
+  });
+
+  if (render) {
+    this.render();
+  }
 };
 
 /**********
@@ -961,15 +961,15 @@ Calendar.prototype.toggleSchedules = function(calendarId, toHide, render) {
  * });
  */
 Calendar.prototype.render = function(immediately) {
-    if (this._requestRender) {
-        reqAnimFrame.cancelAnimFrame(this._requestRender);
-    }
+  if (this._requestRender) {
+    reqAnimFrame.cancelAnimFrame(this._requestRender);
+  }
 
-    if (immediately) {
-        this._renderFunc();
-    } else {
-        this._requestRender = reqAnimFrame.requestAnimFrame(this._renderFunc, this);
-    }
+  if (immediately) {
+    this._renderFunc();
+  } else {
+    this._requestRender = reqAnimFrame.requestAnimFrame(this._renderFunc, this);
+  }
 };
 
 /**
@@ -977,18 +977,18 @@ Calendar.prototype.render = function(immediately) {
  * @private
  */
 Calendar.prototype._renderFunc = function() {
-    if (this._refreshMethod) {
-        this._refreshMethod();
-    }
-    if (this._layout) {
-        this._layout.render();
-    }
-    if (this._scrollToNowMethod && this._requestScrollToNow) {
-        this._scrollToNowMethod();
-    }
+  if (this._refreshMethod) {
+    this._refreshMethod();
+  }
+  if (this._layout) {
+    this._layout.render();
+  }
+  if (this._scrollToNowMethod && this._requestScrollToNow) {
+    this._scrollToNowMethod();
+  }
 
-    this._requestScrollToNow = false;
-    this._requestRender = null;
+  this._requestScrollToNow = false;
+  this._requestRender = null;
 };
 
 /**
@@ -1001,8 +1001,8 @@ Calendar.prototype._renderFunc = function() {
  * calendar.render();
  */
 Calendar.prototype.clear = function(immediately) {
-    this._controller.clearSchedules();
-    this.render(immediately);
+  this._controller.clearSchedules();
+  this.render(immediately);
 };
 
 /**
@@ -1016,10 +1016,10 @@ Calendar.prototype.clear = function(immediately) {
  * }
  */
 Calendar.prototype.scrollToNow = function() {
-    if (this._scrollToNowMethod) {
-        this._requestScrollToNow = true;
-        // this._scrollToNowMethod() will be called at next frame rendering.
-    }
+  if (this._scrollToNowMethod) {
+    this._requestScrollToNow = true;
+    // this._scrollToNowMethod() will be called at next frame rendering.
+  }
 };
 
 /**
@@ -1030,11 +1030,11 @@ Calendar.prototype.scrollToNow = function() {
  * }
  */
 Calendar.prototype.today = function() {
-    this._renderDate = datetime.start();
+  this._renderDate = datetime.start();
 
-    this._setViewName(this._viewName);
-    this.move();
-    this.render();
+  this._setViewName(this._viewName);
+  this.move();
+  this.render();
 };
 
 /**
@@ -1047,89 +1047,89 @@ Calendar.prototype.today = function() {
  * calendar.move(-1);
  */
 Calendar.prototype.move = function(offset) {
-    var renderDate = dw(datetime.start(this._renderDate)),
-        viewName = this._viewName,
-        view = this._getCurrentView(),
-        recursiveSet = _setOptionRecurseively,
-        startDate, endDate, tempDate,
-        startDayOfWeek, visibleWeeksCount, workweek, isAlways6Week, datetimeOptions;
+  var renderDate = dw(datetime.start(this._renderDate)),
+    viewName = this._viewName,
+    view = this._getCurrentView(),
+    recursiveSet = _setOptionRecurseively,
+    startDate, endDate, tempDate,
+    startDayOfWeek, visibleWeeksCount, workweek, isAlways6Week, datetimeOptions;
 
-    offset = util.isExisty(offset) ? offset : 0;
+  offset = util.isExisty(offset) ? offset : 0;
 
-    if (viewName === 'month') {
-        startDayOfWeek = util.pick(this._options, 'month', 'startDayOfWeek') || 0;
-        visibleWeeksCount = mmin(util.pick(this._options, 'month', 'visibleWeeksCount') || 0, 6);
-        workweek = util.pick(this._options, 'month', 'workweek') || false;
-        isAlways6Week = util.pick(this._options, 'month', 'isAlways6Week');
+  if (viewName === 'month') {
+    startDayOfWeek = util.pick(this._options, 'month', 'startDayOfWeek') || 0;
+    visibleWeeksCount = mmin(util.pick(this._options, 'month', 'visibleWeeksCount') || 0, 6);
+    workweek = util.pick(this._options, 'month', 'workweek') || false;
+    isAlways6Week = util.pick(this._options, 'month', 'isAlways6Week');
 
-        if (visibleWeeksCount) {
-            datetimeOptions = {
-                startDayOfWeek: startDayOfWeek,
-                isAlways6Week: false,
-                visibleWeeksCount: visibleWeeksCount,
-                workweek: workweek
-            };
+    if (visibleWeeksCount) {
+      datetimeOptions = {
+        startDayOfWeek: startDayOfWeek,
+        isAlways6Week: false,
+        visibleWeeksCount: visibleWeeksCount,
+        workweek: workweek
+      };
 
-            renderDate.addDate(offset * 7 * datetimeOptions.visibleWeeksCount);
-            tempDate = datetime.arr2dCalendar(renderDate.d, datetimeOptions);
+      renderDate.addDate(offset * 7 * datetimeOptions.visibleWeeksCount);
+      tempDate = datetime.arr2dCalendar(renderDate.d, datetimeOptions);
 
-            recursiveSet(view, function(childView, opt) {
-                opt.renderMonth = new TZDate(renderDate.d);
-            });
-        } else {
-            datetimeOptions = {
-                startDayOfWeek: startDayOfWeek,
-                isAlways6Week: isAlways6Week,
-                workweek: workweek
-            };
+      recursiveSet(view, function(childView, opt) {
+        opt.renderMonth = new TZDate(renderDate.d);
+      });
+    } else {
+      datetimeOptions = {
+        startDayOfWeek: startDayOfWeek,
+        isAlways6Week: isAlways6Week,
+        workweek: workweek
+      };
 
-            renderDate.addMonth(offset);
-            tempDate = datetime.arr2dCalendar(renderDate.d, datetimeOptions);
+      renderDate.addMonth(offset);
+      tempDate = datetime.arr2dCalendar(renderDate.d, datetimeOptions);
 
-            recursiveSet(view, function(childView, opt) {
-                opt.renderMonth = new TZDate(renderDate.d);
-            });
-        }
-
-        startDate = tempDate[0][0];
-        endDate = tempDate[tempDate.length - 1][tempDate[tempDate.length - 1].length - 1];
-    } else if (viewName === 'week') {
-        renderDate.addDate(offset * 7);
-        startDayOfWeek = util.pick(this._options, 'week', 'startDayOfWeek') || 0;
-        workweek = util.pick(this._options, 'week', 'workweek') || false;
-        tempDate = this._getWeekDayRange(renderDate.d, startDayOfWeek, workweek);
-
-        startDate = tempDate[0];
-        endDate = tempDate[1];
-
-        recursiveSet(view, function(childView, opt) {
-            opt.renderStartDate = new TZDate(startDate);
-            opt.renderEndDate = new TZDate(endDate);
-
-            childView.setState({
-                collapsed: true
-            });
-        });
-    } else if (viewName === 'day') {
-        renderDate.addDate(offset);
-        startDate = datetime.start(renderDate.d);
-        endDate = datetime.end(renderDate.d);
-
-        recursiveSet(view, function(childView, opt) {
-            opt.renderStartDate = new TZDate(startDate);
-            opt.renderEndDate = new TZDate(endDate);
-
-            childView.setState({
-                collapsed: true
-            });
-        });
+      recursiveSet(view, function(childView, opt) {
+        opt.renderMonth = new TZDate(renderDate.d);
+      });
     }
 
-    this._renderDate = renderDate.d;
-    this._renderRange = {
-        start: startDate,
-        end: endDate
-    };
+    startDate = tempDate[0][0];
+    endDate = tempDate[tempDate.length - 1][tempDate[tempDate.length - 1].length - 1];
+  } else if (viewName === 'week') {
+    renderDate.addDate(offset * 7);
+    startDayOfWeek = util.pick(this._options, 'week', 'startDayOfWeek') || 0;
+    workweek = util.pick(this._options, 'week', 'workweek') || false;
+    tempDate = this._getWeekDayRange(renderDate.d, startDayOfWeek, workweek);
+
+    startDate = tempDate[0];
+    endDate = tempDate[1];
+
+    recursiveSet(view, function(childView, opt) {
+      opt.renderStartDate = new TZDate(startDate);
+      opt.renderEndDate = new TZDate(endDate);
+
+      childView.setState({
+        collapsed: true
+      });
+    });
+  } else if (viewName === 'day') {
+    renderDate.addDate(offset);
+    startDate = datetime.start(renderDate.d);
+    endDate = datetime.end(renderDate.d);
+
+    recursiveSet(view, function(childView, opt) {
+      opt.renderStartDate = new TZDate(startDate);
+      opt.renderEndDate = new TZDate(endDate);
+
+      childView.setState({
+        collapsed: true
+      });
+    });
+  }
+
+  this._renderDate = renderDate.d;
+  this._renderRange = {
+    start: startDate,
+    end: endDate
+  };
 };
 
 /**
@@ -1144,14 +1144,14 @@ Calendar.prototype.move = function(offset) {
  * });
  */
 Calendar.prototype.setDate = function(date) {
-    if (util.isString(date)) {
-        date = datetime.parse(date);
-    }
+  if (util.isString(date)) {
+    date = datetime.parse(date);
+  }
 
-    this._renderDate = new TZDate(date);
-    this._setViewName(this._viewName);
-    this.move(0);
-    this.render();
+  this._renderDate = new TZDate(date);
+  this._setViewName(this._viewName);
+  this.move(0);
+  this.render();
 };
 
 /**
@@ -1166,8 +1166,8 @@ Calendar.prototype.setDate = function(date) {
 }
  */
 Calendar.prototype.next = function() {
-    this.move(1);
-    this.render();
+  this.move(1);
+  this.render();
 };
 
 /**
@@ -1182,8 +1182,8 @@ Calendar.prototype.next = function() {
 }
  */
 Calendar.prototype.prev = function() {
-    this.move(-1);
-    this.render();
+  this.move(-1);
+  this.render();
 };
 
 /**
@@ -1192,13 +1192,13 @@ Calendar.prototype.prev = function() {
  * @private
  */
 Calendar.prototype._getCurrentView = function() {
-    var viewName = this._viewName;
+  var viewName = this._viewName;
 
-    if (viewName === 'day') {
-        viewName = 'week';
-    }
+  if (viewName === 'day') {
+    viewName = 'week';
+  }
 
-    return util.pick(this._layout.children.items, viewName);
+  return util.pick(this._layout.children.items, viewName);
 };
 
 /**
@@ -1227,35 +1227,35 @@ Calendar.prototype._getCurrentView = function() {
  * });
  */
 Calendar.prototype.setCalendarColor = function(calendarId, option, silent) {
-    var calColor = this._calendarColor,
-        ownSchedules = this._controller.schedules,
-        ownColor = calColor[calendarId];
+  var calColor = this._calendarColor,
+    ownSchedules = this._controller.schedules,
+    ownColor = calColor[calendarId];
 
-    if (!util.isObject(option)) {
-        config.throwError('Calendar#changeCalendarColor(): color 는 {color: \'\', bgColor: \'\'} 형태여야 합니다.');
+  if (!util.isObject(option)) {
+    config.throwError('Calendar#changeCalendarColor(): color 는 {color: \'\', bgColor: \'\'} 형태여야 합니다.');
+  }
+
+  ownColor = calColor[calendarId] = util.extend({
+    color: '#000',
+    bgColor: '#a1b56c',
+    borderColor: '#a1b56c',
+    dragBgColor: '#a1b56c'
+  }, option);
+
+  ownSchedules.each(function(model) {
+    if (model.calendarId !== calendarId) {
+      return;
     }
 
-    ownColor = calColor[calendarId] = util.extend({
-        color: '#000',
-        bgColor: '#a1b56c',
-        borderColor: '#a1b56c',
-        dragBgColor: '#a1b56c'
-    }, option);
+    model.color = ownColor.color;
+    model.bgColor = ownColor.bgColor;
+    model.borderColor = ownColor.borderColor;
+    model.dragBgColor = ownColor.dragBgColor;
+  });
 
-    ownSchedules.each(function(model) {
-        if (model.calendarId !== calendarId) {
-            return;
-        }
-
-        model.color = ownColor.color;
-        model.bgColor = ownColor.bgColor;
-        model.borderColor = ownColor.borderColor;
-        model.dragBgColor = ownColor.dragBgColor;
-    });
-
-    if (!silent) {
-        this.render();
-    }
+  if (!silent) {
+    this.render();
+  }
 };
 
 /**********
@@ -1269,7 +1269,7 @@ Calendar.prototype.setCalendarColor = function(calendarId, option, silent) {
  * @private
  */
 Calendar.prototype._onClick = function(clickScheduleData) {
-    /**
+  /**
      * Fire this event when click a schedule.
      * @event Calendar#clickSchedule
      * @type {object}
@@ -1292,7 +1292,7 @@ Calendar.prototype._onClick = function(clickScheduleData) {
      *     // open detail view
      * });
      */
-    this.fire('clickSchedule', clickScheduleData);
+  this.fire('clickSchedule', clickScheduleData);
 };
 
 /**
@@ -1302,7 +1302,7 @@ Calendar.prototype._onClick = function(clickScheduleData) {
  * @private
  */
 Calendar.prototype._onClickMore = function(clickMoreSchedule) {
-    /**
+  /**
      * Fire this event when click a schedule.
      * @event Calendar#clickMore
      * @type {object}
@@ -1313,7 +1313,7 @@ Calendar.prototype._onClickMore = function(clickMoreSchedule) {
      *     console.log('clickMore', event.date, event.target);
      * });
      */
-    this.fire('clickMore', clickMoreSchedule);
+  this.fire('clickMore', clickMoreSchedule);
 };
 
 /**
@@ -1323,7 +1323,7 @@ Calendar.prototype._onClickMore = function(clickMoreSchedule) {
  * @private
  */
 Calendar.prototype._onClickDayname = function(clickScheduleData) {
-    /**
+  /**
      * Fire this event when click a day name in weekly.
      * @event Calendar#clickDayname
      * @type {object}
@@ -1336,7 +1336,7 @@ Calendar.prototype._onClickDayname = function(clickScheduleData) {
      *     }
      * });
      */
-    this.fire('clickDayname', clickScheduleData);
+  this.fire('clickDayname', clickScheduleData);
 };
 
 /**
@@ -1345,14 +1345,14 @@ Calendar.prototype._onClickDayname = function(clickScheduleData) {
  * @private
  */
 Calendar.prototype._onBeforeCreate = function(createScheduleData) {
-    if (this._options.useCreationPopup && !createScheduleData.useCreationPopup) {
-        if (this._showCreationPopup) {
-            this._showCreationPopup(createScheduleData);
+  if (this._options.useCreationPopup && !createScheduleData.useCreationPopup) {
+    if (this._showCreationPopup) {
+      this._showCreationPopup(createScheduleData);
 
-            return;
-        }
+      return;
     }
-    /**
+  }
+  /**
      * Fire this event when select time period in daily, weekly, monthly.
      * @event Calendar#beforeCreateSchedule
      * @type {object}
@@ -1381,7 +1381,7 @@ Calendar.prototype._onBeforeCreate = function(createScheduleData) {
      *     calendar.createSchedules([schedule]);
      * });
      */
-    this.fire('beforeCreateSchedule', createScheduleData);
+  this.fire('beforeCreateSchedule', createScheduleData);
 };
 
 /**
@@ -1390,7 +1390,7 @@ Calendar.prototype._onBeforeCreate = function(createScheduleData) {
  * @private
  */
 Calendar.prototype._onBeforeUpdate = function(updateScheduleData) {
-    /**
+  /**
      * Fire this event when drag a schedule to change time in daily, weekly, monthly.
      * @event Calendar#beforeUpdateSchedule
      * @type {object}
@@ -1406,7 +1406,7 @@ Calendar.prototype._onBeforeUpdate = function(updateScheduleData) {
      *     calendar.updateSchedule(schedule.id, schedule.calendarId, changes);
      * });
      */
-    this.fire('beforeUpdateSchedule', updateScheduleData);
+  this.fire('beforeUpdateSchedule', updateScheduleData);
 };
 
 /**
@@ -1415,7 +1415,7 @@ Calendar.prototype._onBeforeUpdate = function(updateScheduleData) {
  * @private
  */
 Calendar.prototype._onBeforeDelete = function(deleteScheduleData) {
-    /**
+  /**
      * Fire this event when delete a schedule.
      * @event Calendar#beforeDeleteSchedule
      * @type {object}
@@ -1426,7 +1426,7 @@ Calendar.prototype._onBeforeDelete = function(deleteScheduleData) {
      *     alert('The schedule is removed.', schedule);
      * });
      */
-    this.fire('beforeDeleteSchedule', deleteScheduleData);
+  this.fire('beforeDeleteSchedule', deleteScheduleData);
 };
 
 /**
@@ -1435,7 +1435,7 @@ Calendar.prototype._onBeforeDelete = function(deleteScheduleData) {
  * @private
  */
 Calendar.prototype._onAfterRenderSchedule = function(scheduleData) {
-    /**
+  /**
      * Fire this event by every single schedule after rendering whole calendar.
      * @event Calendar#afterRenderSchedule
      * @type {object}
@@ -1448,7 +1448,7 @@ Calendar.prototype._onAfterRenderSchedule = function(scheduleData) {
      *     console.log(element);
      * });
      */
-    this.fire('afterRenderSchedule', scheduleData);
+  this.fire('afterRenderSchedule', scheduleData);
 };
 
 /**
@@ -1457,7 +1457,7 @@ Calendar.prototype._onAfterRenderSchedule = function(scheduleData) {
  * @private
  */
 Calendar.prototype._onClickTimezonesCollapseBtn = function(timezonesCollapsed) {
-    /**
+  /**
      * Fire this event by clicking timezones collapse button
      * @event Calendar#clickTimezonesCollapseBtn
      * @type {object}
@@ -1467,7 +1467,7 @@ Calendar.prototype._onClickTimezonesCollapseBtn = function(timezonesCollapsed) {
      *     console.log(timezonesCollapsed);
      * });
      */
-    this.fire('clickTimezonesCollapseBtn', timezonesCollapsed);
+  this.fire('clickTimezonesCollapseBtn', timezonesCollapsed);
 };
 
 /**
@@ -1477,35 +1477,35 @@ Calendar.prototype._onClickTimezonesCollapseBtn = function(timezonesCollapsed) {
  * @private
  */
 Calendar.prototype._toggleViewSchedule = function(isAttach, view) {
-    var self = this,
-        handler = view.handler,
-        method = isAttach ? 'on' : 'off';
+  var self = this,
+    handler = view.handler,
+    method = isAttach ? 'on' : 'off';
 
-    util.forEach(handler.click, function(clickHandler) {
-        clickHandler[method]('clickSchedule', self._onClick, self);
-    });
+  util.forEach(handler.click, function(clickHandler) {
+    clickHandler[method]('clickSchedule', self._onClick, self);
+  });
 
-    util.forEach(handler.dayname, function(clickHandler) {
-        clickHandler[method]('clickDayname', self._onClickDayname, self);
-    });
+  util.forEach(handler.dayname, function(clickHandler) {
+    clickHandler[method]('clickDayname', self._onClickDayname, self);
+  });
 
-    util.forEach(handler.creation, function(creationHandler) {
-        creationHandler[method]('beforeCreateSchedule', self._onBeforeCreate, self);
-        creationHandler[method]('beforeDeleteSchedule', self._onBeforeDelete, self);
-    });
+  util.forEach(handler.creation, function(creationHandler) {
+    creationHandler[method]('beforeCreateSchedule', self._onBeforeCreate, self);
+    creationHandler[method]('beforeDeleteSchedule', self._onBeforeDelete, self);
+  });
 
-    util.forEach(handler.move, function(moveHandler) {
-        moveHandler[method]('beforeUpdateSchedule', self._onBeforeUpdate, self);
-    });
+  util.forEach(handler.move, function(moveHandler) {
+    moveHandler[method]('beforeUpdateSchedule', self._onBeforeUpdate, self);
+  });
 
-    util.forEach(handler.resize, function(resizeHandler) {
-        resizeHandler[method]('beforeUpdateSchedule', self._onBeforeUpdate, self);
-    });
+  util.forEach(handler.resize, function(resizeHandler) {
+    resizeHandler[method]('beforeUpdateSchedule', self._onBeforeUpdate, self);
+  });
 
-    // bypass events from view
-    view[method]('afterRenderSchedule', self._onAfterRenderSchedule, self);
-    view[method]('clickTimezonesCollapseBtn', self._onClickTimezonesCollapseBtn, self);
-    view[method]('clickMore', self._onClickMore, self);
+  // bypass events from view
+  view[method]('afterRenderSchedule', self._onAfterRenderSchedule, self);
+  view[method]('clickTimezonesCollapseBtn', self._onClickTimezonesCollapseBtn, self);
+  view[method]('clickMore', self._onClickMore, self);
 };
 
 /**
@@ -1547,65 +1547,65 @@ Calendar.prototype._toggleViewSchedule = function(isAttach, view) {
  * calendar.changeView(calendar.getViewName(), true);
  */
 Calendar.prototype.changeView = function(newViewName, force) {
-    var self = this,
-        layout = this._layout,
-        controller = this._controller,
-        dragHandler = this._dragHandler,
-        options = this._options,
-        viewName = this._viewName,
-        created;
+  var self = this,
+    layout = this._layout,
+    controller = this._controller,
+    dragHandler = this._dragHandler,
+    options = this._options,
+    viewName = this._viewName,
+    created;
 
-    if (!force && viewName === newViewName) {
-        return;
-    }
+  if (!force && viewName === newViewName) {
+    return;
+  }
 
-    this._setViewName(newViewName);
+  this._setViewName(newViewName);
 
-    // convert day to week
-    if (viewName === 'day') {
-        viewName = 'week';
-    }
+  // convert day to week
+  if (viewName === 'day') {
+    viewName = 'week';
+  }
 
-    if (newViewName === 'day') {
-        newViewName = 'week';
-    }
-    layout.children.doWhenHas(viewName, function(view) {
-        self._toggleViewSchedule(false, view);
-    });
+  if (newViewName === 'day') {
+    newViewName = 'week';
+  }
+  layout.children.doWhenHas(viewName, function(view) {
+    self._toggleViewSchedule(false, view);
+  });
 
-    layout.clear();
+  layout.clear();
 
-    if (newViewName === 'month') {
-        created = _createMonthView(
-            controller,
-            layout.container,
-            dragHandler,
-            options
-        );
-    } else if (newViewName === 'week' || newViewName === 'day') {
-        created = _createWeekView(
-            controller,
-            layout.container,
-            dragHandler,
-            options,
-            this.getViewName()
-        );
-    }
+  if (newViewName === 'month') {
+    created = _createMonthView(
+      controller,
+      layout.container,
+      dragHandler,
+      options
+    );
+  } else if (newViewName === 'week' || newViewName === 'day') {
+    created = _createWeekView(
+      controller,
+      layout.container,
+      dragHandler,
+      options,
+      this.getViewName()
+    );
+  }
 
-    layout.addChild(created.view);
+  layout.addChild(created.view);
 
-    layout.children.doWhenHas(newViewName, function(view) {
-        self._toggleViewSchedule(true, view);
-    });
+  layout.children.doWhenHas(newViewName, function(view) {
+    self._toggleViewSchedule(true, view);
+  });
 
-    this._refreshMethod = created.refresh;
-    this._scrollToNowMethod = created.scrollToNow;
-    this._openCreationPopup = created.openCreationPopup;
-    this._showCreationPopup = created.showCreationPopup;
-    this._hideMoreView = created.hideMoreView;
+  this._refreshMethod = created.refresh;
+  this._scrollToNowMethod = created.scrollToNow;
+  this._openCreationPopup = created.openCreationPopup;
+  this._showCreationPopup = created.showCreationPopup;
+  this._hideMoreView = created.hideMoreView;
 
-    this.move();
-    this.render();
+  this.move();
+  this.render();
 };
 
 /**
@@ -1620,12 +1620,12 @@ Calendar.prototype.changeView = function(newViewName, force) {
  * calendar.toggleTaskView(true);
  */
 Calendar.prototype.toggleTaskView = function(enabled) {
-    var viewName = this._viewName,
-        options = this._options;
+  var viewName = this._viewName,
+    options = this._options;
 
-    options.taskView = enabled;
+  options.taskView = enabled;
 
-    this.changeView(viewName, true);
+  this.changeView(viewName, true);
 };
 
 /**
@@ -1640,12 +1640,12 @@ Calendar.prototype.toggleTaskView = function(enabled) {
  * calendar.toggleScheduleView(true);
  */
 Calendar.prototype.toggleScheduleView = function(enabled) {
-    var viewName = this._viewName,
-        options = this._options;
+  var viewName = this._viewName,
+    options = this._options;
 
-    options.scheduleView = enabled;
+  options.scheduleView = enabled;
 
-    this.changeView(viewName, true);
+  this.changeView(viewName, true);
 };
 
 /**
@@ -1654,7 +1654,7 @@ Calendar.prototype.toggleScheduleView = function(enabled) {
  * @private
  */
 Calendar.prototype._setViewName = function(viewName) {
-    this._viewName = viewName;
+  this._viewName = viewName;
 };
 
 /**
@@ -1667,12 +1667,12 @@ Calendar.prototype._setViewName = function(viewName) {
  * console.log(element);
  */
 Calendar.prototype.getElement = function(scheduleId, calendarId) {
-    var schedule = this.getSchedule(scheduleId, calendarId);
-    if (schedule) {
-        return document.querySelector('[data-schedule-id="' + scheduleId + '"][data-calendar-id="' + calendarId + '"]');
-    }
+  var schedule = this.getSchedule(scheduleId, calendarId);
+  if (schedule) {
+    return document.querySelector('[data-schedule-id="' + scheduleId + '"][data-calendar-id="' + calendarId + '"]');
+  }
 
-    return null;
+  return null;
 };
 
 /**
@@ -1687,10 +1687,10 @@ Calendar.prototype.getElement = function(scheduleId, calendarId) {
  * });
  */
 Calendar.prototype.setTheme = function(theme) {
-    var result = this._controller.setTheme(theme);
-    this.render(true);
+  var result = this._controller.setTheme(theme);
+  this.render(true);
 
-    return result;
+  return result;
 };
 
 /**
@@ -1699,21 +1699,21 @@ Calendar.prototype.setTheme = function(theme) {
  * @param {boolean} [silent=false] - no auto render after creation when set true
  */
 Calendar.prototype.setOptions = function(options, silent) {
-    util.forEach(options, function(value, name) {
-        if (util.isObject(value) && !util.isArray(value)) {
-            util.forEach(value, function(innerValue, innerName) {
-                this._options[name][innerName] = innerValue;
-            }, this);
-        } else {
-            this._options[name] = value;
-        }
-    }, this);
-
-    this._setAdditionalInternalOptions(options);
-
-    if (!silent) {
-        this.changeView(this._viewName, true);
+  util.forEach(options, function(value, name) {
+    if (util.isObject(value) && !util.isArray(value)) {
+      util.forEach(value, function(innerValue, innerName) {
+        this._options[name][innerName] = innerValue;
+      }, this);
+    } else {
+      this._options[name] = value;
     }
+  }, this);
+
+  this._setAdditionalInternalOptions(options);
+
+  if (!silent) {
+    this.changeView(this._viewName, true);
+  }
 };
 
 /**
@@ -1721,7 +1721,7 @@ Calendar.prototype.setOptions = function(options, silent) {
  * @returns {Options} options
  */
 Calendar.prototype.getOptions = function() {
-    return this._options;
+  return this._options;
 };
 
 /**
@@ -1729,7 +1729,7 @@ Calendar.prototype.getOptions = function() {
  * @returns {TZDate}
  */
 Calendar.prototype.getDate = function() {
-    return this._renderDate;
+  return this._renderDate;
 };
 
 /**
@@ -1737,7 +1737,7 @@ Calendar.prototype.getDate = function() {
  * @returns {TZDate}
  */
 Calendar.prototype.getDateRangeStart = function() {
-    return this._renderRange.start;
+  return this._renderRange.start;
 };
 
 /**
@@ -1745,7 +1745,7 @@ Calendar.prototype.getDateRangeStart = function() {
  * @returns {TZDate}
  */
 Calendar.prototype.getDateRangeEnd = function() {
-    return this._renderRange.end;
+  return this._renderRange.end;
 };
 
 /**
@@ -1753,7 +1753,7 @@ Calendar.prototype.getDateRangeEnd = function() {
  * @returns {string} view name
  */
 Calendar.prototype.getViewName = function() {
-    return this._viewName;
+  return this._viewName;
 };
 
 /**
@@ -1761,13 +1761,13 @@ Calendar.prototype.getViewName = function() {
  * @param {Array.<CalendarProps>} calendars - {@link CalendarProps} List
  */
 Calendar.prototype.setCalendars = function(calendars) {
-    util.forEach(calendars || [], function(calendar) {
-        this.setCalendarColor(calendar.id, calendar, true);
-    }, this);
+  util.forEach(calendars || [], function(calendar) {
+    this.setCalendarColor(calendar.id, calendar, true);
+  }, this);
 
-    this._controller.setCalendars(calendars);
+  this._controller.setCalendars(calendars);
 
-    this.render();
+  this.render();
 };
 
 /**
@@ -1775,18 +1775,18 @@ Calendar.prototype.setCalendars = function(calendars) {
  * @param {Schedule} schedule - The preset {@link Schedule} data
  */
 Calendar.prototype.openCreationPopup = function(schedule) {
-    if (this._openCreationPopup) {
-        this._openCreationPopup(schedule);
-    }
+  if (this._openCreationPopup) {
+    this._openCreationPopup(schedule);
+  }
 };
 
 /**
  * Hide the more view
  */
 Calendar.prototype.hideMoreView = function() {
-    if (this._hideMoreView) {
-        this._hideMoreView();
-    }
+  if (this._hideMoreView) {
+    this._hideMoreView();
+  }
 };
 
 /**
@@ -1799,7 +1799,7 @@ Calendar.prototype.hideMoreView = function() {
  * tui.Calendar.setTimezoneOffset(moment.tz.zone(timezoneName).utcOffset(moment()));
  */
 Calendar.setTimezoneOffset = function(offset) {
-    timezone.setOffset(offset);
+  timezone.setOffset(offset);
 };
 
 /**
@@ -1814,7 +1814,7 @@ Calendar.setTimezoneOffset = function(offset) {
  * });
  */
 Calendar.setTimezoneOffsetCallback = function(callback) {
-    timezone.setOffsetCallback(callback);
+  timezone.setOffsetCallback(callback);
 };
 
 /**
@@ -1824,7 +1824,7 @@ Calendar.setTimezoneOffsetCallback = function(callback) {
  * @private
  */
 function _createController(options) {
-    return controllerFactory(options);
+  return controllerFactory(options);
 }
 
 /**
@@ -1838,13 +1838,13 @@ function _createController(options) {
  * @private
  */
 function _createWeekView(controller, container, dragHandler, options, viewName) {
-    return weekViewFactory(
-        controller,
-        container,
-        dragHandler,
-        options,
-        viewName
-    );
+  return weekViewFactory(
+    controller,
+    container,
+    dragHandler,
+    options,
+    viewName
+  );
 }
 
 /**
@@ -1857,12 +1857,12 @@ function _createWeekView(controller, container, dragHandler, options, viewName) 
  * @private
  */
 function _createMonthView(controller, container, dragHandler, options) {
-    return monthViewFactory(
-        controller,
-        container,
-        dragHandler,
-        options
-    );
+  return monthViewFactory(
+    controller,
+    container,
+    dragHandler,
+    options
+  );
 }
 
 /**
@@ -1872,15 +1872,15 @@ function _createMonthView(controller, container, dragHandler, options) {
  * @private
  */
 function _setOptionRecurseively(view, func) {
-    view.recursive(function(childView) {
-        var opt = childView.options;
+  view.recursive(function(childView) {
+    var opt = childView.options;
 
-        if (!opt) {
-            return;
-        }
+    if (!opt) {
+      return;
+    }
 
-        func(childView, opt);
-    });
+    func(childView, opt);
+  });
 }
 
 util.CustomEvents.mixin(Calendar);

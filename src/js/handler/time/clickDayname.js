@@ -17,32 +17,32 @@ var domutil = require('../../common/domutil');
  * @param {Base} [baseController] - Base controller instance.
  */
 function DayNameClick(dragHandler, dayNameView, baseController) {
-    /**
+  /**
      * @type {Drag}
      */
-    this.dragHandler = dragHandler;
+  this.dragHandler = dragHandler;
 
-    /**
+  /**
      * @type {DayName}
      */
-    this.dayNameView = dayNameView;
+  this.dayNameView = dayNameView;
 
-    /**
+  /**
      * @type {Base}
      */
-    this.baseController = baseController;
+  this.baseController = baseController;
 
-    dragHandler.on({
-        'click': this._onClick
-    }, this);
+  dragHandler.on({
+    'click': this._onClick
+  }, this);
 }
 
 /**
  * Destroy method
  */
 DayNameClick.prototype.destroy = function() {
-    this.dragHandler.off(this);
-    this.dayNameView = this.baseController = this.dragHandler = null;
+  this.dragHandler.off(this);
+  this.dayNameView = this.baseController = this.dragHandler = null;
 };
 
 /**
@@ -51,13 +51,13 @@ DayNameClick.prototype.destroy = function() {
  * @returns {string} - model id
  */
 DayNameClick.prototype.checkExpectCondition = function(target) {
-    var container = domutil.closest(target, config.classname('.dayname-date-area'));
+  var container = domutil.closest(target, config.classname('.dayname-date-area'));
 
-    if (!container) {
-        return false;
-    }
+  if (!container) {
+    return false;
+  }
 
-    return true;
+  return true;
 };
 
 /**
@@ -66,23 +66,23 @@ DayNameClick.prototype.checkExpectCondition = function(target) {
  * @emits DayNameClick#clickDayname
  */
 DayNameClick.prototype._onClick = function(clickEvent) {
-    var self = this,
-        target = clickEvent.target,
-        daynameView = this.checkExpectCondition(target),
-        blockElement = domutil.closest(target, config.classname('.dayname'));
+  var self = this,
+    target = clickEvent.target,
+    daynameView = this.checkExpectCondition(target),
+    blockElement = domutil.closest(target, config.classname('.dayname'));
 
-    if (!daynameView || !blockElement) {
-        return;
-    }
+  if (!daynameView || !blockElement) {
+    return;
+  }
 
-    /**
+  /**
      * @events DayNameClick#clickDayname
      * @type {object}
      * @property {string} date - click date
      */
-    self.fire('clickDayname', {
-        date: domutil.getData(blockElement, 'date')
-    });
+  self.fire('clickDayname', {
+    date: domutil.getData(blockElement, 'date')
+  });
 };
 
 util.CustomEvents.mixin(DayNameClick);

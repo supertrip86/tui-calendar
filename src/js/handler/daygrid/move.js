@@ -22,44 +22,44 @@ var TZDate = require('../../common/timezone').Date;
  * @param {Base} controller - Base controller instance.
  */
 function DayGridMove(dragHandler, view, controller) {
-    /**
+  /**
      * Drag handler instance.
      * @type {Drag}
      */
-    this.dragHandler = dragHandler;
+  this.dragHandler = dragHandler;
 
-    /**
+  /**
      * view instance.
      * @type {DayGrid}
      */
-    this.view = view;
+  this.view = view;
 
-    /**
+  /**
      * Base controller instance.
      * @type {Base}
      */
-    this.controller = controller;
+  this.controller = controller;
 
-    /**
+  /**
      * Temporary variable for dragstart event data.
      * @type {object}
      */
-    this._dragStart = null;
+  this._dragStart = null;
 
-    dragHandler.on({
-        dragStart: this._onDragStart
-    }, this);
+  dragHandler.on({
+    dragStart: this._onDragStart
+  }, this);
 
-    /**
+  /**
      * @type {DayGridMoveGuide}
      */
-    this.guide = new DayGridMoveGuide(this);
+  this.guide = new DayGridMoveGuide(this);
 }
 
 DayGridMove.prototype.destroy = function() {
-    this.guide.destroy();
-    this.dragHandler.off(this);
-    this.dragHandler = this.view = this.controller =
+  this.guide.destroy();
+  this.dragHandler.off(this);
+  this.dragHandler = this.view = this.controller =
         this.guide = this._dragStart = null;
 };
 
@@ -69,28 +69,28 @@ DayGridMove.prototype.destroy = function() {
  * @returns {boolean|DayGridSchedule} return DayGridSchedule view instance when satiate condition.
  */
 DayGridMove.prototype.checkExpectedCondition = function(target) {
-    var cssClass = domutil.getClass(target),
-        parentView,
-        matches;
+  var cssClass = domutil.getClass(target),
+    parentView,
+    matches;
 
-    if (~cssClass.indexOf(config.classname('weekday-resize-handle'))) {
-        return false;
-    }
+  if (~cssClass.indexOf(config.classname('weekday-resize-handle'))) {
+    return false;
+  }
 
-    parentView = domutil.closest(target, config.classname('.weekday'));
+  parentView = domutil.closest(target, config.classname('.weekday'));
 
-    if (!parentView) {
-        return false;
-    }
+  if (!parentView) {
+    return false;
+  }
 
-    cssClass = domutil.getClass(parentView);
-    matches = cssClass.match(config.daygrid.getViewIDRegExp);
+  cssClass = domutil.getClass(parentView);
+  matches = cssClass.match(config.daygrid.getViewIDRegExp);
 
-    if (!matches || matches.length < 2) {
-        return false;
-    }
+  if (!matches || matches.length < 2) {
+    return false;
+  }
 
-    return util.pick(this.view.children.items, matches[1]);
+  return util.pick(this.view.children.items, matches[1]);
 };
 
 /**
@@ -99,52 +99,52 @@ DayGridMove.prototype.checkExpectedCondition = function(target) {
  * @param {object} dragStartEventData - Drag#dragStart event handler event data.
  */
 DayGridMove.prototype._onDragStart = function(dragStartEventData) {
-    var target = dragStartEventData.target,
-        result = this.checkExpectedCondition(target),
-        controller = this.controller,
-        excludeTarget = true,
-        scheduleBlockElement,
-        modelID,
-        targetModel,
-        getScheduleDataFunc,
-        scheduleData;
+  var target = dragStartEventData.target,
+    result = this.checkExpectedCondition(target),
+    controller = this.controller,
+    excludeTarget = true,
+    scheduleBlockElement,
+    modelID,
+    targetModel,
+    getScheduleDataFunc,
+    scheduleData;
 
-    if (!result) {
-        return;
-    }
+  if (!result) {
+    return;
+  }
 
-    scheduleBlockElement = domutil.closest(target, config.classname('.weekday-schedule-block'), excludeTarget);
-    if (!scheduleBlockElement) {
-        return;
-    }
+  scheduleBlockElement = domutil.closest(target, config.classname('.weekday-schedule-block'), excludeTarget);
+  if (!scheduleBlockElement) {
+    return;
+  }
 
-    modelID = domutil.getData(scheduleBlockElement, 'id');
-    targetModel = controller.schedules.items[modelID];
+  modelID = domutil.getData(scheduleBlockElement, 'id');
+  targetModel = controller.schedules.items[modelID];
 
-    if (!targetModel) {
-        return;
-    }
+  if (!targetModel) {
+    return;
+  }
 
-    if (targetModel.isReadOnly) {
-        return;
-    }
+  if (targetModel.isReadOnly) {
+    return;
+  }
 
-    getScheduleDataFunc = this._retriveScheduleData(this.view, dragStartEventData.originEvent);
-    this.getScheduleDataFunc = getScheduleDataFunc;
-    scheduleData = this._dragStart = getScheduleDataFunc(dragStartEventData.originEvent);
+  getScheduleDataFunc = this._retriveScheduleData(this.view, dragStartEventData.originEvent);
+  this.getScheduleDataFunc = getScheduleDataFunc;
+  scheduleData = this._dragStart = getScheduleDataFunc(dragStartEventData.originEvent);
 
-    util.extend(scheduleData, {
-        scheduleBlockElement: scheduleBlockElement,
-        model: targetModel
-    });
+  util.extend(scheduleData, {
+    scheduleBlockElement: scheduleBlockElement,
+    model: targetModel
+  });
 
-    this.dragHandler.on({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd,
-        click: this._onClick
-    }, this);
+  this.dragHandler.on({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd,
+    click: this._onClick
+  }, this);
 
-    /**
+  /**
      * @event DayGridMove#dragstart
      * @type {object}
      * @property {DayGrid} relatedView - view instance.
@@ -154,7 +154,7 @@ DayGridMove.prototype._onDragStart = function(dragStartEventData) {
      * @property {Schedule} model - data object of model isntance.
      * @property {HTMLDivElement} scheduleBlockElement - target schedule block element.
      */
-    this.fire('dragstart', scheduleData);
+  this.fire('dragstart', scheduleData);
 };
 
 /**
@@ -163,13 +163,13 @@ DayGridMove.prototype._onDragStart = function(dragStartEventData) {
  * @param {object} dragEventData - Drag#drag event handler eventdata.
  */
 DayGridMove.prototype._onDrag = function(dragEventData) {
-    var getScheduleDataFunc = this.getScheduleDataFunc;
+  var getScheduleDataFunc = this.getScheduleDataFunc;
 
-    if (!getScheduleDataFunc) {
-        return;
-    }
+  if (!getScheduleDataFunc) {
+    return;
+  }
 
-    /**
+  /**
      * @schedule DayGridMove#drag
      * @type {object}
      * @property {DayGrid} relatedView - view instance.
@@ -177,7 +177,7 @@ DayGridMove.prototype._onDrag = function(dragEventData) {
      * @property {number} dragStartXIndex - index number of dragstart grid index.
      * @property {number} xIndex - index number of mouse positions.
      */
-    this.fire('drag', getScheduleDataFunc(dragEventData.originEvent));
+  this.fire('drag', getScheduleDataFunc(dragEventData.originEvent));
 };
 
 /**
@@ -186,15 +186,15 @@ DayGridMove.prototype._onDrag = function(dragEventData) {
  * @param {object} scheduleData - schedule data from DayGridMove handler module.
  */
 DayGridMove.prototype._updateSchedule = function(scheduleData) {
-    var schedule = scheduleData.targetModel,
-        dateOffset = scheduleData.xIndex - scheduleData.dragStartXIndex,
-        newStarts = new TZDate(schedule.start),
-        newEnds = new TZDate(schedule.end);
+  var schedule = scheduleData.targetModel,
+    dateOffset = scheduleData.xIndex - scheduleData.dragStartXIndex,
+    newStarts = new TZDate(schedule.start),
+    newEnds = new TZDate(schedule.end);
 
-    newStarts = newStarts.addDate(dateOffset);
-    newEnds = newEnds.addDate(dateOffset);
+  newStarts = newStarts.addDate(dateOffset);
+  newEnds = newEnds.addDate(dateOffset);
 
-    /**
+  /**
      * @event DayGridMove#beforeUpdateSchedule
      * @type {object}
      * @property {Schedule} schedule - The original schedule instance
@@ -204,15 +204,15 @@ DayGridMove.prototype._updateSchedule = function(scheduleData) {
      *  @property {Date} start - start time to update
      *  @property {Date} end - end time to update
      */
-    this.fire('beforeUpdateSchedule', {
-        schedule: schedule,
-        changes: {
-            start: newStarts,
-            end: newEnds
-        },
-        start: newStarts,
-        end: newEnds
-    });
+  this.fire('beforeUpdateSchedule', {
+    schedule: schedule,
+    changes: {
+      start: newStarts,
+      end: newEnds
+    },
+    start: newStarts,
+    end: newEnds
+  });
 };
 
 /**
@@ -223,30 +223,30 @@ DayGridMove.prototype._updateSchedule = function(scheduleData) {
  * @param {?boolean} skipUpdate - true then skip update schedule model.
  */
 DayGridMove.prototype._onDragEnd = function(dragEndEventData, overrideEventName, skipUpdate) {
-    var getScheduleDataFunc = this.getScheduleDataFunc,
-        dragStart = this._dragStart,
-        scheduleData;
+  var getScheduleDataFunc = this.getScheduleDataFunc,
+    dragStart = this._dragStart,
+    scheduleData;
 
-    if (!getScheduleDataFunc || !dragStart) {
-        return;
-    }
+  if (!getScheduleDataFunc || !dragStart) {
+    return;
+  }
 
-    this.dragHandler.off({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd,
-        click: this._onClick
-    }, this);
+  this.dragHandler.off({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd,
+    click: this._onClick
+  }, this);
 
-    scheduleData = getScheduleDataFunc(dragEndEventData.originEvent);
-    util.extend(scheduleData, {
-        targetModel: dragStart.model
-    });
+  scheduleData = getScheduleDataFunc(dragEndEventData.originEvent);
+  util.extend(scheduleData, {
+    targetModel: dragStart.model
+  });
 
-    if (!skipUpdate) {
-        this._updateSchedule(scheduleData);
-    }
+  if (!skipUpdate) {
+    this._updateSchedule(scheduleData);
+  }
 
-    /**
+  /**
      * @event DayGridMove#dragend
      * @type {object}
      * @property {DayGrid} relatedView - view instance.
@@ -254,9 +254,9 @@ DayGridMove.prototype._onDragEnd = function(dragEndEventData, overrideEventName,
      * @property {number} dragStartXIndex - index number of dragstart grid index.
      * @property {number} xIndex - index number of mouse positions.
      */
-    this.fire(overrideEventName || 'dragend', scheduleData);
+  this.fire(overrideEventName || 'dragend', scheduleData);
 
-    this.getScheduleDataFunc = this._dragStart = null;
+  this.getScheduleDataFunc = this._dragStart = null;
 };
 
 /**
@@ -265,7 +265,7 @@ DayGridMove.prototype._onDragEnd = function(dragEndEventData, overrideEventName,
  * @param {object} clickEventData - Drag#Click event handler data.
  */
 DayGridMove.prototype._onClick = function(clickEventData) {
-    /**
+  /**
      * @event DayGridMove#click
      * @type {object}
      * @property {DayGrid} relatedView - view instance.
@@ -273,7 +273,7 @@ DayGridMove.prototype._onClick = function(clickEventData) {
      * @property {number} dragStartXIndex - index number of dragstart grid index.
      * @property {number} xIndex - index number of mouse positions.
      */
-    this._onDragEnd(clickEventData, 'click', true);
+  this._onDragEnd(clickEventData, 'click', true);
 };
 
 common.mixin(dayGridCore, DayGridMove);

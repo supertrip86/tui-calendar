@@ -18,14 +18,14 @@ var View = require('./view');
  * @param {Theme} theme - theme instance
  */
 function Layout(container, theme) {
-    container = domutil.appendHTMLElement('div', container, config.classname('layout'));
+  container = domutil.appendHTMLElement('div', container, config.classname('layout'));
 
-    /**
+  /**
      * @type {HTMLElement}
      */
-    this.container = container;
+  this.container = container;
 
-    /*eslint-disable*/
+  /*eslint-disable*/
     /**
      * @type {Collection} Child view collection.
      */
@@ -34,12 +34,12 @@ function Layout(container, theme) {
     });
     /* eslint-enable*/
 
-    /**
+  /**
      * @type {Theme}
      */
-    this.theme = theme;
+  this.theme = theme;
 
-    this.applyTheme();
+  this.applyTheme();
 }
 
 util.inherit(Layout, View);
@@ -48,12 +48,12 @@ util.inherit(Layout, View);
  * Clear child views.
  */
 Layout.prototype.clear = function() {
-    this.children.each(function(childView) {
-        childView.destroy();
-    });
+  this.children.each(function(childView) {
+    childView.destroy();
+  });
 
-    this.children.clear();
-    this.container.innerHTML = '';
+  this.children.clear();
+  this.container.innerHTML = '';
 };
 
 /**
@@ -62,7 +62,7 @@ Layout.prototype.clear = function() {
  * @param {(string|View)} viewName - name of view or instance.
  */
 Layout.prototype.removeChild = function(viewName) {
-    this.children.remove(viewName);
+  this.children.remove(viewName);
 };
 
 /**
@@ -70,23 +70,23 @@ Layout.prototype.removeChild = function(viewName) {
  * @param {string} viewName - Name of view.
  */
 Layout.prototype.toggleChildView = function(viewName) {
-    var container,
-        prefix = ['add', 'remove'],
-        flag;
+  var container,
+    prefix = ['add', 'remove'],
+    flag;
 
-    this.children.each(function(childView) {
-        container = childView.container;
-        flag = Number(childView.viewName === viewName);
-        domutil[prefix[flag] + 'Class'](container, config.classname('hidden'));
-    });
+  this.children.each(function(childView) {
+    container = childView.container;
+    flag = Number(childView.viewName === viewName);
+    domutil[prefix[flag] + 'Class'](container, config.classname('hidden'));
+  });
 };
 
 Layout.prototype.applyTheme = function() {
-    var style = this.container.style;
-    var theme = this.theme.common;
+  var style = this.container.style;
+  var theme = this.theme.common;
 
-    // background color
-    style.backgroundColor = theme.backgroundColor;
+  // background color
+  style.backgroundColor = theme.backgroundColor;
 };
 
 module.exports = Layout;

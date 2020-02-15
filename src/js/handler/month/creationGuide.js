@@ -11,35 +11,35 @@ var MonthGuide = require('./guide');
  * @param {MonthCreation} monthCreation - instance of MonthCreation
  */
 function MonthCreationGuide(monthCreation) {
-    /**
+  /**
      * @type {MonthCreation}
      */
-    this.monthCreation = monthCreation;
+  this.monthCreation = monthCreation;
 
-    /**
+  /**
      * @type {MonthGuide}
      */
-    this.guide = null;
+  this.guide = null;
 
-    monthCreation.on({
-        monthCreationDragstart: this._createGuideElement,
-        monthCreationDrag: this._onDrag,
-        monthCreationDragend: this._onDragEnd,
-        monthCreationClick: this._createGuideElement
-    }, this);
+  monthCreation.on({
+    monthCreationDragstart: this._createGuideElement,
+    monthCreationDrag: this._onDrag,
+    monthCreationDragend: this._onDragEnd,
+    monthCreationClick: this._createGuideElement
+  }, this);
 }
 
 /**
  * Destructor
  */
 MonthCreationGuide.prototype.destroy = function() {
-    this.monthCreation.off(this);
+  this.monthCreation.off(this);
 
-    if (this.guide) {
-        this.guide.destroy();
-    }
+  if (this.guide) {
+    this.guide.destroy();
+  }
 
-    this.guide = this.monthCreation = null;
+  this.guide = this.monthCreation = null;
 };
 
 /**
@@ -47,14 +47,14 @@ MonthCreationGuide.prototype.destroy = function() {
  * @param {object} dragStartEvent - schedule data from MonthCreation
  */
 MonthCreationGuide.prototype._createGuideElement = function(dragStartEvent) {
-    var options = {
-        isCreationMode: true,
-        height: '100%',
-        top: 0
-    };
+  var options = {
+    isCreationMode: true,
+    height: '100%',
+    top: 0
+  };
 
-    this.guide = new MonthGuide(options, this.monthCreation.monthView);
-    this.guide.start(dragStartEvent);
+  this.guide = new MonthGuide(options, this.monthCreation.monthView);
+  this.guide.start(dragStartEvent);
 };
 
 /**
@@ -62,15 +62,15 @@ MonthCreationGuide.prototype._createGuideElement = function(dragStartEvent) {
  * @param {object} dragEvent - schedule data from MonthCreation
  */
 MonthCreationGuide.prototype._onDrag = function(dragEvent) {
-    this.guide.update(dragEvent.x, dragEvent.y);
+  this.guide.update(dragEvent.x, dragEvent.y);
 };
 
 /**
  * Drag end event handler
  */
 MonthCreationGuide.prototype._onDragEnd = function() {
-    // Do nothing. User calls destroy directly.
-    this.guide = null;
+  // Do nothing. User calls destroy directly.
+  this.guide = null;
 };
 
 module.exports = MonthCreationGuide;

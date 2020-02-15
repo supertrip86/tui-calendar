@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.12.11 | Wed Feb 05 2020
+ * @version 1.12.11 | Sat Feb 15 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -683,14 +683,14 @@
 .tui-full-calendar-section-title input {
   width: 365px;
 }
-.tui-full-calendar-button.tui-full-calendar-section-private {
+.tui-full-calendar-button.tui-full-calendar-section-attachment {
   height: 32px;
-  padding: 8px;
+  padding: 6px;
   font-size: 0;
   margin-left: 4px;
 }
-.tui-full-calendar-section-private.tui-full-calendar-public .tui-full-calendar-ic-private {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAKdJREFUKBVjYCATMKLri46Olvn9+3fX////HUByjIyMB1hZWcuWLl36BFktikaQpl+/fl0EKhBCVgRkv2NjY9NH1syErABkE1TTdqBCWRAG8reDxKBycOUoGmHOA2pIA5kOwiA2SDVMDq4TmREaGvofhJHFcLHhfgwLC9sKNNULl0KQODCgtq1atcobxIY7lZAmkGJkNXCNIAlSwIjSCApqIgJnK0wNALoOPwSpOcq0AAAAAElFTkSuQmCC) no-repeat;
+.tui-full-calendar-button #tui-full-calendar-input-attachment {
+  display: none;
 }
 .tui-full-calendar-section-start-date,
 .tui-full-calendar-section-end-date {
@@ -724,12 +724,29 @@
   border: none;
   padding: 0 0 0 8px;
   cursor: pointer;
+  height: 20px;
 }
 .tui-full-calendar-popup-section-item.tui-full-calendar-section-location {
   display: block;
 }
 .tui-full-calendar-popup-section-item.tui-full-calendar-section-location input {
   width: 400px;
+}
+.tui-full-calendar-popup-section-item.tui-full-calendar-section-comments {
+  height: 100px;
+  margin-bottom: 10px;
+}
+.tui-full-calendar-popup-section-item #tui-full-calendar-schedule-comments {
+  width: 400px;
+  resize: none;
+  border: none;
+  outline: none;
+  height: 100%;
+  padding: 6px 8px;
+}
+.tui-full-calendar-popup-section-item #tui-full-calendar-schedule-comments::placeholder {
+  color: #bbb;
+  font-weight: 300;
 }
 .tui-full-calendar-section-allday .tui-full-calendar-icon.tui-full-calendar-ic-checkbox {
   margin: 0;
@@ -747,7 +764,7 @@
 }
 .tui-full-calendar-popup-section-item {
   height: 32px;
-  padding: 0 9px 0 12px;
+  padding: 0 6px 0 12px;
   border: 1px solid #d5d5d5;
   display: inline-block;
   font-size: 0;
@@ -951,18 +968,18 @@
   width: 96px;
   height: 36px;
   border-radius: 40px;
-  background-color: #ff6618;
+  background-color: #587ca1;
   font-size: 12px;
   font-weight: bold;
   color: #fff;
   border: none;
 }
 .tui-full-calendar-confirm:hover {
-  background-color: #e55b15;
+  background-color: #587ca1;
   color: #fff;
 }
 .tui-full-calendar-confirm:active {
-  background-color: #d95614;
+  background-color: #587ca1;
   color: #fff;
 }
 .tui-full-calendar-icon.tui-full-calendar-right {
@@ -1031,9 +1048,6 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
 .tui-full-calendar-popup-detail .tui-full-calendar-icon {
   margin-right: 8px;
 }
-.tui-full-calendar-popup-detail .tui-full-calendar-icon.tui-full-calendar-ic-location-b {
-  top: -2px;
-}
 .tui-full-calendar-popup-detail .tui-full-calendar-icon.tui-full-calendar-ic-user-b {
   top: -2px;
 }
@@ -1068,16 +1082,15 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
   line-height: 1.6;
   word-break: break-all;
 }
-.tui-full-calendar-popup-detail .tui-full-calendar-schedule-private {
+.tui-full-calendar-popup-detail .tui-full-calendar-schedule-attachment {
   display: none;
   width: 16px;
   height: 16px;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAKpJREFUKBVjYCATMKLri46Olvn9+3fX////HUByjIyMB1hZWcuWLl36BFktikaQpl+/fl0EKhBCVgRkv2NjY9NH1syErABkE1TTdqBCWRAG8reDxKBycOUoGmHOA2pIA5kOwiA2SDVMDqYTRSNQUBIkgewkJDZYDqYR7sewsLCtQFO9YBLYaGBAbVu1apU3SA5uIyFNIMXIauAaQRKkgBGlERTURATOVpgaABRQQOK46wEAAAAAAElFTkSuQmCC) no-repeat 16px;
-}
-.tui-full-calendar-popup-detail .tui-full-calendar-schedule-private .tui-full-calendar-ic-private {
-  display: block;
 }
 .tui-full-calendar-popup-detail .tui-full-calendar-section-detail {
+  margin-bottom: 16px;
+}
+.tui-full-calendar-section-comment {
   margin-bottom: 16px;
 }
 .tui-full-calendar-popup-detail .tui-full-calendar-section-button {
@@ -1116,16 +1129,17 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
   border-color: #d5d5d5;
 }
 .tui-full-calendar-icon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   display: inline-block;
   vertical-align: middle;
 }
 .tui-full-calendar-icon.tui-full-calendar-ic-title {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAO5JREFUKBVjYCATMOLSFxkZqfHnz5+1QHktNDVbV69e7cOCJgjmQjXtB3IksMh7g8SY0CXQNTEyMlYD1fBCabhyFI3omkCq/v//PwnotC8gGq4LyIBrxKYJpBBoU15oaCgPiEbWCPYjUEIFGBBY/QS0qRWooRVIg/UBDXgMYoBtBHJSgWxsAQFWjET8BBqQBuLDNM4Can6GpAAb8ydQMADo3x0gSbDGlStX3gVqdMSjGUUTSCNKAggPD1cDOmU/EEuBJKEAQxNIHEUjSABNM1ZNIHXMIAIZXL169a2+vv5moK18QKeXAv20B1meYjYAr7xrljpOzc0AAAAASUVORK5CYII=) no-repeat;
 }
-.tui-full-calendar-icon.tui-full-calendar-ic-location {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAR1JREFUKBWdUTtPg1AUBiT8CydHJtv/0MTJRWAgcTK1bq0/pO3k4E4IYLo2Me46tS4wumjSpV07kAb6HXLPzaGPRZLL+c73uE/D+OdnHuaCIOhVVTUEf620pWVZ0yRJ3qW3FfR9f1zX9UgaGJumOUnT9Fn3DDzPuwPOuD9TvSzL3kizhOFJ4LnjOJc0wM0FP2Asgx0mEehHUfRHgzDzqF3GOogzbJg8V6XHFqYv4Cvqy7J8DcOwWYmw8Hwy1kHMRjcaKuEGgV82caWbZay3indagJyxcKLOlKeRdJA627YfUVaN0v6tlKbZVjCO4zW2cw91px3AxJEmOONCNoTzPP9xXZfOd6u0Bzz60RGOgmQuiuIb4S3gB0IvaoJW2QMDs1bBoH1CAQAAAABJRU5ErkJggg==) no-repeat;
+.tui-full-calendar-icon.tui-full-calendar-ic-comments {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAYAAADtc08vAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAABYktHRG27BgCtAAABkElEQVQ4T52SO68BYRCG313XUBDCT1GRuDSaDYlOYQuq/Q0K/4FCSaXSKkSjV4lSTSgU4n777IzddTnr5OQ8ycQ3k/lmx/t+ktAZjUZotVqQZRmSJOGT2+0Gr9eLarWKQCBgVB9I1+tVpFIpRCIR28smp9MJwWAQ7XbbqDyQV6sVPB4PnE4nHA7H16Ce7XZrXHuib22/th3U+8nPyh+YTCbQpeOzTAddB05+g/pITKJcLiOZTGKxWEAOh8OsrPn/qHG/33P+GqRVPB7HfD5HKBRiQbvdLthGuliv1zEYDLDb7VAqlRCNRq0v0i+5FIvFoKoqD7xcLshms08NEokEZrMZarUacrkclssl1us1Bw0dj8fI5/PYbDbsGEHiWxv0+30cj0ceVCgU4PP53twhB9xut+XE4XB43yCTyUBRFAyHQ/bd7/fzEDPoJb7aSMLzEzA3eKVSqWA6ncLlchmVB+YgepVEp9Nh1W05n89Cb7SCaDabIp1OC03TOCe+DvhGo9EQxWLRyP4xgOj1esZJiDtMxFvV0RFM7gAAAABJRU5ErkJggg==) no-repeat;
+  top: -32px;
 }
 .tui-full-calendar-icon.tui-full-calendar-ic-date {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAGpJREFUKBVjYKAGCA0N/Q/C6GZhE2cEKQoLC9v6//9/L3QN2PiMjIzbVq1a5c0EkiRWE7JasEZsJhMSI1sjC7LJq1evBvsZWQyZjRxwZNs4hDSiBA6y55EDBRsb7EdQasAmiUNsKw5x4oQBkUAeDPJ53KsAAAAASUVORK5CYII=) no-repeat;
@@ -1133,17 +1147,14 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
 .tui-full-calendar-icon.tui-full-calendar-ic-state {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAIxJREFUKBVjYCATMKLrCw8P9/z3798soLgMVO4JExNT2sqVK7cjq2VC5oDYME2MjIyNIAwUkoGKoShlQeFBOGCbVq1a1QDihoaG1gMpmO0gITAAOzUsLGzr////vWCC+GigK7YBDfUGO5VYTSADYWox/IjPNmS5UY3IoYHGBgcOKG7QxPFxt+KTJCgHAGcZJbGLRuJ2AAAAAElFTkSuQmCC) no-repeat;
 }
-.tui-full-calendar-icon.tui-full-calendar-ic-private {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAKpJREFUKBVjYCATMKLri46Olvn9+3fX////HUByjIyMB1hZWcuWLl36BFktikaQpl+/fl0EKhBCVgRkv2NjY9NH1syErABkE1TTdqBCWRAG8reDxKBycOUoGmHOA2pIA5kOwiA2SDVMDqYTRSNQUBIkgewkJDZYDqYR7sewsLCtQFO9YBLYaGBAbVu1apU3SA5uIyFNIMXIauAaQRKkgBGlERTURATOVpgaABRQQOK46wEAAAAAAElFTkSuQmCC) no-repeat;
+.tui-full-calendar-icon.tui-full-calendar-ic-attachment {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABOklEQVR42qXSzSsFURjH8TO3vPwDKCkbpMROItmIUiJ1i5KSd8nGgp0N2REWFF1l596LnZdYKOWlsLFXyoKFnQ0LL9/R7+g2OWPKU5+amTO/Z07PGc/8s7yQtWzE8Kr7CkygCLtYw6erQT4OcIkx9GAdF7hFP1IY+K1BMY7xgha0YxVTmNc7tTjEXLBBucJ3aEOnwqPaQWZNoyOzQRWOcI24th0MD2onJdhGjm1QhjOcogu9jrB9loUlNHi68b/6hNYIYaPrYSQ8TXQBpWjCZoTwz7rfYA8PGMcjFjEbJWwb3GALG3hGveYxhJWwsG2QxoeOzD/bSh1jHUb0jusovxebsY9GXOnPK0AS1Vh2hW0Do612a6A7yMMM+rSLhHGUbRBTYBJvyMW9hnhiQir4KxeiRsM8x7v5o74AzpZRRXU1C34AAAAASUVORK5CYII=) no-repeat;
 }
-.tui-full-calendar-icon.tui-full-calendar-ic-public {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAKdJREFUKBVjYCATMKLri46Olvn9+3fX////HUByjIyMB1hZWcuWLl36BFktikaQpl+/fl0EKhBCVgRkv2NjY9NH1syErABkE1TTdqBCWRAG8reDxKBycOUoGmHOA2pIA5kOwiA2SDVMDq4TmREaGvofhJHFcLHhfgwLC9sKNNULl0KQODCgtq1atcobxIY7lZAmkGJkNXCNIAlSwIjSCApqIgJnK0wNALoOPwSpOcq0AAAAAElFTkSuQmCC) no-repeat;
+.tui-full-calendar-icon.tui-full-calendar-ic-loaded {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABBklEQVQ4ja2TMU7DUBBEXwhFyhwh/W/SpnNOABTbh46O3CBwAuAEmHoLkhMk3MDVrzmCj4BWWlvLRziWYCTL1npn/sx6zV8xKfkisgB2wDUw93IL7IEXVW1i/7Qgb4AjsARm4dXMa3cppUnO+fRDwMmvIxJVUWQabL8Xp5awGCvv2aaU3nLO7YU33Ye8v5HXnv/DazYnOoHlGHIRs4oCVWh+HEE2LKJA6/cbVX0Abs+Qe1z6Q+MunkTESDVg19DXaaKDQ5jFUUTmZ8g9pxOoQ4xOZDtAtt5n4iqLiEWwLRwDm5Wtdu8AVbXNWgOfAwp2ck/+5iA4sfz2I10Vy2WZa1Xtov4DgC8U2WE4D/BHswAAAABJRU5ErkJggg==) no-repeat;
 }
 .tui-full-calendar-icon.tui-full-calendar-ic-close {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAJRJREFUKBXFkNERhCAMREUbuEKohzq0Eq2DDq6Da4B60KezDORkxj+ZwchmX0IYhtdWCGFl9y5g82NtzDnPdzAaudo76ZBS+nrvPxiInMkJcs5tMcZFfqcfxdqIRiELof+BiIJPg+mExmpmvKRn3zKj7OrG9Y79szPL14A1xEP0Hgy4gBZS5R7czHj3ehSgOzkVeyfuGrBw/WLm0hsAAAAASUVORK5CYII=) no-repeat;
-}
-.tui-full-calendar-ic-location-b {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAOZJREFUKBWVUT0KwjAUbkzGTuJWPYNDpV0cXD2ETuIRBK+gs4ubp3BwcXBp6eINBKWDgydoid9X8oKCggYeee/7S9IGwZ9LverTNO3Wdb2y1o6IK6WOWutFlmU30XmDE58hbgvpTA+Y+mJqCemS20jdG2N6LPYMICc6b5BrIG3ONBZ7CoVj7w0cfllGRDj+gKQpjt/iPU0ye/LkROcNANaoCUzjqqquIsBuHddAWoiyLO9RFHUwJ4JxR/qmKIqdYG9vCMNwCeIiJHuHecj/B0GSJBng7ifO+ErDPM8L4b7ucRzPWJ8ET1E7YC7tmi9qAAAAAElFTkSuQmCC);
 }
 .tui-full-calendar-ic-state-b {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAHlJREFUKBVjYCARMCKrNzEx8QTyZ/3//18GJM7IyPgESKWdOXNmO4gPAkwQCk6CFQMVNoIwVOMsuCw6w9jY+D8Iw8TR+SBxsJOATtkKNM0LphAbDbRxG9Bp3mAnEVIMMgCmBt0P2AxHERusGkAhgOJQ7Jyt2IUJiAIAwwIn24FgmhkAAAAASUVORK5CYII=);

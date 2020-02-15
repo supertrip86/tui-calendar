@@ -1,5 +1,5 @@
 // Type definitions for TOAST UI Calendar v1.12.11
-// TypeScript Version: 3.2.1
+// TypeScript Version: 3.7.5
 
 export type DateType = string | Date | TZDate;
 export type EventHandlerType = IEvents[keyof IEvents];

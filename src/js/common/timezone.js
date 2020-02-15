@@ -13,24 +13,24 @@ var timezoneOffsetCallback = null;
 var setByTimezoneOption = false;
 
 var getterMethods = [
-    'getDate',
-    'getDay',
-    'getFullYear',
-    'getHours',
-    'getMilliseconds',
-    'getMinutes',
-    'getMonth',
-    'getSeconds'
+  'getDate',
+  'getDay',
+  'getFullYear',
+  'getHours',
+  'getMilliseconds',
+  'getMinutes',
+  'getMonth',
+  'getSeconds'
 ];
 
 var setterMethods = [
-    'setDate',
-    'setFullYear',
-    'setHours',
-    'setMilliseconds',
-    'setMinutes',
-    'setMonth',
-    'setSeconds'
+  'setDate',
+  'setFullYear',
+  'setHours',
+  'setMilliseconds',
+  'setMinutes',
+  'setMonth',
+  'setSeconds'
 ];
 
 /**
@@ -40,9 +40,9 @@ var setterMethods = [
  * @private
  */
 function getTimezoneOffset(timestamp) {
-    timestamp = timestamp || Date.now();
+  timestamp = timestamp || Date.now();
 
-    return new Date(timestamp).getTimezoneOffset() * MIN_TO_MS;
+  return new Date(timestamp).getTimezoneOffset() * MIN_TO_MS;
 }
 
 /**
@@ -52,11 +52,11 @@ function getTimezoneOffset(timestamp) {
  * @private
  */
 function getCustomTimezoneOffset(timestamp) {
-    if (!setByTimezoneOption && timezoneOffsetCallback) {
-        return timezoneOffsetCallback(timestamp) * MIN_TO_MS;
-    }
+  if (!setByTimezoneOption && timezoneOffsetCallback) {
+    return timezoneOffsetCallback(timestamp) * MIN_TO_MS;
+  }
 
-    return customOffsetMs;
+  return customOffsetMs;
 }
 
 /**
@@ -65,12 +65,12 @@ function getCustomTimezoneOffset(timestamp) {
  * @returns {number} local time
  */
 function getLocalTime(time) {
-    var timezoneOffset = getTimezoneOffset(time);
-    var customTimezoneOffset = getCustomTimezoneOffset(time);
-    var timezoneOffsetDiff = customTimezoneOffset ? 0 : nativeOffsetMs - timezoneOffset;
-    var localTime = time - customTimezoneOffset + timezoneOffset + timezoneOffsetDiff;
+  var timezoneOffset = getTimezoneOffset(time);
+  var customTimezoneOffset = getCustomTimezoneOffset(time);
+  var timezoneOffsetDiff = customTimezoneOffset ? 0 : nativeOffsetMs - timezoneOffset;
+  var localTime = time - customTimezoneOffset + timezoneOffset + timezoneOffsetDiff;
 
-    return localTime;
+  return localTime;
 }
 
 /**
@@ -80,9 +80,9 @@ function getLocalTime(time) {
  * @private
  */
 function createDateWithMultipleArgs(args) {
-    var utc = Date.UTC.apply(null, args);
+  var utc = Date.UTC.apply(null, args);
 
-    return new Date(utc + getTimezoneOffset(utc));
+  return new Date(utc + getTimezoneOffset(utc));
 }
 
 /**
@@ -91,19 +91,18 @@ function createDateWithMultipleArgs(args) {
  * @returns {Date}
  */
 function createDateWithUTCTime(arg) {
-    var time;
+  var time;
+  if (arg instanceof TZDate) {
+    time = arg.getUTCTime();
+  } else if ((typeof arg) === 'number') {
+    time = arg;
+  } else if (arg === null) {
+    time = 0;
+  } else {
+    throw new Error('Invalid Type');
+  }
 
-    if (arg instanceof TZDate) {
-        time = arg.getUTCTime();
-    } else if ((typeof arg) === 'number') {
-        time = arg;
-    } else if (arg === null) {
-        time = 0;
-    } else {
-        throw new Error('Invalid Type');
-    }
-
-    return new Date(time);
+  return new Date(time);
 }
 
 /**
@@ -112,19 +111,19 @@ function createDateWithUTCTime(arg) {
  * @returns {Date}
  */
 function createDateAsLocalTime(arg) {
-    var time;
+  var time;
 
-    if (arg instanceof Date) {
-        time = arg.getTime();
-    } else if ((typeof arg) === 'string') {
-        time = Date.parse(arg);
-    } else {
-        throw new Error('Invalid Type');
-    }
+  if (arg instanceof Date) {
+    time = arg.getTime();
+  } else if ((typeof arg) === 'string') {
+    time = Date.parse(arg);
+  } else {
+    throw new Error('Invalid Type');
+  }
 
-    time = getLocalTime(time);
+  time = getLocalTime(time);
 
-    return new Date(time);
+  return new Date(time);
 }
 
 /**
@@ -133,7 +132,7 @@ function createDateAsLocalTime(arg) {
  * @returns {boolean}
  */
 function useLocalTimeConverter(arg) {
-    return arg instanceof Date || (typeof arg) === 'string';
+  return arg instanceof Date || (typeof arg) === 'string';
 }
 
 /**
@@ -142,21 +141,21 @@ function useLocalTimeConverter(arg) {
  * @constructor
  */
 function TZDate(date) {
-    var nativeDate;
+  var nativeDate;
 
-    if (util.isUndefined(date)) {
-        date = Date.now();
-    }
+  if (util.isUndefined(date)) {
+    date = Date.now();
+  }
 
-    if (arguments.length > 1) {
-        nativeDate = createDateWithMultipleArgs(arguments);
-    } else if (useLocalTimeConverter(date)) {
-        nativeDate = createDateAsLocalTime(date);
-    } else {
-        nativeDate = createDateWithUTCTime(date);
-    }
+  if (arguments.length > 1) {
+    nativeDate = createDateWithMultipleArgs(arguments);
+  } else if (useLocalTimeConverter(date)) {
+    nativeDate = createDateAsLocalTime(date);
+  } else {
+    nativeDate = createDateWithUTCTime(date);
+  }
 
-    this._date = nativeDate;
+  this._date = nativeDate;
 }
 
 /**
@@ -164,9 +163,9 @@ function TZDate(date) {
  * @returns {number} milliseconds
  */
 TZDate.prototype.getTime = function() {
-    var time = this._date.getTime();
+  var time = this._date.getTime();
 
-    return time + getCustomTimezoneOffset(time) - getTimezoneOffset(time);
+  return time + getCustomTimezoneOffset(time) - getTimezoneOffset(time);
 };
 
 /**
@@ -174,7 +173,7 @@ TZDate.prototype.getTime = function() {
  * @returns {number} milliseconds
  */
 TZDate.prototype.getUTCTime = function() {
-    return this._date.getTime();
+  return this._date.getTime();
 };
 
 /**
@@ -182,7 +181,7 @@ TZDate.prototype.getUTCTime = function() {
  * @returns {string}
  */
 TZDate.prototype.toUTCString = function() {
-    return this._date.toUTCString();
+  return this._date.toUTCString();
 };
 
 /**
@@ -190,109 +189,109 @@ TZDate.prototype.toUTCString = function() {
  * @returns {Date}
  */
 TZDate.prototype.toDate = function() {
-    return this._date;
+  return this._date;
 };
 
 TZDate.prototype.valueOf = function() {
-    return this.getTime();
+  return this.getTime();
 };
 
 TZDate.prototype.addDate = function(day) {
-    this.setDate(this.getDate() + day);
+  this.setDate(this.getDate() + day);
 
-    return this;
+  return this;
 };
 
 TZDate.prototype.addMinutes = function(minutes) {
-    this.setMinutes(this.getMinutes() + minutes);
+  this.setMinutes(this.getMinutes() + minutes);
 
-    return this;
+  return this;
 };
 
 TZDate.prototype.addMilliseconds = function(milliseconds) {
-    this.setMilliseconds(this.getMilliseconds() + milliseconds);
+  this.setMilliseconds(this.getMilliseconds() + milliseconds);
 
-    return this;
+  return this;
 };
 
 /* eslint-disable max-params*/
 TZDate.prototype.setWithRaw = function(y, M, d, h, m, s, ms) {
-    this.setFullYear(y, M, d);
-    this.setHours(h, m, s, ms);
+  this.setFullYear(y, M, d);
+  this.setHours(h, m, s, ms);
 
-    return this;
+  return this;
 };
 
 /**
  * @returns {TZDate} local time
  */
 TZDate.prototype.toLocalTime = function() {
-    var time = this.getTime();
-    var utcTime = this.getUTCTime();
-    var diff = time - utcTime;
+  var time = this.getTime();
+  var utcTime = this.getUTCTime();
+  var diff = time - utcTime;
 
-    return new TZDate(utcTime - diff);
+  return new TZDate(utcTime - diff);
 };
 
 getterMethods.forEach(function(methodName) {
-    TZDate.prototype[methodName] = function() {
-        return this._date[methodName].apply(this._date, arguments);
-    };
+  TZDate.prototype[methodName] = function() {
+    return this._date[methodName].apply(this._date, arguments);
+  };
 });
 
 setterMethods.forEach(function(methodName) {
-    TZDate.prototype[methodName] = function() {
-        this._date[methodName].apply(this._date, arguments);
+  TZDate.prototype[methodName] = function() {
+    this._date[methodName].apply(this._date, arguments);
 
-        return this.getTime();
-    };
+    return this.getTime();
+  };
 });
 
 module.exports = {
-    Date: TZDate,
+  Date: TZDate,
 
-    /**
+  /**
      * Set offset
      * @param {number} offset - timezone offset based on minutes
      */
-    setOffset: function(offset) {
-        customOffsetMs = offset * MIN_TO_MS;
-    },
+  setOffset: function(offset) {
+    customOffsetMs = offset * MIN_TO_MS;
+  },
 
-    /**
+  /**
      * Set offset
      * @param {number} offset - timezone offset based on minutes
      */
-    setOffsetByTimezoneOption: function(offset) {
-        this.setOffset(-offset);
-        setByTimezoneOption = true;
-    },
+  setOffsetByTimezoneOption: function(offset) {
+    this.setOffset(-offset);
+    setByTimezoneOption = true;
+  },
 
-    /**
+  /**
      * Get offset in case of `setByTimezoneOption`. Or return 0.
      * @returns {number} timezone offset offset minutes
      */
-    getOffset: function() {
-        if (setByTimezoneOption) {
-            return customOffsetMs / MIN_TO_MS;
-        }
+  getOffset: function() {
+    if (setByTimezoneOption) {
+      return customOffsetMs / MIN_TO_MS;
+    }
 
-        return 0;
-    },
+    return 0;
+  },
 
-    /**
+  /**
      * Set a callback function to get timezone offset by timestamp
      * @param {function} callback - callback function
      */
-    setOffsetCallback: function(callback) {
-        timezoneOffsetCallback = callback;
-    },
+  setOffsetCallback: function(callback) {
+    timezoneOffsetCallback = callback;
+  },
 
-    /**
+  /**
      * (Use this method only for testing)
      * Reset system timezone and custom timezone
      */
-    restoreOffset: function() {
-        customOffsetMs = getTimezoneOffset();
-    }
+  restoreOffset: function() {
+    customOffsetMs = getTimezoneOffset();
+  }
 };

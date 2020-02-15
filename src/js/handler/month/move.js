@@ -7,11 +7,11 @@
 var util = require('tui-code-snippet');
 
 var config = require('../../config'),
-    domutil = require('../../common/domutil'),
-    datetime = require('../../common/datetime'),
-    getMousePosData = require('./core'),
-    MonthMoveGuide = require('./moveGuide'),
-    TZDate = require('../../common/timezone').Date;
+  domutil = require('../../common/domutil'),
+  datetime = require('../../common/datetime'),
+  getMousePosData = require('./core'),
+  MonthMoveGuide = require('./moveGuide'),
+  TZDate = require('../../common/timezone').Date;
 
 /**
  * @constructor
@@ -21,46 +21,46 @@ var config = require('../../config'),
  * @param {Base} baseController - Base controller instance.
  */
 function MonthMove(dragHandler, monthView, baseController) {
-    /**
+  /**
      * @type {Drag}
      */
-    this.dragHandler = dragHandler;
+  this.dragHandler = dragHandler;
 
-    /**
+  /**
      * @type {Month}
      */
-    this.monthView = monthView;
+  this.monthView = monthView;
 
-    /**
+  /**
      * @type {Base}
      */
-    this.baseController = baseController;
+  this.baseController = baseController;
 
-    /**
+  /**
      * @type {function}
      */
-    this.getScheduleData = null;
+  this.getScheduleData = null;
 
-    /**
+  /**
      * @type {object}
      */
-    this._cache = null;
+  this._cache = null;
 
-    /**
+  /**
      * @type {MonthMoveGuide}
      */
-    this.guide = new MonthMoveGuide(this);
+  this.guide = new MonthMoveGuide(this);
 
-    dragHandler.on('dragStart', this._onDragStart, this);
+  dragHandler.on('dragStart', this._onDragStart, this);
 }
 
 /**
  * Destructor
  */
 MonthMove.prototype.destroy = function() {
-    this.dragHandler.off(this);
+  this.dragHandler.off(this);
 
-    this.dragHandler = this.monthView = this.baseController = null;
+  this.dragHandler = this.monthView = this.baseController = null;
 };
 
 /**
@@ -70,15 +70,15 @@ MonthMove.prototype.destroy = function() {
  *  session.
  */
 MonthMove.prototype.updateSchedule = function(scheduleCache) {
-    var schedule = scheduleCache.model;
-    var duration = schedule.duration();
-    var startDateRaw = datetime.raw(schedule.start);
-    var dragEndTime = new TZDate(scheduleCache.end);
-    var newStartDate = new TZDate(dragEndTime);
+  var schedule = scheduleCache.model;
+  var duration = schedule.duration();
+  var startDateRaw = datetime.raw(schedule.start);
+  var dragEndTime = new TZDate(scheduleCache.end);
+  var newStartDate = new TZDate(dragEndTime);
 
-    newStartDate.setHours(startDateRaw.h, startDateRaw.m, startDateRaw.s, startDateRaw.ms);
+  newStartDate.setHours(startDateRaw.h, startDateRaw.m, startDateRaw.s, startDateRaw.ms);
 
-    /**
+  /**
      * @event MonthMove#beforeUpdateSchedule
      * @type {object}
      * @property {Schedule} schedule - The original schedule instance
@@ -88,15 +88,15 @@ MonthMove.prototype.updateSchedule = function(scheduleCache) {
      *  @property {Date} start - start time to update
      *  @property {Date} end - end time to update
      */
-    this.fire('beforeUpdateSchedule', {
-        schedule: schedule,
-        changes: {
-            start: newStartDate,
-            end: new TZDate(newStartDate).addMilliseconds(duration)
-        },
-        start: newStartDate,
-        end: new TZDate(newStartDate).addMilliseconds(duration)
-    });
+  this.fire('beforeUpdateSchedule', {
+    schedule: schedule,
+    changes: {
+      start: newStartDate,
+      end: new TZDate(newStartDate).addMilliseconds(duration)
+    },
+    start: newStartDate,
+    end: new TZDate(newStartDate).addMilliseconds(duration)
+  });
 };
 
 /**
@@ -105,9 +105,9 @@ MonthMove.prototype.updateSchedule = function(scheduleCache) {
  * @returns {HTMLElement} element to create guide effect
  */
 MonthMove.prototype.getMonthScheduleBlock = function(target) {
-    var blockSelector = config.classname('.weekday-schedule-block');
+  var blockSelector = config.classname('.weekday-schedule-block');
 
-    return domutil.closest(target, blockSelector);
+  return domutil.closest(target, blockSelector);
 };
 
 /**
@@ -116,9 +116,9 @@ MonthMove.prototype.getMonthScheduleBlock = function(target) {
  * @returns {HTMLElement} schedule element
  */
 MonthMove.prototype.getMoreLayerScheduleBlock = function(target) {
-    var className = config.classname('.month-more-schedule');
+  var className = config.classname('.month-more-schedule');
 
-    return domutil.closest(target, className);
+  return domutil.closest(target, className);
 };
 
 /**
@@ -129,31 +129,31 @@ MonthMove.prototype.getMoreLayerScheduleBlock = function(target) {
  *  has not permission to handle the schedule then return null.
  */
 MonthMove.prototype.hasPermissionToHandle = function(target) {
-    var modelID = null;
-    var blockElement;
+  var modelID = null;
+  var blockElement;
 
-    if (domutil.hasClass(target, config.classname('weekday-resize-handle'))) {
-        return null;
-    }
+  if (domutil.hasClass(target, config.classname('weekday-resize-handle'))) {
+    return null;
+  }
 
-    blockElement = this.getMonthScheduleBlock(target);
+  blockElement = this.getMonthScheduleBlock(target);
+
+  if (blockElement) {
+    modelID = domutil.getData(blockElement, 'id');
+  } else {
+    blockElement = this.getMoreLayerScheduleBlock(target);
 
     if (blockElement) {
-        modelID = domutil.getData(blockElement, 'id');
-    } else {
-        blockElement = this.getMoreLayerScheduleBlock(target);
-
-        if (blockElement) {
-            modelID = domutil.getData(blockElement, 'id');
-            /**
+      modelID = domutil.getData(blockElement, 'id');
+      /**
              * Fire for notificate that the drag schedule start at more layer view.
              * @event {MonthMove#monthMoveStart_from_morelayer}
              */
-            this.fire('monthMoveStart_from_morelayer');
-        }
+      this.fire('monthMoveStart_from_morelayer');
     }
+  }
 
-    return modelID;
+  return modelID;
 };
 
 /**
@@ -162,34 +162,34 @@ MonthMove.prototype.hasPermissionToHandle = function(target) {
  * @param {object} dragStartEvent - drag start schedule data
  */
 MonthMove.prototype._onDragStart = function(dragStartEvent) {
-    var target = dragStartEvent.target,
-        modelID = this.hasPermissionToHandle(target),
-        model = this.baseController.schedules.items[modelID],
-        scheduleData;
+  var target = dragStartEvent.target,
+    modelID = this.hasPermissionToHandle(target),
+    model = this.baseController.schedules.items[modelID],
+    scheduleData;
 
-    if (!modelID || !model || model.isReadOnly || model.isPending) {
-        return;
-    }
+  if (!modelID || !model || model.isReadOnly || model.isPending) {
+    return;
+  }
 
-    this.dragHandler.on({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this.dragHandler.on({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    this.getScheduleData = getMousePosData(this.monthView);
+  this.getScheduleData = getMousePosData(this.monthView);
 
-    scheduleData = this.getScheduleData(dragStartEvent.originEvent);
-    scheduleData.originEvent = dragStartEvent.originEvent;
-    scheduleData.target = this.getMonthScheduleBlock(target);
-    scheduleData.model = model;
+  scheduleData = this.getScheduleData(dragStartEvent.originEvent);
+  scheduleData.originEvent = dragStartEvent.originEvent;
+  scheduleData.target = this.getMonthScheduleBlock(target);
+  scheduleData.model = model;
 
-    this._cache = {
-        model: model,
-        target: target,
-        start: new TZDate(Number(scheduleData.date))
-    };
+  this._cache = {
+    model: model,
+    target: target,
+    start: new TZDate(Number(scheduleData.date))
+  };
 
-    /**
+  /**
      * @event {MonthMove#monthMoveDragstart}
      * @type {object}
      * @property {number} x - x index
@@ -198,7 +198,7 @@ MonthMove.prototype._onDragStart = function(dragStartEvent) {
      * @property {HTMLElement} target - schedule block element
      * @property {Schedule} model - model instance
      */
-    this.fire('monthMoveDragstart', scheduleData);
+  this.fire('monthMoveDragstart', scheduleData);
 };
 
 /**
@@ -206,28 +206,28 @@ MonthMove.prototype._onDragStart = function(dragStartEvent) {
  * @param {object} dragEvent - drag event data
  */
 MonthMove.prototype._onDrag = function(dragEvent) {
-    var scheduleData;
+  var scheduleData;
 
-    if (!this.getScheduleData) {
-        return;
-    }
+  if (!this.getScheduleData) {
+    return;
+  }
 
-    scheduleData = util.extend({
-        originEvent: dragEvent.originEvent
-    }, this.getScheduleData(dragEvent.originEvent));
+  scheduleData = util.extend({
+    originEvent: dragEvent.originEvent
+  }, this.getScheduleData(dragEvent.originEvent));
 
-    if (!scheduleData) {
-        return;
-    }
+  if (!scheduleData) {
+    return;
+  }
 
-    /**
+  /**
      * @event {MonthMove#monthMoveDrag}
      * @type {object}
      * @property {number} x - x index
      * @property {number} y - y index
      * @property {Date} date - drag date
      */
-    this.fire('monthMoveDrag', scheduleData);
+  this.fire('monthMoveDrag', scheduleData);
 };
 
 /**
@@ -236,35 +236,35 @@ MonthMove.prototype._onDrag = function(dragEvent) {
  * @param {object} dragEndEvent - dragend event data
  */
 MonthMove.prototype._onDragEnd = function(dragEndEvent) {
-    var cache = this._cache;
-    var scheduleData;
+  var cache = this._cache;
+  var scheduleData;
 
-    this.dragHandler.off({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this.dragHandler.off({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    if (!this.getScheduleData) {
-        return;
-    }
+  if (!this.getScheduleData) {
+    return;
+  }
 
-    scheduleData = this.getScheduleData(dragEndEvent.originEvent);
+  scheduleData = this.getScheduleData(dragEndEvent.originEvent);
 
-    if (scheduleData) {
-        cache.end = new TZDate(scheduleData.date);
-        this.updateSchedule(cache);
-    }
+  if (scheduleData) {
+    cache.end = new TZDate(scheduleData.date);
+    this.updateSchedule(cache);
+  }
 
-    /**
+  /**
      * @event {MonthResize#monthMoveDragend}
      * @type {object}
      * @property {number} x - x index
      * @property {number} y - y index
      * @property {Date} date - drag date
      */
-    this.fire('monthMoveDragend', scheduleData);
+  this.fire('monthMoveDragend', scheduleData);
 
-    this.getScheduleData = this._cache = null;
+  this.getScheduleData = this._cache = null;
 };
 
 util.CustomEvents.mixin(MonthMove);

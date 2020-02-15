@@ -28,15 +28,15 @@ var util = require('tui-code-snippet');
  * var t = new Point(13, 5);
  */
 function Point(x, y, useRound) {
-    /**
+  /**
      * @type {number}
      */
-    this.x = (useRound ? Math.round(x) : x);
+  this.x = (useRound ? Math.round(x) : x);
 
-    /**
+  /**
      * @type {number}
      */
-    this.y = (useRound ? Math.round(y) : y);
+  this.y = (useRound ? Math.round(y) : y);
 }
 
 /**********
@@ -51,11 +51,11 @@ function Point(x, y, useRound) {
  * @returns {Point} Point instance calculated.
  */
 Point.getRatio = function(point, factor, toFactor) {
-    if (factor === toFactor) {
-        return point.clone();
-    }
+  if (factor === toFactor) {
+    return point.clone();
+  }
 
-    return point.multiplyBy(toFactor)._divideBy(factor);
+  return point.multiplyBy(toFactor)._divideBy(factor);
 };
 
 /**
@@ -69,15 +69,15 @@ Point.getRatio = function(point, factor, toFactor) {
  * var p2 = point([10, 15]);
  */
 Point.n = function(x, y, useRound) {
-    if (x instanceof Point) {
-        return x;
-    }
+  if (x instanceof Point) {
+    return x;
+  }
 
-    if (util.isArray(x)) {
-        return new Point(x[0], x[1], y);
-    }
+  if (util.isArray(x)) {
+    return new Point(x[0], x[1], y);
+  }
 
-    return new Point(x, y, useRound);
+  return new Point(x, y, useRound);
 };
 
 /**********
@@ -89,7 +89,7 @@ Point.n = function(x, y, useRound) {
  * @returns {Point} The point instance cloned.
  */
 Point.prototype.clone = function() {
-    return new Point(this.x, this.y);
+  return new Point(this.x, this.y);
 };
 
 /**
@@ -98,7 +98,7 @@ Point.prototype.clone = function() {
  * @returns {Point} Point calculated.
  */
 Point.prototype.add = function(point) {
-    return this.clone()._add(Point.n(point));
+  return this.clone()._add(Point.n(point));
 };
 
 /**
@@ -107,10 +107,10 @@ Point.prototype.add = function(point) {
  * @returns {Point} Point calculated.
  */
 Point.prototype._add = function(point) {
-    this.x += point.x;
-    this.y += point.y;
+  this.x += point.x;
+  this.y += point.y;
 
-    return this;
+  return this;
 };
 
 /**
@@ -119,7 +119,7 @@ Point.prototype._add = function(point) {
  * @returns {Point} Point calculated.
  */
 Point.prototype.subtract = function(point) {
-    return this.clone()._subtract(Point.n(point));
+  return this.clone()._subtract(Point.n(point));
 };
 
 /**
@@ -128,10 +128,10 @@ Point.prototype.subtract = function(point) {
  * @returns {Point} Point calculated.
  */
 Point.prototype._subtract = function(point) {
-    this.x -= point.x;
-    this.y -= point.y;
+  this.x -= point.x;
+  this.y -= point.y;
 
-    return this;
+  return this;
 };
 
 /**
@@ -140,7 +140,7 @@ Point.prototype._subtract = function(point) {
  * @returns {Point} Point calculated.
  */
 Point.prototype.divideBy = function(num) {
-    return this.clone()._divideBy(num);
+  return this.clone()._divideBy(num);
 };
 
 /**
@@ -149,10 +149,10 @@ Point.prototype.divideBy = function(num) {
  * @returns {Point} Point calculated.
  */
 Point.prototype._divideBy = function(num) {
-    this.x /= num;
-    this.y /= num;
+  this.x /= num;
+  this.y /= num;
 
-    return this;
+  return this;
 };
 
 /**
@@ -161,7 +161,7 @@ Point.prototype._divideBy = function(num) {
  * @returns {Point} Point calculated.
  */
 Point.prototype.multiplyBy = function(num) {
-    return this.clone()._multiplyBy(num);
+  return this.clone()._multiplyBy(num);
 };
 
 /**
@@ -170,10 +170,10 @@ Point.prototype.multiplyBy = function(num) {
  * @returns {Point} Point calculated.
  */
 Point.prototype._multiplyBy = function(num) {
-    this.x *= num;
-    this.y *= num;
+  this.x *= num;
+  this.y *= num;
 
-    return this;
+  return this;
 };
 
 /**
@@ -181,7 +181,7 @@ Point.prototype._multiplyBy = function(num) {
  * @returns {Point} Point calculated.
  */
 Point.prototype.round = function() {
-    return this.clone()._round();
+  return this.clone()._round();
 };
 
 /**
@@ -189,10 +189,10 @@ Point.prototype.round = function() {
  * @returns {Point} Point calculated.
  */
 Point.prototype._round = function() {
-    this.x = Math.round(this.x);
-    this.y = Math.round(this.y);
+  this.x = Math.round(this.x);
+  this.y = Math.round(this.y);
 
-    return this;
+  return this;
 };
 
 /**
@@ -200,7 +200,7 @@ Point.prototype._round = function() {
  * @returns {Point} Point calculated.
  */
 Point.prototype.reverse = function() {
-    return this.clone()._reverse();
+  return this.clone()._reverse();
 };
 
 /**
@@ -208,10 +208,10 @@ Point.prototype.reverse = function() {
  * @returns {Point} Point calculated.
  */
 Point.prototype._reverse = function() {
-    this.x *= -1;
-    this.y *= -1;
+  this.x *= -1;
+  this.y *= -1;
 
-    return this;
+  return this;
 };
 
 /**
@@ -219,7 +219,7 @@ Point.prototype._reverse = function() {
  * @returns {Point} Point calculated.
  */
 Point.prototype.floor = function() {
-    return this.clone()._floor();
+  return this.clone()._floor();
 };
 
 /**
@@ -227,10 +227,10 @@ Point.prototype.floor = function() {
  * @returns {Point} Point calculated.
  */
 Point.prototype._floor = function() {
-    this.x = Math.floor(this.x);
-    this.y = Math.floor(this.y);
+  this.x = Math.floor(this.x);
+  this.y = Math.floor(this.y);
 
-    return this;
+  return this;
 };
 
 /**
@@ -238,7 +238,7 @@ Point.prototype._floor = function() {
  * @returns {Point} Point calculated.
  */
 Point.prototype.ceil = function() {
-    return this.clone()._ceil();
+  return this.clone()._ceil();
 };
 
 /**
@@ -246,10 +246,10 @@ Point.prototype.ceil = function() {
  * @returns {Point} Point calculated.
  */
 Point.prototype._ceil = function() {
-    this.x = Math.ceil(this.x);
-    this.y = Math.ceil(this.y);
+  this.x = Math.ceil(this.x);
+  this.y = Math.ceil(this.y);
 
-    return this;
+  return this;
 };
 
 /**
@@ -261,7 +261,7 @@ Point.prototype._ceil = function() {
  * @returns {Point} The point instance rotated.
  */
 Point.prototype.rotate = function(deg, center, cos, sin) {
-    return this.clone()._rotate(deg, center, cos, sin);
+  return this.clone()._rotate(deg, center, cos, sin);
 };
 
 /**
@@ -273,24 +273,24 @@ Point.prototype.rotate = function(deg, center, cos, sin) {
  * @returns {Point} The point instance rotated.
  */
 Point.prototype._rotate = function(deg, center, cos, sin) {
-    var rad = deg * (Math.PI / 180),
-        x,
-        y;
+  var rad = deg * (Math.PI / 180),
+    x,
+    y;
 
-    cos = cos || parseFloat(Math.cos(rad).toFixed(8));
-    sin = sin || parseFloat(Math.sin(rad).toFixed(8));
+  cos = cos || parseFloat(Math.cos(rad).toFixed(8));
+  sin = sin || parseFloat(Math.sin(rad).toFixed(8));
 
-    this._subtract(center);
+  this._subtract(center);
 
-    x = this.x;
-    y = this.y;
+  x = this.x;
+  y = this.y;
 
-    this.x = (x * cos) - (y * sin);
-    this.y = (x * sin) + (y * cos);
+  this.x = (x * cos) - (y * sin);
+  this.y = (x * sin) + (y * cos);
 
-    this._add(center);
+  this._add(center);
 
-    return this;
+  return this;
 };
 
 /**
@@ -299,15 +299,15 @@ Point.prototype._rotate = function(deg, center, cos, sin) {
  * @returns {number} The number of distance between two points.
  */
 Point.prototype.distanceTo = function(point) {
-    var x,
-        y;
+  var x,
+    y;
 
-    point = Point.n(point);
+  point = Point.n(point);
 
-    x = point.x - this.x;
-    y = point.y - this.y;
+  x = point.x - this.x;
+  y = point.y - this.y;
 
-    return Math.sqrt((x * x) + (y * y));
+  return Math.sqrt((x * x) + (y * y));
 };
 
 /**
@@ -316,9 +316,9 @@ Point.prototype.distanceTo = function(point) {
  * @returns {boolean} equality
  */
 Point.prototype.equals = function(point) {
-    point = Point.n(point);
+  point = Point.n(point);
 
-    return point.x === this.x && point.y === this.y;
+  return point.x === this.x && point.y === this.y;
 };
 
 /**
@@ -326,7 +326,7 @@ Point.prototype.equals = function(point) {
  * @returns {string} string
  */
 Point.prototype.toString = function() {
-    return 'Point(' + this.x + ', ' + this.y + ')';
+  return 'Point(' + this.x + ', ' + this.y + ')';
 };
 
 /**
@@ -334,7 +334,7 @@ Point.prototype.toString = function() {
  * @returns {number[]} coordinate array.
  */
 Point.prototype.toArray = function() {
-    return [this.x, this.y];
+  return [this.x, this.y];
 };
 
 module.exports = Point;

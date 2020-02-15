@@ -6,9 +6,9 @@
 
 var util = require('tui-code-snippet');
 var forEachProp = util.forEachOwnProperties,
-    forEachArr = util.forEachArray,
-    isFunc = util.isFunction,
-    isObj = util.isObject;
+  forEachArr = util.forEachArray,
+  isFunc = util.isFunction,
+  isObj = util.isObject;
 
 var aps = Array.prototype.slice;
 
@@ -22,22 +22,22 @@ var aps = Array.prototype.slice;
  * @param {function} [getItemIDFn] function for get model's id.
  */
 function Collection(getItemIDFn) {
-    /**
+  /**
      * @type {object.<string, *>}
      */
-    this.items = {};
+  this.items = {};
 
-    /**
+  /**
      * @type {number}
      */
-    this.length = 0;
+  this.length = 0;
 
-    if (isFunc(getItemIDFn)) {
-        /**
+  if (isFunc(getItemIDFn)) {
+    /**
          * @type {function}
          */
-        this.getItemID = getItemIDFn;
-    }
+    this.getItemID = getItemIDFn;
+  }
 }
 
 /**********
@@ -50,22 +50,22 @@ function Collection(getItemIDFn) {
  * @returns {function} combined filter
  */
 Collection.and = function(filters) {
-    var cnt;
+  var cnt;
 
-    filters = aps.call(arguments);
-    cnt = filters.length;
+  filters = aps.call(arguments);
+  cnt = filters.length;
 
-    return function(item) {
-        var i = 0;
+  return function(item) {
+    var i = 0;
 
-        for (; i < cnt; i += 1) {
-            if (!filters[i].call(null, item)) {
-                return false;
-            }
-        }
+    for (; i < cnt; i += 1) {
+      if (!filters[i].call(null, item)) {
+        return false;
+      }
+    }
 
-        return true;
-    };
+    return true;
+  };
 };
 
 /**
@@ -74,21 +74,21 @@ Collection.and = function(filters) {
  * @returns {function} combined filter
  */
 Collection.or = function(filters) {
-    var cnt;
+  var cnt;
 
-    filters = aps.call(arguments);
-    cnt = filters.length;
+  filters = aps.call(arguments);
+  cnt = filters.length;
 
-    return function(item) {
-        var i = 1,
-            result = filters[0].call(null, item);
+  return function(item) {
+    var i = 1,
+      result = filters[0].call(null, item);
 
-        for (; i < cnt; i += 1) {
-            result = (result || filters[i].call(null, item));
-        }
+    for (; i < cnt; i += 1) {
+      result = (result || filters[i].call(null, item));
+    }
 
-        return result;
-    };
+    return result;
+  };
 };
 
 /**
@@ -99,19 +99,19 @@ Collection.or = function(filters) {
  * @returns {Collection} merged collection.
  */
 Collection.merge = function(collections) {    // eslint-disable-line
-    var cols = aps.call(arguments),
-        newItems = {},
-        merged = new Collection(cols[0].getItemID),
-        extend = util.extend;
+  var cols = aps.call(arguments),
+    newItems = {},
+    merged = new Collection(cols[0].getItemID),
+    extend = util.extend;
 
-    forEachArr(cols, function(col) {
-        extend(newItems, col.items);
-    });
+  forEachArr(cols, function(col) {
+    extend(newItems, col.items);
+  });
 
-    merged.items = newItems;
-    merged.length = util.keys(merged.items).length;
+  merged.items = newItems;
+  merged.length = util.keys(merged.items).length;
 
-    return merged;
+  return merged;
 };
 
 /**********
@@ -124,7 +124,7 @@ Collection.merge = function(collections) {    // eslint-disable-line
  * @returns {number} model unique id.
  */
 Collection.prototype.getItemID = function(item) {
-    return String(item._id);
+  return String(item._id);
 };
 
 /**
@@ -132,25 +132,25 @@ Collection.prototype.getItemID = function(item) {
  * @param {...*} item models to add this collection.
  */
 Collection.prototype.add = function(item) {
-    var self = this,
-        id,
-        ownItems;
+  var self = this,
+    id,
+    ownItems;
 
-    if (arguments.length > 1) {
-        forEachArr(aps.call(arguments), function(o) {
-            self.add(o);
-        });
+  if (arguments.length > 1) {
+    forEachArr(aps.call(arguments), function(o) {
+      self.add(o);
+    });
 
-        return;
-    }
+    return;
+  }
 
-    id = this.getItemID(item);
-    ownItems = this.items;
+  id = this.getItemID(item);
+  ownItems = this.items;
 
-    if (!ownItems[id]) {
-        this.length += 1;
-    }
-    ownItems[id] = item;
+  if (!ownItems[id]) {
+    this.length += 1;
+  }
+  ownItems[id] = item;
 };
 
 /**
@@ -159,46 +159,46 @@ Collection.prototype.add = function(item) {
  * @returns {array} deleted model list.
  */
 Collection.prototype.remove = function(id) {
-    var self = this,
-        removed = [],
-        ownItems,
-        itemToRemove;
+  var self = this,
+    removed = [],
+    ownItems,
+    itemToRemove;
 
-    if (!this.length) {
-        return removed;
-    }
+  if (!this.length) {
+    return removed;
+  }
 
-    if (arguments.length > 1) {
-        removed = util.map(aps.call(arguments), function(_id) {
-            return self.remove(_id);
-        });
+  if (arguments.length > 1) {
+    removed = util.map(aps.call(arguments), function(_id) {
+      return self.remove(_id);
+    });
 
-        return removed;
-    }
+    return removed;
+  }
 
-    ownItems = this.items;
+  ownItems = this.items;
 
-    if (isObj(id)) {
-        id = this.getItemID(id);
-    }
+  if (isObj(id)) {
+    id = this.getItemID(id);
+  }
 
-    if (!ownItems[id]) {
-        return removed;
-    }
+  if (!ownItems[id]) {
+    return removed;
+  }
 
-    this.length -= 1;
-    itemToRemove = ownItems[id];
-    delete ownItems[id];
+  this.length -= 1;
+  itemToRemove = ownItems[id];
+  delete ownItems[id];
 
-    return itemToRemove;
+  return itemToRemove;
 };
 
 /**
  * remove all models in collection.
  */
 Collection.prototype.clear = function() {
-    this.items = {};
-    this.length = 0;
+  this.items = {};
+  this.length = 0;
 };
 
 /**
@@ -207,32 +207,32 @@ Collection.prototype.clear = function() {
  * @returns {boolean} is has model?
  */
 Collection.prototype.has = function(id) {
-    var isFilter,
-        has;
+  var isFilter,
+    has;
 
-    if (!this.length) {
-        return false;
-    }
+  if (!this.length) {
+    return false;
+  }
 
-    isFilter = isFunc(id);
-    has = false;
+  isFilter = isFunc(id);
+  has = false;
 
-    if (isFilter) {
-        this.each(function(item) {
-            if (id(item) === true) {
-                has = true;
+  if (isFilter) {
+    this.each(function(item) {
+      if (id(item) === true) {
+        has = true;
 
-                return false; // returning false can stop this loop
-            }
+        return false; // returning false can stop this loop
+      }
 
-            return true;
-        });
-    } else {
-        id = isObj(id) ? this.getItemID(id) : id;
-        has = util.isExisty(this.items[id]);
-    }
+      return true;
+    });
+  } else {
+    id = isObj(id) ? this.getItemID(id) : id;
+    has = util.isExisty(this.items[id]);
+  }
 
-    return has;
+  return has;
 };
 
 /**
@@ -242,13 +242,13 @@ Collection.prototype.has = function(id) {
  * @param {*} [context] callback context.
  */
 Collection.prototype.doWhenHas = function(id, fn, context) {
-    var item = this.items[id];
+  var item = this.items[id];
 
-    if (!util.isExisty(item)) {
-        return;
-    }
+  if (!util.isExisty(item)) {
+    return;
+  }
 
-    fn.call(context || this, item);
+  fn.call(context || this, item);
 };
 
 /**
@@ -273,19 +273,19 @@ Collection.prototype.doWhenHas = function(id, fn, context) {
  * collection.find(Collection.or(filter1, filter2));
  */
 Collection.prototype.find = function(filter) {
-    var result = new Collection();
+  var result = new Collection();
 
-    if (this.hasOwnProperty('getItemID')) {
-        result.getItemID = this.getItemID;
+  if (this.hasOwnProperty('getItemID')) {
+    result.getItemID = this.getItemID;
+  }
+
+  this.each(function(item) {
+    if (filter(item) === true) {
+      result.add(item);
     }
+  });
 
-    this.each(function(item) {
-        if (filter(item) === true) {
-            result.add(item);
-        }
-    });
-
-    return result;
+  return result;
 };
 
 /**
@@ -324,46 +324,46 @@ Collection.prototype.find = function(filter) {
  * });
  */
 Collection.prototype.groupBy = function(key, groupFunc) {
-    var result = {},
-        collection,
-        baseValue,
-        keyIsFunc = isFunc(key),
-        getItemIDFn = this.getItemID;
+  var result = {},
+    collection,
+    baseValue,
+    keyIsFunc = isFunc(key),
+    getItemIDFn = this.getItemID;
 
-    if (util.isArray(key)) {
-        util.forEachArray(key, function(k) {
-            result[String(k)] = new Collection(getItemIDFn);
-        });
-
-        if (!groupFunc) {
-            return result;
-        }
-
-        key = groupFunc;
-        keyIsFunc = true;
-    }
-
-    this.each(function(item) {
-        if (keyIsFunc) {
-            baseValue = key(item);
-        } else {
-            baseValue = item[key];
-
-            if (isFunc(baseValue)) {
-                baseValue = baseValue.apply(item);
-            }
-        }
-
-        collection = result[baseValue];
-
-        if (!collection) {
-            collection = result[baseValue] = new Collection(getItemIDFn);
-        }
-
-        collection.add(item);
+  if (util.isArray(key)) {
+    util.forEachArray(key, function(k) {
+      result[String(k)] = new Collection(getItemIDFn);
     });
 
-    return result;
+    if (!groupFunc) {
+      return result;
+    }
+
+    key = groupFunc;
+    keyIsFunc = true;
+  }
+
+  this.each(function(item) {
+    if (keyIsFunc) {
+      baseValue = key(item);
+    } else {
+      baseValue = item[key];
+
+      if (isFunc(baseValue)) {
+        baseValue = baseValue.apply(item);
+      }
+    }
+
+    collection = result[baseValue];
+
+    if (!collection) {
+      collection = result[baseValue] = new Collection(getItemIDFn);
+    }
+
+    collection.add(item);
+  });
+
+  return result;
 };
 
 /**
@@ -374,25 +374,25 @@ Collection.prototype.groupBy = function(key, groupFunc) {
  * @returns {object} item.
  */
 Collection.prototype.single = function(filter) {
-    var result,
-        useFilter = util.isFunction(filter);
+  var result,
+    useFilter = util.isFunction(filter);
 
-    this.each(function(item) {
-        if (!useFilter) {
-            result = item;
+  this.each(function(item) {
+    if (!useFilter) {
+      result = item;
 
-            return false; // returning false can stop this loop
-        }
-        if (filter(item)) {
-            result = item;
+      return false; // returning false can stop this loop
+    }
+    if (filter(item)) {
+      result = item;
 
-            return false; // returning false can stop this loop
-        }
+      return false; // returning false can stop this loop
+    }
 
-        return true;
-    }, this);
+    return true;
+  }, this);
 
-    return result;
+  return result;
 };
 
 /**
@@ -401,17 +401,17 @@ Collection.prototype.single = function(filter) {
  * @returns {array} sorted array.
  */
 Collection.prototype.sort = function(compareFunction) {
-    var arr = [];
+  var arr = [];
 
-    this.each(function(item) {
-        arr.push(item);
-    });
+  this.each(function(item) {
+    arr.push(item);
+  });
 
-    if (isFunc(compareFunction)) {
-        arr = arr.sort(compareFunction);
-    }
+  if (isFunc(compareFunction)) {
+    arr = arr.sort(compareFunction);
+  }
 
-    return arr;
+  return arr;
 };
 
 /**
@@ -422,7 +422,7 @@ Collection.prototype.sort = function(compareFunction) {
  * @param {*} [context] context
  */
 Collection.prototype.each = function(iteratee, context) {
-    forEachProp(this.items, iteratee, context || this);
+  forEachProp(this.items, iteratee, context || this);
 };
 
 /**
@@ -430,13 +430,13 @@ Collection.prototype.each = function(iteratee, context) {
  * @returns {array} new array.
  */
 Collection.prototype.toArray = function() {
-    if (!this.length) {
-        return [];
-    }
+  if (!this.length) {
+    return [];
+  }
 
-    return util.map(this.items, function(item) {
-        return item;
-    });
+  return util.map(this.items, function(item) {
+    return item;
+  });
 };
 
 module.exports = Collection;

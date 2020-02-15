@@ -14,14 +14,14 @@ var common = require('../common/common');
  * @param {object} customTheme - custom theme
  */
 function Theme(customTheme) {
-    var theme = customTheme || themeStandard;
+  var theme = customTheme || themeStandard;
 
-    /**
+  /**
      * @type {util.HashMap}
      */
-    this._map = new util.HashMap();
+  this._map = new util.HashMap();
 
-    this.setStyles(theme);
+  this.setStyles(theme);
 }
 
 /**
@@ -30,7 +30,7 @@ function Theme(customTheme) {
  * @returns {string|undefined} style
  */
 Theme.prototype.getStyle = function(key) {
-    return this._map.get(key);
+  return this._map.get(key);
 };
 
 /**
@@ -40,10 +40,10 @@ Theme.prototype.getStyle = function(key) {
  * @returns {boolean} true if the give key is valid or false
  */
 Theme.prototype.setStyle = function(key, style) {
-    var styles = {};
-    styles[key] = style;
+  var styles = {};
+  styles[key] = style;
 
-    return this.setStyles(styles).length === 0;
+  return this.setStyles(styles).length === 0;
 };
 
 /**
@@ -52,46 +52,46 @@ Theme.prototype.setStyle = function(key, style) {
  * @returns {Array.<string>} error keys
  */
 Theme.prototype.setStyles = function(styles) {
-    var errors = [];
+  var errors = [];
 
-    util.forEach(styles, function(style, key) {
-        if (util.isUndefined(themeConfig[key])) {
-            errors.push(key);
-        } else {
-            this._map.set(key, style);
-            common.set(this, key, style);
-        }
-    }, this);
+  util.forEach(styles, function(style, key) {
+    if (util.isUndefined(themeConfig[key])) {
+      errors.push(key);
+    } else {
+      this._map.set(key, style);
+      common.set(this, key, style);
+    }
+  }, this);
 
-    // apply missing styles which have to be default
-    util.forEach(themeConfig, function(style, key) {
-        if (!this.getStyle(key)) {
-            this._map.set(key, style);
-            common.set(this, key, style);
-        }
-    }, this);
+  // apply missing styles which have to be default
+  util.forEach(themeConfig, function(style, key) {
+    if (!this.getStyle(key)) {
+      this._map.set(key, style);
+      common.set(this, key, style);
+    }
+  }, this);
 
-    return errors;
+  return errors;
 };
 
 /**
  * Delete all styles
  */
 Theme.prototype.clear = function() {
-    var keys = this._map.keys();
-    var categories = {};
-    util.forEach(keys, function(key) {
-        var category = key.split('.')[0];
-        if (!categories[category]) {
-            categories[category] = category;
-        }
-    });
+  var keys = this._map.keys();
+  var categories = {};
+  util.forEach(keys, function(key) {
+    var category = key.split('.')[0];
+    if (!categories[category]) {
+      categories[category] = category;
+    }
+  });
 
-    util.forEach(categories, function(child) {
-        delete this[child];
-    }, this);
+  util.forEach(categories, function(child) {
+    delete this[child];
+  }, this);
 
-    this._map.removeAll();
+  this._map.removeAll();
 };
 
 module.exports = Theme;

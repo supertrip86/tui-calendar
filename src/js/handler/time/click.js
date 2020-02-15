@@ -17,32 +17,32 @@ var domutil = require('../../common/domutil');
  * @param {Base} [baseController] - Base controller instance.
  */
 function TimeClick(dragHandler, timeGridView, baseController) {
-    /**
+  /**
      * @type {Drag}
      */
-    this.dragHandler = dragHandler;
+  this.dragHandler = dragHandler;
 
-    /**
+  /**
      * @type {TimeGrid}
      */
-    this.timeGridView = timeGridView;
+  this.timeGridView = timeGridView;
 
-    /**
+  /**
      * @type {Base}
      */
-    this.baseController = baseController;
+  this.baseController = baseController;
 
-    dragHandler.on({
-        'click': this._onClick
-    }, this);
+  dragHandler.on({
+    'click': this._onClick
+  }, this);
 }
 
 /**
  * Destroy method
  */
 TimeClick.prototype.destroy = function() {
-    this.dragHandler.off(this);
-    this.timeGridView = this.baseController = this.dragHandler = null;
+  this.dragHandler.off(this);
+  this.timeGridView = this.baseController = this.dragHandler = null;
 };
 
 /**
@@ -51,22 +51,22 @@ TimeClick.prototype.destroy = function() {
  * @returns {string} - model id
  */
 TimeClick.prototype.checkExpectCondition = function(target) {
-    var container,
-        matches;
+  var container,
+    matches;
 
-    container = domutil.closest(target, config.classname('.time-date'));
+  container = domutil.closest(target, config.classname('.time-date'));
 
-    if (!container) {
-        return false;
-    }
+  if (!container) {
+    return false;
+  }
 
-    matches = domutil.getClass(container).match(config.time.getViewIDRegExp);
+  matches = domutil.getClass(container).match(config.time.getViewIDRegExp);
 
-    if (!matches || matches.length < 2) {
-        return false;
-    }
+  if (!matches || matches.length < 2) {
+    return false;
+  }
 
-    return util.pick(this.timeGridView.children.items, Number(matches[1]));
+  return util.pick(this.timeGridView.children.items, Number(matches[1]));
 };
 
 /**
@@ -75,28 +75,28 @@ TimeClick.prototype.checkExpectCondition = function(target) {
  * @emits TimeClick#clickEvent
  */
 TimeClick.prototype._onClick = function(clickEvent) {
-    var self = this,
-        target = clickEvent.target,
-        timeView = this.checkExpectCondition(target),
-        blockElement = domutil.closest(target, config.classname('.time-date-schedule-block')),
-        schedulesCollection = this.baseController.schedules;
+  var self = this,
+    target = clickEvent.target,
+    timeView = this.checkExpectCondition(target),
+    blockElement = domutil.closest(target, config.classname('.time-date-schedule-block')),
+    schedulesCollection = this.baseController.schedules;
 
-    if (!timeView || !blockElement) {
-        return;
-    }
+  if (!timeView || !blockElement) {
+    return;
+  }
 
-    schedulesCollection.doWhenHas(domutil.getData(blockElement, 'id'), function(schedule) {
-        /**
+  schedulesCollection.doWhenHas(domutil.getData(blockElement, 'id'), function(schedule) {
+    /**
          * @events TimeClick#clickSchedule
          * @type {object}
          * @property {Schedule} schedule - schedule instance
          * @property {MouseEvent} event - MouseEvent object
          */
-        self.fire('clickSchedule', {
-            schedule: schedule,
-            event: clickEvent.originEvent
-        });
+    self.fire('clickSchedule', {
+      schedule: schedule,
+      event: clickEvent.originEvent
     });
+  });
 };
 
 util.CustomEvents.mixin(TimeClick);

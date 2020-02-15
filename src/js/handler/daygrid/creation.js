@@ -27,71 +27,71 @@ var CLICK_DELAY = 300;
  * @param {Options} [options] - calendar Options
  */
 function DayGridCreation(dragHandler, view, controller, options) {
-    /**
+  /**
      * Drag handler instance.
      * @type {Drag}
      */
-    this.dragHandler = dragHandler;
+  this.dragHandler = dragHandler;
 
-    /**
+  /**
      * view instance.
      * @type {DayGrid}
      */
-    this.view = view;
+  this.view = view;
 
-    /**
+  /**
      * Base controller instance.
      * @type {Base}
      */
-    this.controller = controller;
+  this.controller = controller;
 
-    /**
+  /**
      * @type {function}
      */
-    this.getScheduleDataFunc = null;
+  this.getScheduleDataFunc = null;
 
-    /**
+  /**
      * @type {DayGridCreationGuide}
      */
-    this.guide = new DayGridCreationGuide(this);
+  this.guide = new DayGridCreationGuide(this);
 
-    /**
+  /**
      * @type {boolean}
      */
-    this._requestOnClick = false;
+  this._requestOnClick = false;
 
-    /**
+  /**
      * @type {boolean}
      */
-    this._disableDblClick = options.disableDblClick;
+  this._disableDblClick = options.disableDblClick;
 
-    /**
+  /**
      * @type {boolean}
      */
-    this._disableClick = options.disableClick;
+  this._disableClick = options.disableClick;
 
-    dragHandler.on('dragStart', this._onDragStart, this);
-    dragHandler.on('click', this._onClick, this);
+  dragHandler.on('dragStart', this._onDragStart, this);
+  dragHandler.on('click', this._onClick, this);
 
-    if (this._disableDblClick) {
-        CLICK_DELAY = 0;
-    } else {
-        domevent.on(view.container, 'dblclick', this._onDblClick, this);
-    }
+  if (this._disableDblClick) {
+    CLICK_DELAY = 0;
+  } else {
+    domevent.on(view.container, 'dblclick', this._onDblClick, this);
+  }
 }
 
 /**
  * Destroy method
  */
 DayGridCreation.prototype.destroy = function() {
-    this.guide.destroy();
-    this.dragHandler.off(this);
+  this.guide.destroy();
+  this.dragHandler.off(this);
 
-    if (this.view && this.view.container) {
-        domevent.off(this.view.container, 'dblclick', this._onDblClick, this);
-    }
+  if (this.view && this.view.container) {
+    domevent.off(this.view.container, 'dblclick', this._onDblClick, this);
+  }
 
-    this.dragHandler = this.view = this.controller = this.getScheduleDataFunc = null;
+  this.dragHandler = this.view = this.controller = this.getScheduleDataFunc = null;
 };
 
 /**
@@ -100,34 +100,34 @@ DayGridCreation.prototype.destroy = function() {
  * @returns {boolean|WeekdayInWeek} return WeekdayInWeek view instance when satiate condition.
  */
 DayGridCreation.prototype.checkExpectedCondition = function(target) {
-    var cssClass = domutil.getClass(target).trim();
-    var excludeTarget = true;
-    var matches, schedulesElement;
+  var cssClass = domutil.getClass(target).trim();
+  var excludeTarget = true;
+  var matches, schedulesElement;
 
-    if (domutil.closest(target, config.classname('.weekday-exceed-in-week'))
+  if (domutil.closest(target, config.classname('.weekday-exceed-in-week'))
         || domutil.closest(target, config.classname('.weekday-collapse-btn'))
-    ) {
-        return false;
-    }
+  ) {
+    return false;
+  }
 
-    if (domutil.closest(target, config.classname('.weekday-schedule-block'), excludeTarget)) {
-        return false;
-    }
+  if (domutil.closest(target, config.classname('.weekday-schedule-block'), excludeTarget)) {
+    return false;
+  }
 
-    schedulesElement = domutil.closest(target, config.classname('.weekday-schedules'));
-    if (!schedulesElement && cssClass !== config.classname('weekday-schedules')) {
-        return false;
-    }
+  schedulesElement = domutil.closest(target, config.classname('.weekday-schedules'));
+  if (!schedulesElement && cssClass !== config.classname('weekday-schedules')) {
+    return false;
+  }
 
-    target = schedulesElement ? schedulesElement.parentNode : target.parentNode;
-    cssClass = domutil.getClass(target);
-    matches = cssClass.match(config.daygrid.getViewIDRegExp);
+  target = schedulesElement ? schedulesElement.parentNode : target.parentNode;
+  cssClass = domutil.getClass(target);
+  matches = cssClass.match(config.daygrid.getViewIDRegExp);
 
-    if (!matches || matches.length < 2) {
-        return false;
-    }
+  if (!matches || matches.length < 2) {
+    return false;
+  }
 
-    return util.pick(this.view.children.items, matches[1]);
+  return util.pick(this.view.children.items, matches[1]);
 };
 
 /**
@@ -136,22 +136,22 @@ DayGridCreation.prototype.checkExpectedCondition = function(target) {
  * @param {object} scheduleData - schedule data from DayGridCreation module.
  */
 DayGridCreation.prototype._createSchedule = function(scheduleData) {
-    var dateRange = scheduleData.range,
-        startXIndex = scheduleData.dragStartXIndex,
-        xIndex = scheduleData.xIndex,
-        start, end;
+  var dateRange = scheduleData.range,
+    startXIndex = scheduleData.dragStartXIndex,
+    xIndex = scheduleData.xIndex,
+    start, end;
 
-    // when inverse start, end then change it.
-    if (xIndex < startXIndex) {
-        startXIndex = xIndex + startXIndex;
-        xIndex = startXIndex - xIndex;
-        startXIndex = startXIndex - xIndex;
-    }
+  // when inverse start, end then change it.
+  if (xIndex < startXIndex) {
+    startXIndex = xIndex + startXIndex;
+    xIndex = startXIndex - xIndex;
+    startXIndex = startXIndex - xIndex;
+  }
 
-    start = new TZDate(dateRange[startXIndex]);
-    end = datetime.end(dateRange[xIndex]);
+  start = new TZDate(dateRange[startXIndex]);
+  end = datetime.end(dateRange[xIndex]);
 
-    /**
+  /**
      * @event {DayGridCreation#beforeCreateSchedule}
      * @type {object}
      * @property {string} category - schedule category
@@ -161,14 +161,14 @@ DayGridCreation.prototype._createSchedule = function(scheduleData) {
      * @property {DayGridCreationGuide} guide - DayGridCreationGuide instance
      * @property {string} triggerEventName - event name
      */
-    this.fire('beforeCreateSchedule', {
-        category: this.view.options.viewName,
-        isAllDay: true,
-        start: start,
-        end: end,
-        guide: this.guide,
-        triggerEventName: scheduleData.triggerEvent
-    });
+  this.fire('beforeCreateSchedule', {
+    category: this.view.options.viewName,
+    isAllDay: true,
+    start: start,
+    end: end,
+    guide: this.guide,
+    triggerEventName: scheduleData.triggerEvent
+  });
 };
 
 /**
@@ -177,26 +177,26 @@ DayGridCreation.prototype._createSchedule = function(scheduleData) {
  * @param {object} dragStartEventData - Drag#dragStart event handler schedule data.
  */
 DayGridCreation.prototype._onDragStart = function(dragStartEventData) {
-    var target = dragStartEventData.target,
-        result = this.checkExpectedCondition(target),
-        getScheduleDataFunc,
-        scheduleData;
+  var target = dragStartEventData.target,
+    result = this.checkExpectedCondition(target),
+    getScheduleDataFunc,
+    scheduleData;
 
-    if (!result) {
-        return;
-    }
+  if (!result) {
+    return;
+  }
 
-    this.dragHandler.on({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this.dragHandler.on({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    getScheduleDataFunc = this._retriveScheduleData(this.view, dragStartEventData.originEvent);
-    this.getScheduleDataFunc = getScheduleDataFunc;
+  getScheduleDataFunc = this._retriveScheduleData(this.view, dragStartEventData.originEvent);
+  this.getScheduleDataFunc = getScheduleDataFunc;
 
-    scheduleData = getScheduleDataFunc(dragStartEventData.originEvent);
+  scheduleData = getScheduleDataFunc(dragStartEventData.originEvent);
 
-    /**
+  /**
      * @event DayGridCreation#dragstart
      * @type {object}
      * @property {DayGridView} relatedView - view instance.
@@ -204,7 +204,7 @@ DayGridCreation.prototype._onDragStart = function(dragStartEventData) {
      * @property {number} dragStartXIndex - index number of dragstart grid index.
      * @property {number} xIndex - index number of mouse positions.
      */
-    this.fire('dragstart', scheduleData);
+  this.fire('dragstart', scheduleData);
 };
 
 /**
@@ -213,16 +213,16 @@ DayGridCreation.prototype._onDragStart = function(dragStartEventData) {
  * @param {object} dragEventData - Drag#drag event handler scheduledata.
  */
 DayGridCreation.prototype._onDrag = function(dragEventData) {
-    var getScheduleDataFunc = this.getScheduleDataFunc,
-        scheduleData;
+  var getScheduleDataFunc = this.getScheduleDataFunc,
+    scheduleData;
 
-    if (!getScheduleDataFunc) {
-        return;
-    }
+  if (!getScheduleDataFunc) {
+    return;
+  }
 
-    scheduleData = getScheduleDataFunc(dragEventData.originEvent);
+  scheduleData = getScheduleDataFunc(dragEventData.originEvent);
 
-    /**
+  /**
      * @event DayGridCreation#drag
      * @type {object}
      * @property {DayGridView} relatedView - view instance.
@@ -230,7 +230,7 @@ DayGridCreation.prototype._onDrag = function(dragEventData) {
      * @property {number} dragStartXIndex - index number of dragstart grid index.
      * @property {number} xIndex - index number of mouse positions.
      */
-    this.fire('drag', scheduleData);
+  this.fire('drag', scheduleData);
 };
 
 /**
@@ -240,23 +240,23 @@ DayGridCreation.prototype._onDrag = function(dragEventData) {
  * @param {string} [overrideEventName] - override emitted event name when supplied.
  */
 DayGridCreation.prototype._onDragEnd = function(dragEndEventData, overrideEventName) {
-    var getScheduleDataFunc = this.getScheduleDataFunc;
-    var scheduleData;
+  var getScheduleDataFunc = this.getScheduleDataFunc;
+  var scheduleData;
 
-    if (!getScheduleDataFunc) {
-        return;
-    }
+  if (!getScheduleDataFunc) {
+    return;
+  }
 
-    this.dragHandler.off({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this.dragHandler.off({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    scheduleData = getScheduleDataFunc(dragEndEventData.originEvent);
+  scheduleData = getScheduleDataFunc(dragEndEventData.originEvent);
 
-    this._createSchedule(scheduleData);
+  this._createSchedule(scheduleData);
 
-    /**
+  /**
      * @event DayGridCreation#dragend
      * @type {object}
      * @property {DayGridView} relatedView - view instance.
@@ -264,9 +264,9 @@ DayGridCreation.prototype._onDragEnd = function(dragEndEventData, overrideEventN
      * @property {number} dragStartXIndex - index number of dragstart grid index.
      * @property {number} xIndex - index number of mouse positions.
      */
-    this.fire(overrideEventName || 'dragend', scheduleData);
+  this.fire(overrideEventName || 'dragend', scheduleData);
 
-    this.getScheduleDataFunc = null;
+  this.getScheduleDataFunc = null;
 };
 
 /**
@@ -275,24 +275,24 @@ DayGridCreation.prototype._onDragEnd = function(dragEndEventData, overrideEventN
  * @param {object} clickEventData - Drag#click event handler data.
  */
 DayGridCreation.prototype._onClick = function(clickEventData) {
-    var self = this;
-    var getScheduleDataFunc, scheduleData;
+  var self = this;
+  var getScheduleDataFunc, scheduleData;
 
-    if (!this.checkExpectedCondition(clickEventData.target) || this._disableClick) {
-        return;
+  if (!this.checkExpectedCondition(clickEventData.target) || this._disableClick) {
+    return;
+  }
+
+  getScheduleDataFunc = this._retriveScheduleData(this.view, clickEventData.originEvent);
+  scheduleData = getScheduleDataFunc(clickEventData.originEvent);
+
+  this._requestOnClick = true;
+  setTimeout(function() {
+    if (self._requestOnClick) {
+      self.fire('click', scheduleData);
+      self._createSchedule(scheduleData);
     }
-
-    getScheduleDataFunc = this._retriveScheduleData(this.view, clickEventData.originEvent);
-    scheduleData = getScheduleDataFunc(clickEventData.originEvent);
-
-    this._requestOnClick = true;
-    setTimeout(function() {
-        if (self._requestOnClick) {
-            self.fire('click', scheduleData);
-            self._createSchedule(scheduleData);
-        }
-        self._requestOnClick = false;
-    }, CLICK_DELAY);
+    self._requestOnClick = false;
+  }, CLICK_DELAY);
 };
 
 /**
@@ -301,20 +301,20 @@ DayGridCreation.prototype._onClick = function(clickEventData) {
  * @param {object} clickEventData - Drag#Click event handler data.
  */
 DayGridCreation.prototype._onDblClick = function(clickEventData) {
-    var getScheduleDataFunc, scheduleData;
+  var getScheduleDataFunc, scheduleData;
 
-    if (!this.checkExpectedCondition(clickEventData.target)) {
-        return;
-    }
+  if (!this.checkExpectedCondition(clickEventData.target)) {
+    return;
+  }
 
-    getScheduleDataFunc = this._retriveScheduleData(this.view, clickEventData);
-    scheduleData = getScheduleDataFunc(clickEventData);
+  getScheduleDataFunc = this._retriveScheduleData(this.view, clickEventData);
+  scheduleData = getScheduleDataFunc(clickEventData);
 
-    this.fire('click', scheduleData);
+  this.fire('click', scheduleData);
 
-    this._createSchedule(scheduleData);
+  this._createSchedule(scheduleData);
 
-    this._requestOnClick = false;
+  this._requestOnClick = false;
 };
 
 /**
@@ -322,14 +322,14 @@ DayGridCreation.prototype._onDblClick = function(clickEventData) {
  * @param {Schedule} schedule - schedule instance
  */
 DayGridCreation.prototype.invokeCreationClick = function(schedule) {
-    var getScheduleDataFunc, scheduleData;
+  var getScheduleDataFunc, scheduleData;
 
-    getScheduleDataFunc = this._retriveScheduleDataFromDate(this.view, schedule.start);
-    scheduleData = getScheduleDataFunc(schedule.start);
+  getScheduleDataFunc = this._retriveScheduleDataFromDate(this.view, schedule.start);
+  scheduleData = getScheduleDataFunc(schedule.start);
 
-    this.fire('click', scheduleData);
+  this.fire('click', scheduleData);
 
-    this._createSchedule(scheduleData);
+  this._createSchedule(scheduleData);
 };
 
 common.mixin(dayGridCore, DayGridCreation);

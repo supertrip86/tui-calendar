@@ -6,10 +6,10 @@
 
 var util = require('tui-code-snippet');
 var config = require('../config'),
-    domutil = require('../common/domutil'),
-    datetime = require('../common/datetime'),
-    TZDate = require('../common/timezone').Date,
-    View = require('./view');
+  domutil = require('../common/domutil'),
+  datetime = require('../common/datetime'),
+  TZDate = require('../common/timezone').Date,
+  View = require('./view');
 
 /**
  * @constructor
@@ -23,31 +23,31 @@ var config = require('../config'),
  *  view.
  */
 function Weekday(options, container) {
-    container = domutil.appendHTMLElement(
-        'div',
-        container,
-        config.classname('weekday')
-    );
+  container = domutil.appendHTMLElement(
+    'div',
+    container,
+    config.classname('weekday')
+  );
 
-    /**
+  /**
      * @type {object}
      */
-    this.options = util.extend({
-        containerBottomGutter: 8,
-        scheduleHeight: 18,
-        scheduleGutter: 2,
-        narrowWeekend: false,
-        startDayOfWeek: 0,
-        workweek: false
-    }, options);
+  this.options = util.extend({
+    containerBottomGutter: 8,
+    scheduleHeight: 18,
+    scheduleGutter: 2,
+    narrowWeekend: false,
+    startDayOfWeek: 0,
+    workweek: false
+  }, options);
 
-    /*
+  /*
      * cache parent's view model
      * @type {object}
      */
-    this._cacheParentViewModel = null;
+  this._cacheParentViewModel = null;
 
-    View.call(this, container);
+  View.call(this, container);
 }
 
 util.inherit(Weekday, View);
@@ -57,7 +57,7 @@ util.inherit(Weekday, View);
  * @returns {Date[]} rendered date range
  */
 Weekday.prototype.getRenderDateRange = function() {
-    return this._cacheParentViewModel.range;
+  return this._cacheParentViewModel.range;
 };
 
 /**
@@ -65,7 +65,7 @@ Weekday.prototype.getRenderDateRange = function() {
  * @returns {Date[]} rendered date grids information
  */
 Weekday.prototype.getRenderDateGrids = function() {
-    return this._cacheParentViewModel.grids;
+  return this._cacheParentViewModel.grids;
 };
 
 /**
@@ -74,40 +74,40 @@ Weekday.prototype.getRenderDateGrids = function() {
  * @returns {object} viewModel to rendering.
  */
 Weekday.prototype.getBaseViewModel = function(viewModel) {
-    var opt = this.options;
-    var range = viewModel.range;
-    var gridWidth = (100 / range.length);
-    var grids = viewModel.grids;
-    var exceedDate = viewModel.exceedDate || {};
-    var theme = viewModel.theme;
-    var now = new TZDate().toLocalTime();
+  var opt = this.options;
+  var range = viewModel.range;
+  var gridWidth = (100 / range.length);
+  var grids = viewModel.grids;
+  var exceedDate = viewModel.exceedDate || {};
+  var theme = viewModel.theme;
+  var now = new TZDate().toLocalTime();
 
-    this._cacheParentViewModel = viewModel;
+  this._cacheParentViewModel = viewModel;
 
-    return {
-        width: gridWidth,
-        scheduleHeight: opt.scheduleHeight,
-        scheduleBlockHeight: (opt.scheduleHeight + opt.scheduleGutter),
-        scheduleBlockGutter: opt.scheduleGutter,
-        dates: util.map(range, function(date, index) {
-            var day = date.getDay();
-            var ymd = datetime.format(new TZDate(date), 'YYYYMMDD');
-            var isToday = datetime.isSameDate(now, date);
+  return {
+    width: gridWidth,
+    scheduleHeight: opt.scheduleHeight,
+    scheduleBlockHeight: (opt.scheduleHeight + opt.scheduleGutter),
+    scheduleBlockGutter: opt.scheduleGutter,
+    dates: util.map(range, function(date, index) {
+      var day = date.getDay();
+      var ymd = datetime.format(new TZDate(date), 'YYYYMMDD');
+      var isToday = datetime.isSameDate(now, date);
 
-            return {
-                date: datetime.format(date, 'YYYY-MM-DD'),
-                month: date.getMonth() + 1,
-                day: day,
-                isToday: isToday,
-                ymd: ymd,
-                hiddenSchedules: exceedDate[ymd] || 0,
-                width: grids[index] ? grids[index].width : 0,
-                left: grids[index] ? grids[index].left : 0,
-                color: this._getDayNameColor(theme, day, isToday),
-                backgroundColor: this._getDayBackgroundColor(theme, day)
-            };
-        }, this)
-    };
+      return {
+        date: datetime.format(date, 'YYYY-MM-DD'),
+        month: date.getMonth() + 1,
+        day: day,
+        isToday: isToday,
+        ymd: ymd,
+        hiddenSchedules: exceedDate[ymd] || 0,
+        width: grids[index] ? grids[index].width : 0,
+        left: grids[index] ? grids[index].left : 0,
+        color: this._getDayNameColor(theme, day, isToday),
+        backgroundColor: this._getDayBackgroundColor(theme, day)
+      };
+    }, this)
+  };
 };
 
 /* eslint max-nested-callbacks: 0 */
@@ -119,34 +119,34 @@ Weekday.prototype.getBaseViewModel = function(viewModel) {
  * @returns {object} exceedDate
  */
 Weekday.prototype.getExceedDate = function(maxCount, eventsInDateRange, range) {
-    var exceedDate = this._initExceedDate(range);
+  var exceedDate = this._initExceedDate(range);
 
-    util.forEach(eventsInDateRange, function(matrix) {
-        util.forEach(matrix, function(column) {
-            util.forEach(column, function(viewModel) {
-                var period;
-                if (!viewModel || viewModel.top < maxCount) {
-                    return;
-                }
+  util.forEach(eventsInDateRange, function(matrix) {
+    util.forEach(matrix, function(column) {
+      util.forEach(column, function(viewModel) {
+        var period;
+        if (!viewModel || viewModel.top < maxCount) {
+          return;
+        }
 
-                // check that this schedule block is not visible after rendered.
-                viewModel.hidden = true;
+        // check that this schedule block is not visible after rendered.
+        viewModel.hidden = true;
 
-                period = datetime.range(
-                    viewModel.getStarts(),
-                    viewModel.getEnds(),
-                    datetime.MILLISECONDS_PER_DAY
-                );
+        period = datetime.range(
+          viewModel.getStarts(),
+          viewModel.getEnds(),
+          datetime.MILLISECONDS_PER_DAY
+        );
 
-                util.forEach(period, function(date) {
-                    var ymd = datetime.format(date, 'YYYYMMDD');
-                    exceedDate[ymd] += 1;
-                });
-            });
+        util.forEach(period, function(date) {
+          var ymd = datetime.format(date, 'YYYYMMDD');
+          exceedDate[ymd] += 1;
         });
+      });
     });
+  });
 
-    return exceedDate;
+  return exceedDate;
 };
 
 /**
@@ -155,14 +155,14 @@ Weekday.prototype.getExceedDate = function(maxCount, eventsInDateRange, range) {
  * @returns {Object} - initiated exceed date
  */
 Weekday.prototype._initExceedDate = function(range) {
-    var exceedDate = {};
+  var exceedDate = {};
 
-    util.forEach(range, function(date) {
-        var ymd = datetime.format(date, 'YYYYMMDD');
-        exceedDate[ymd] = 0;
-    });
+  util.forEach(range, function(date) {
+    var ymd = datetime.format(date, 'YYYYMMDD');
+    exceedDate[ymd] = 0;
+  });
 
-    return exceedDate;
+  return exceedDate;
 };
 
 /**
@@ -174,21 +174,21 @@ Weekday.prototype._initExceedDate = function(range) {
  * @returns {string} style - color style
  */
 Weekday.prototype._getDayNameColor = function(theme, day, isToday, isOtherMonth) {
-    var color = '';
+  var color = '';
 
-    if (theme) {
-        if (day === 0) {
-            color = isOtherMonth ? theme.month.holidayExceptThisMonth.color : theme.common.holiday.color;
-        } else if (day === 6) {
-            color = isOtherMonth ? theme.month.dayExceptThisMonth.color : theme.common.saturday.color;
-        } else if (isToday) {
-            color = theme.common.today.color;
-        } else {
-            color = isOtherMonth ? theme.month.dayExceptThisMonth.color : theme.common.dayname.color;
-        }
+  if (theme) {
+    if (day === 0) {
+      color = isOtherMonth ? theme.month.holidayExceptThisMonth.color : theme.common.holiday.color;
+    } else if (day === 6) {
+      color = isOtherMonth ? theme.month.dayExceptThisMonth.color : theme.common.saturday.color;
+    } else if (isToday) {
+      color = theme.common.today.color;
+    } else {
+      color = isOtherMonth ? theme.month.dayExceptThisMonth.color : theme.common.dayname.color;
     }
+  }
 
-    return color;
+  return color;
 };
 
 /**
@@ -198,17 +198,17 @@ Weekday.prototype._getDayNameColor = function(theme, day, isToday, isOtherMonth)
  * @returns {string} style - color style
  */
 Weekday.prototype._getDayBackgroundColor = function(theme, day) {
-    var color = '';
+  var color = '';
 
-    if (theme) {
-        if (day === 0 || day === 6) {
-            color = theme.month.weekend.backgroundColor;
-        } else {
-            color = 'inherit';
-        }
+  if (theme) {
+    if (day === 0 || day === 6) {
+      color = theme.month.weekend.backgroundColor;
+    } else {
+      color = 'inherit';
     }
+  }
 
-    return color;
+  return color;
 };
 
 module.exports = Weekday;

@@ -7,11 +7,11 @@
 var util = require('tui-code-snippet');
 
 var config = require('../../config'),
-    datetime = require('../../common/datetime'),
-    domutil = require('../../common/domutil'),
-    getMousePosData = require('./core'),
-    MonthResizeGuide = require('./resizeGuide'),
-    TZDate = require('../../common/timezone').Date;
+  datetime = require('../../common/datetime'),
+  domutil = require('../../common/domutil'),
+  getMousePosData = require('./core'),
+  MonthResizeGuide = require('./resizeGuide'),
+  TZDate = require('../../common/timezone').Date;
 
 var common = require('../../common/common');
 
@@ -22,46 +22,46 @@ var common = require('../../common/common');
  * @param {Base} baseController - Base controller instance.
  */
 function MonthResize(dragHandler, monthView, baseController) {
-    /**
+  /**
      * @type {Drag}
      */
-    this.dragHandler = dragHandler;
+  this.dragHandler = dragHandler;
 
-    /**
+  /**
      * @type {Month}
      */
-    this.monthView = monthView;
+  this.monthView = monthView;
 
-    /**
+  /**
      * @type {Base}
      */
-    this.baseController = baseController;
+  this.baseController = baseController;
 
-    /**
+  /**
      * @type {function}
      */
-    this.getScheduleData = null;
+  this.getScheduleData = null;
 
-    /**
+  /**
      * @type {object}
      */
-    this._cache = null;
+  this._cache = null;
 
-    /**
+  /**
      * @type {MonthResizeGuide}
      */
-    this.guide = new MonthResizeGuide(this);
+  this.guide = new MonthResizeGuide(this);
 
-    dragHandler.on('dragStart', this._onDragStart, this);
+  dragHandler.on('dragStart', this._onDragStart, this);
 }
 
 /**
  * Destructor
  */
 MonthResize.prototype.destroy = function() {
-    this.dragHandler.off(this);
+  this.dragHandler.off(this);
 
-    this.dragHandler = this.monthView = this.baseController = null;
+  this.dragHandler = this.monthView = this.baseController = null;
 };
 
 /**
@@ -71,16 +71,16 @@ MonthResize.prototype.destroy = function() {
  *  session.
  */
 MonthResize.prototype._updateSchedule = function(scheduleCache) {
-    // You can not change the start date of the event. Only the end time can be changed.
-    var newEnd = datetime.end(new TZDate(scheduleCache.end)),
-        schedule = scheduleCache.schedule;
-    var changes = common.getScheduleChanges(
-        schedule,
-        ['end'],
-        {end: newEnd}
-    );
+  // You can not change the start date of the event. Only the end time can be changed.
+  var newEnd = datetime.end(new TZDate(scheduleCache.end)),
+    schedule = scheduleCache.schedule;
+  var changes = common.getScheduleChanges(
+    schedule,
+    ['end'],
+    {end: newEnd}
+  );
 
-    /**
+  /**
      * @event MonthResize#beforeUpdateSchedule
      * @type {object}
      * @property {Schedule} schedule - The original schedule instance
@@ -89,12 +89,12 @@ MonthResize.prototype._updateSchedule = function(scheduleCache) {
      * @property {object} changes - end time to update
      *  @property {date} end - end time to update
      */
-    this.fire('beforeUpdateSchedule', {
-        schedule: schedule,
-        changes: changes,
-        start: new TZDate(schedule.getStarts()),
-        end: newEnd
-    });
+  this.fire('beforeUpdateSchedule', {
+    schedule: schedule,
+    changes: changes,
+    start: new TZDate(schedule.getStarts()),
+    end: newEnd
+  });
 };
 
 /**
@@ -103,40 +103,40 @@ MonthResize.prototype._updateSchedule = function(scheduleCache) {
  * @param {object} dragStartEvent - drag start event data
  */
 MonthResize.prototype._onDragStart = function(dragStartEvent) {
-    var target = dragStartEvent.target,
-        modelID, schedule,
-        scheduleData;
+  var target = dragStartEvent.target,
+    modelID, schedule,
+    scheduleData;
 
-    if (!domutil.hasClass(target, config.classname('weekday-resize-handle'))) {
-        return;
-    }
+  if (!domutil.hasClass(target, config.classname('weekday-resize-handle'))) {
+    return;
+  }
 
-    target = domutil.closest(target, config.classname('.weekday-schedule-block'));
+  target = domutil.closest(target, config.classname('.weekday-schedule-block'));
 
-    if (!target) {
-        return;
-    }
+  if (!target) {
+    return;
+  }
 
-    modelID = domutil.getData(target, 'id');
-    schedule = this.baseController.schedules.items[modelID];
+  modelID = domutil.getData(target, 'id');
+  schedule = this.baseController.schedules.items[modelID];
 
-    this.dragHandler.on({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this.dragHandler.on({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    this.getScheduleData = getMousePosData(this.monthView);
-    scheduleData = this.getScheduleData(dragStartEvent.originEvent);
-    scheduleData.target = target;
-    scheduleData.model = schedule;
+  this.getScheduleData = getMousePosData(this.monthView);
+  scheduleData = this.getScheduleData(dragStartEvent.originEvent);
+  scheduleData.target = target;
+  scheduleData.model = schedule;
 
-    this._cache = {
-        schedule: schedule,
-        target: target,
-        start: new TZDate(scheduleData.date)
-    };
+  this._cache = {
+    schedule: schedule,
+    target: target,
+    start: new TZDate(scheduleData.date)
+  };
 
-    /**
+  /**
      * @event {MonthCreation#monthResizeDragstart}
      * @type {object}
      * @property {number} x - x index
@@ -145,7 +145,7 @@ MonthResize.prototype._onDragStart = function(dragStartEvent) {
      * @property {HTMLElement} target - schedule block element
      * @property {Schedule} model - model instance
      */
-    this.fire('monthResizeDragstart', scheduleData);
+  this.fire('monthResizeDragstart', scheduleData);
 };
 
 /**
@@ -153,26 +153,26 @@ MonthResize.prototype._onDragStart = function(dragStartEvent) {
  * @param {object} dragEvent - drag event data
  */
 MonthResize.prototype._onDrag = function(dragEvent) {
-    var scheduleData;
+  var scheduleData;
 
-    if (!this.getScheduleData) {
-        return;
-    }
+  if (!this.getScheduleData) {
+    return;
+  }
 
-    scheduleData = this.getScheduleData(dragEvent.originEvent);
+  scheduleData = this.getScheduleData(dragEvent.originEvent);
 
-    if (!scheduleData) {
-        return;
-    }
+  if (!scheduleData) {
+    return;
+  }
 
-    /**
+  /**
      * @event {MonthResize#monthResizeDrag}
      * @type {object}
      * @property {number} x - x index
      * @property {number} y - y index
      * @property {Date} date - drag date
      */
-    this.fire('monthResizeDrag', scheduleData);
+  this.fire('monthResizeDrag', scheduleData);
 };
 
 /**
@@ -180,41 +180,41 @@ MonthResize.prototype._onDrag = function(dragEvent) {
  * @param {object} dragEndEvent - drag end event data
  */
 MonthResize.prototype._onDragEnd = function(dragEndEvent) {
-    var cache = this._cache;
-    var scheduleData;
-    var start, end;
+  var cache = this._cache;
+  var scheduleData;
+  var start, end;
 
-    this.dragHandler.off({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this.dragHandler.off({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    if (!this.getScheduleData) {
-        return;
+  if (!this.getScheduleData) {
+    return;
+  }
+
+  scheduleData = this.getScheduleData(dragEndEvent.originEvent);
+
+  if (scheduleData) {
+    start = new TZDate(cache.schedule.getStarts());
+    end = new TZDate(scheduleData.date);
+    cache.end = end;
+
+    if (start <= cache.end) {
+      this._updateSchedule(cache);
     }
+  }
 
-    scheduleData = this.getScheduleData(dragEndEvent.originEvent);
-
-    if (scheduleData) {
-        start = new TZDate(cache.schedule.getStarts());
-        end = new TZDate(scheduleData.date);
-        cache.end = end;
-
-        if (start <= cache.end) {
-            this._updateSchedule(cache);
-        }
-    }
-
-    /**
+  /**
      * @event {MonthResize#monthResizeDragend}
      * @type {object}
      * @property {number} x - x index
      * @property {number} y - y index
      * @property {Date} date - drag date
      */
-    this.fire('monthResizeDragend', scheduleData);
+  this.fire('monthResizeDragend', scheduleData);
 
-    this.getScheduleData = this._cache = null;
+  this.getScheduleData = this._cache = null;
 };
 
 util.CustomEvents.mixin(MonthResize);

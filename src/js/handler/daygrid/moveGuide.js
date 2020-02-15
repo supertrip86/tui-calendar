@@ -16,47 +16,47 @@ var reqAnimFrame = require('../../common/reqAnimFrame');
  * @param {DayGridMove} daygridMove - instance of DayGridMove.
  */
 function DayGridMoveGuide(daygridMove) {
-    /**
+  /**
      * @type {DayGridMove}
      */
-    this.daygridMove = daygridMove;
+  this.daygridMove = daygridMove;
 
-    /**
+  /**
      * The element that actually contains the event element
      * @type {HTMLDIVElement}
      */
-    this.scheduleContainer = null;
+  this.scheduleContainer = null;
 
-    /**
+  /**
      * @type {number}
      */
-    this._dragStartXIndex = null;
+  this._dragStartXIndex = null;
 
-    /**
+  /**
      * @type {HTMLDIVElement}
      */
-    this.guideElement = null;
+  this.guideElement = null;
 
-    /**
+  /**
      * @type {HTMLElement[]}
      */
-    this.elements = null;
+  this.elements = null;
 
-    daygridMove.on({
-        'dragstart': this._onDragStart,
-        'drag': this._onDrag,
-        'dragend': this._clearGuideElement,
-        'click': this._clearGuideElement
-    }, this);
+  daygridMove.on({
+    'dragstart': this._onDragStart,
+    'drag': this._onDrag,
+    'dragend': this._clearGuideElement,
+    'click': this._clearGuideElement
+  }, this);
 }
 
 /**
  * Destroy method
  */
 DayGridMoveGuide.prototype.destroy = function() {
-    this._clearGuideElement();
-    this.daygridMove.off(this);
-    this.daygridMove = this.scheduleContainer = this._dragStartXIndex =
+  this._clearGuideElement();
+  this.daygridMove.off(this);
+  this.daygridMove = this.scheduleContainer = this._dragStartXIndex =
         this.elements = this.guideElement = null;
 };
 
@@ -64,15 +64,15 @@ DayGridMoveGuide.prototype.destroy = function() {
  * Clear guide element.
  */
 DayGridMoveGuide.prototype._clearGuideElement = function() {
-    this._showOriginScheduleBlocks();
+  this._showOriginScheduleBlocks();
 
-    domutil.remove(this.guideElement);
+  domutil.remove(this.guideElement);
 
-    if (!util.browser.msie) {
-        domutil.removeClass(global.document.body, config.classname('dragging'));
-    }
+  if (!util.browser.msie) {
+    domutil.removeClass(global.document.body, config.classname('dragging'));
+  }
 
-    this._dragStartXIndex = this.getScheduleDataFunc = this.guideElement = null;
+  this._dragStartXIndex = this.getScheduleDataFunc = this.guideElement = null;
 };
 
 /**
@@ -80,31 +80,31 @@ DayGridMoveGuide.prototype._clearGuideElement = function() {
  * @param {number} modelID - Schedule model instance ID
  */
 DayGridMoveGuide.prototype._hideOriginScheduleBlocks = function(modelID) {
-    var className = config.classname('weekday-schedule-block-dragging-dim');
-    var scheduleBlocks = domutil.find(
-        config.classname('.weekday-schedule-block'),
-        this.daygridMove.view.container,
-        true
-    );
+  var className = config.classname('weekday-schedule-block-dragging-dim');
+  var scheduleBlocks = domutil.find(
+    config.classname('.weekday-schedule-block'),
+    this.daygridMove.view.container,
+    true
+  );
 
-    this.elements = util.filter(scheduleBlocks, function(schedule) {
-        return domutil.getData(schedule, 'id') === modelID;
-    });
+  this.elements = util.filter(scheduleBlocks, function(schedule) {
+    return domutil.getData(schedule, 'id') === modelID;
+  });
 
-    util.forEach(this.elements, function(el) {
-        domutil.addClass(el, className);
-    });
+  util.forEach(this.elements, function(el) {
+    domutil.addClass(el, className);
+  });
 };
 
 /**
  * Show element blocks
  */
 DayGridMoveGuide.prototype._showOriginScheduleBlocks = function() {
-    var className = config.classname('weekday-schedule-block-dragging-dim');
+  var className = config.classname('weekday-schedule-block-dragging-dim');
 
-    util.forEach(this.elements, function(el) {
-        domutil.removeClass(el, className);
-    });
+  util.forEach(this.elements, function(el) {
+    domutil.removeClass(el, className);
+  });
 };
 
 /**
@@ -113,17 +113,17 @@ DayGridMoveGuide.prototype._showOriginScheduleBlocks = function() {
  * @param {HTMLElement} parent - parent element
  */
 DayGridMoveGuide.prototype._highlightScheduleBlocks = function(model, parent) {
-    var elements = domutil.find(config.classname('.weekday-schedule'), parent, true);
+  var elements = domutil.find(config.classname('.weekday-schedule'), parent, true);
 
-    util.forEach(elements, function(el) {
-        el.style.margin = '0';
+  util.forEach(elements, function(el) {
+    el.style.margin = '0';
 
-        if (!model.isFocused) {
-            el.style.backgroundColor = model.dragBgColor;
-            el.style.borderLeftColor = model.borderColor;
-            el.style.color = '#ffffff';
-        }
-    });
+    if (!model.isFocused) {
+      el.style.backgroundColor = model.dragBgColor;
+      el.style.borderLeftColor = model.borderColor;
+      el.style.color = '#ffffff';
+    }
+  });
 };
 
 /**
@@ -134,24 +134,24 @@ DayGridMoveGuide.prototype._highlightScheduleBlocks = function(model, parent) {
  * @param {boolean} isExceededRight - schedule end is later then render end date?
  */
 DayGridMoveGuide.prototype.refreshGuideElement = function(leftPercent, widthPercent, isExceededLeft, isExceededRight) {
-    var guideElement = this.guideElement;
+  var guideElement = this.guideElement;
 
-    reqAnimFrame.requestAnimFrame(function() {
-        guideElement.style.left = leftPercent + '%';
-        guideElement.style.width = widthPercent + '%';
+  reqAnimFrame.requestAnimFrame(function() {
+    guideElement.style.left = leftPercent + '%';
+    guideElement.style.width = widthPercent + '%';
 
-        if (isExceededLeft) {
-            domutil.addClass(guideElement, config.classname('weekday-exceed-left'));
-        } else {
-            domutil.removeClass(guideElement, config.classname('weekday-exceed-left'));
-        }
+    if (isExceededLeft) {
+      domutil.addClass(guideElement, config.classname('weekday-exceed-left'));
+    } else {
+      domutil.removeClass(guideElement, config.classname('weekday-exceed-left'));
+    }
 
-        if (isExceededRight) {
-            domutil.addClass(guideElement, config.classname('weekday-exceed-right'));
-        } else {
-            domutil.removeClass(guideElement, config.classname('weekday-exceed-right'));
-        }
-    });
+    if (isExceededRight) {
+      domutil.addClass(guideElement, config.classname('weekday-exceed-right'));
+    } else {
+      domutil.removeClass(guideElement, config.classname('weekday-exceed-right'));
+    }
+  });
 };
 
 /**
@@ -165,26 +165,26 @@ DayGridMoveGuide.prototype.refreshGuideElement = function(leftPercent, widthPerc
  * @returns {function} function that return schedule block information.
  */
 DayGridMoveGuide.prototype._getScheduleBlockDataFunc = function(dragStartEventData) {
-    var model = dragStartEventData.model,
-        datesInRange = dragStartEventData.datesInRange,
-        range = dragStartEventData.range,
-        baseWidthPercent = (100 / datesInRange),
-        originScheduleStarts = datetime.start(model.start),
-        originScheduleEnds = datetime.end(model.end),
-        renderStartDate = datetime.start(range[0]),
-        renderEndDate = datetime.end(range[range.length - 1]),
-        fromLeft = Math.ceil((originScheduleStarts.getTime() -
+  var model = dragStartEventData.model,
+    datesInRange = dragStartEventData.datesInRange,
+    range = dragStartEventData.range,
+    baseWidthPercent = (100 / datesInRange),
+    originScheduleStarts = datetime.start(model.start),
+    originScheduleEnds = datetime.end(model.end),
+    renderStartDate = datetime.start(range[0]),
+    renderEndDate = datetime.end(range[range.length - 1]),
+    fromLeft = Math.ceil((originScheduleStarts.getTime() -
             renderStartDate.getTime()) / datetime.MILLISECONDS_PER_DAY) || 0,
-        fromRight = Math.ceil((originScheduleEnds.getTime() -
+    fromRight = Math.ceil((originScheduleEnds.getTime() -
             renderEndDate.getTime()) / datetime.MILLISECONDS_PER_DAY) || 0;
 
-    return function(indexOffset) {
-        return {
-            baseWidthPercent: baseWidthPercent,
-            fromLeft: fromLeft + indexOffset,
-            fromRight: fromRight + indexOffset
-        };
+  return function(indexOffset) {
+    return {
+      baseWidthPercent: baseWidthPercent,
+      fromLeft: fromLeft + indexOffset,
+      fromRight: fromRight + indexOffset
     };
+  };
 };
 
 /**
@@ -192,24 +192,24 @@ DayGridMoveGuide.prototype._getScheduleBlockDataFunc = function(dragStartEventDa
  * @param {object} dragStartEventData - schedule data.
  */
 DayGridMoveGuide.prototype._onDragStart = function(dragStartEventData) {
-    var container = this.daygridMove.view.container,
-        guideElement = this.guideElement = dragStartEventData.scheduleBlockElement.cloneNode(true),
-        scheduleContainer;
+  var container = this.daygridMove.view.container,
+    guideElement = this.guideElement = dragStartEventData.scheduleBlockElement.cloneNode(true),
+    scheduleContainer;
 
-    if (!util.browser.msie) {
-        domutil.addClass(global.document.body, config.classname('dragging'));
-    }
+  if (!util.browser.msie) {
+    domutil.addClass(global.document.body, config.classname('dragging'));
+  }
 
-    this._hideOriginScheduleBlocks(String(dragStartEventData.model.cid()));
+  this._hideOriginScheduleBlocks(String(dragStartEventData.model.cid()));
 
-    scheduleContainer = domutil.find(config.classname('.weekday-schedules'), container);
-    domutil.appendHTMLElement('div', guideElement, config.classname('weekday-schedule-cover'));
-    scheduleContainer.appendChild(guideElement);
+  scheduleContainer = domutil.find(config.classname('.weekday-schedules'), container);
+  domutil.appendHTMLElement('div', guideElement, config.classname('weekday-schedule-cover'));
+  scheduleContainer.appendChild(guideElement);
 
-    this._dragStartXIndex = dragStartEventData.xIndex;
-    this.getScheduleDataFunc = this._getScheduleBlockDataFunc(dragStartEventData);
+  this._dragStartXIndex = dragStartEventData.xIndex;
+  this.getScheduleDataFunc = this._getScheduleBlockDataFunc(dragStartEventData);
 
-    this._highlightScheduleBlocks(dragStartEventData.model, guideElement);
+  this._highlightScheduleBlocks(dragStartEventData.model, guideElement);
 };
 
 /**
@@ -217,36 +217,36 @@ DayGridMoveGuide.prototype._onDragStart = function(dragStartEventData) {
  * @param {object} dragEventData - schedule data.
  */
 DayGridMoveGuide.prototype._onDrag = function(dragEventData) {
-    var getScheduleDataFunc = this.getScheduleDataFunc,
-        dragStartXIndex = this._dragStartXIndex,
-        datesInRange = dragEventData.datesInRange,
-        grids = dragEventData.grids,
-        scheduleData,
-        isExceededLeft,
-        isExceededRight,
-        originLength,
-        leftIndex,
-        size,
-        newLeft,
-        newWidth;
+  var getScheduleDataFunc = this.getScheduleDataFunc,
+    dragStartXIndex = this._dragStartXIndex,
+    datesInRange = dragEventData.datesInRange,
+    grids = dragEventData.grids,
+    scheduleData,
+    isExceededLeft,
+    isExceededRight,
+    originLength,
+    leftIndex,
+    size,
+    newLeft,
+    newWidth;
 
-    if (!getScheduleDataFunc) {
-        return;
-    }
+  if (!getScheduleDataFunc) {
+    return;
+  }
 
-    scheduleData = getScheduleDataFunc(dragEventData.xIndex - dragStartXIndex);
-    isExceededLeft = scheduleData.fromLeft < 0;
-    isExceededRight = scheduleData.fromRight > 0;
+  scheduleData = getScheduleDataFunc(dragEventData.xIndex - dragStartXIndex);
+  isExceededLeft = scheduleData.fromLeft < 0;
+  isExceededRight = scheduleData.fromRight > 0;
 
-    leftIndex = Math.max(0, scheduleData.fromLeft);
-    originLength = (scheduleData.fromLeft * -1) + (datesInRange + scheduleData.fromRight);
-    size = isExceededLeft ? (originLength + scheduleData.fromLeft) : originLength;
-    size = isExceededRight ? (size - scheduleData.fromRight) : size;
+  leftIndex = Math.max(0, scheduleData.fromLeft);
+  originLength = (scheduleData.fromLeft * -1) + (datesInRange + scheduleData.fromRight);
+  size = isExceededLeft ? (originLength + scheduleData.fromLeft) : originLength;
+  size = isExceededRight ? (size - scheduleData.fromRight) : size;
 
-    newLeft = grids[leftIndex] ? grids[leftIndex].left : 0;
-    newWidth = getScheduleBlockWidth(leftIndex, size, grids);
+  newLeft = grids[leftIndex] ? grids[leftIndex].left : 0;
+  newWidth = getScheduleBlockWidth(leftIndex, size, grids);
 
-    this.refreshGuideElement(newLeft, newWidth, isExceededLeft, isExceededRight);
+  this.refreshGuideElement(newLeft, newWidth, isExceededLeft, isExceededRight);
 };
 
 /**
@@ -257,17 +257,17 @@ DayGridMoveGuide.prototype._onDrag = function(dragEventData) {
  * @returns {number} element width
  */
 function getScheduleBlockWidth(left, size, grids) {
-    var width = 0;
-    var i = 0;
-    var length = grids.length;
-    for (; i < size; i += 1) {
-        left = (left + i) % length;
-        if (left < length) {
-            width += grids[left] ? grids[left].width : 0;
-        }
+  var width = 0;
+  var i = 0;
+  var length = grids.length;
+  for (; i < size; i += 1) {
+    left = (left + i) % length;
+    if (left < length) {
+      width += grids[left] ? grids[left].width : 0;
     }
+  }
 
-    return width;
+  return width;
 }
 
 module.exports = DayGridMoveGuide;

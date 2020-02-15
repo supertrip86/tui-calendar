@@ -6,7 +6,7 @@
 
 var util = require('tui-code-snippet');
 var Weekday = require('../weekday'),
-    tmpl = require('../template/week/dayGridSchedule.hbs');
+  tmpl = require('../template/week/dayGridSchedule.hbs');
 var mmax = Math.max;
 
 /**
@@ -21,9 +21,9 @@ var mmax = Math.max;
  *  view.
  */
 function DayGridSchedule(options, container) {
-    Weekday.call(this, options, container);
+  Weekday.call(this, options, container);
 
-    this.collapsed = true;
+  this.collapsed = true;
 }
 
 util.inherit(DayGridSchedule, Weekday);
@@ -33,14 +33,14 @@ util.inherit(DayGridSchedule, Weekday);
  * @override
  */
 DayGridSchedule.prototype.render = function(viewModel) {
-    var container = this.container;
-    var baseViewModel;
+  var container = this.container;
+  var baseViewModel;
 
-    baseViewModel = this.getBaseViewModel(viewModel);
+  baseViewModel = this.getBaseViewModel(viewModel);
 
-    container.innerHTML = tmpl(baseViewModel);
+  container.innerHTML = tmpl(baseViewModel);
 
-    this.fire('afterRender', baseViewModel);
+  this.fire('afterRender', baseViewModel);
 };
 
 /**
@@ -49,14 +49,14 @@ DayGridSchedule.prototype.render = function(viewModel) {
  * @returns {number} maximum schedule count in day
  */
 DayGridSchedule.prototype._getMaxScheduleInDay = function(matrices) {
-    return mmax.apply(
-        null,
-        util.map(matrices, function(matrix) {
-            return Math.max.apply(null, util.map(matrix, function(row) {
-                return row.length;
-            }));
-        })
-    );
+  return mmax.apply(
+    null,
+    util.map(matrices, function(matrix) {
+      return Math.max.apply(null, util.map(matrix, function(row) {
+        return row.length;
+      }));
+    })
+  );
 };
 
 /**
@@ -65,15 +65,15 @@ DayGridSchedule.prototype._getMaxScheduleInDay = function(matrices) {
  * @returns {number}
  */
 DayGridSchedule.prototype._getMinHeight = function(maxScheduleInDay) {
-    var opt = this.options;
-    var contentHeight = (maxScheduleInDay * opt.scheduleHeight)
+  var opt = this.options;
+  var contentHeight = (maxScheduleInDay * opt.scheduleHeight)
         + ((maxScheduleInDay - 1) * opt.scheduleGutter);
 
-    // if (this.collapsed && this.aboutMe.maxHeight >= contentHeight + opt.containerBottomGutter) {
-    //     contentHeight += opt.containerBottomGutter;
-    // }
+  // if (this.collapsed && this.aboutMe.maxHeight >= contentHeight + opt.containerBottomGutter) {
+  //     contentHeight += opt.containerBottomGutter;
+  // }
 
-    return contentHeight;
+  return contentHeight;
 };
 
 /**
@@ -81,24 +81,24 @@ DayGridSchedule.prototype._getMinHeight = function(maxScheduleInDay) {
  * @param {object} viewModel - schedules view models
  */
 DayGridSchedule.prototype.getBaseViewModel = function(viewModel) {
-    var opt = this.options;
-    var matrices = opt.getViewModelFunc(viewModel);
-    var maxScheduleInDay = this._getMaxScheduleInDay(matrices);
-    var baseViewModel;
-    var styles = this._getStyles(viewModel.theme);
+  var opt = this.options;
+  var matrices = opt.getViewModelFunc(viewModel);
+  var maxScheduleInDay = this._getMaxScheduleInDay(matrices);
+  var baseViewModel;
+  var styles = this._getStyles(viewModel.theme);
 
-    baseViewModel = Weekday.prototype.getBaseViewModel.call(this, viewModel);
+  baseViewModel = Weekday.prototype.getBaseViewModel.call(this, viewModel);
 
-    baseViewModel = util.extend({
-        minHeight: this._getMinHeight(maxScheduleInDay),
-        matrices: matrices,
-        scheduleContainerTop: this.options.scheduleContainerTop,
-        maxScheduleInDay: maxScheduleInDay,
-        isReadOnly: opt.isReadOnly,
-        styles: styles
-    }, baseViewModel);
+  baseViewModel = util.extend({
+    minHeight: this._getMinHeight(maxScheduleInDay),
+    matrices: matrices,
+    scheduleContainerTop: this.options.scheduleContainerTop,
+    maxScheduleInDay: maxScheduleInDay,
+    isReadOnly: opt.isReadOnly,
+    styles: styles
+  }, baseViewModel);
 
-    return baseViewModel;
+  return baseViewModel;
 };
 
 /**
@@ -107,13 +107,13 @@ DayGridSchedule.prototype.getBaseViewModel = function(viewModel) {
  * @returns {object} styles - styles object
  */
 DayGridSchedule.prototype._getStyles = function(theme) {
-    var styles = {};
+  var styles = {};
 
-    if (theme) {
-        styles.borderRadius = theme.week.dayGridSchedule.borderRadius;
-    }
+  if (theme) {
+    styles.borderRadius = theme.week.dayGridSchedule.borderRadius;
+  }
 
-    return styles;
+  return styles;
 };
 
 module.exports = DayGridSchedule;

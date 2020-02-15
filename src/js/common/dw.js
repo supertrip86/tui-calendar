@@ -11,18 +11,18 @@ var TZDate = require('./timezone').Date;
  * @param {TZDate} date to wrapping DW class
  */
 function DW(date) {
-    if (!(this instanceof DW)) {
-        return new DW(date);
-    }
+  if (!(this instanceof DW)) {
+    return new DW(date);
+  }
 
-    if (!(date instanceof TZDate)) {
-        date = new TZDate(date);
-    }
+  if (!(date instanceof TZDate)) {
+    date = new TZDate(date);
+  }
 
-    /**
+  /**
      * @type {TZDate}
      */
-    this.d = date;
+  this.d = date;
 }
 
 /**
@@ -31,11 +31,11 @@ function DW(date) {
  * @returns {TZDate} date
  */
 DW.prototype.safe = function(obj) {
-    if (obj.constructor === DW) {
-        return obj.d;
-    }
+  if (obj.constructor === DW) {
+    return obj.d;
+  }
 
-    return obj;
+  return obj;
 };
 
 /**
@@ -43,7 +43,7 @@ DW.prototype.safe = function(obj) {
  * @returns {DW} cloned dwrap object
  */
 DW.prototype.clone = function() {
-    return new DW(new TZDate(this.d));
+  return new DW(new TZDate(this.d));
 };
 
 /**
@@ -52,9 +52,9 @@ DW.prototype.clone = function() {
  * @returns {DW} wrapper object
  */
 DW.prototype.addDate = function(day) {
-    this.d.setDate(this.d.getDate() + day);
+  this.d.setDate(this.d.getDate() + day);
 
-    return this;
+  return this;
 };
 
 /**
@@ -63,29 +63,29 @@ DW.prototype.addDate = function(day) {
  * @returns {DW} wrapper object
  */
 DW.prototype.addMonth = function(m) {
-    var currentMonth = this.d.getMonth();
-    var currentDay = this.d.getDate();
-    var leapYear = this._isLeapYear();
-    var targetMonth = currentMonth + m;
-    var clone = this.clone();
-    var targetDaysOfMonth = currentDay;
+  var currentMonth = this.d.getMonth();
+  var currentDay = this.d.getDate();
+  var leapYear = this._isLeapYear();
+  var targetMonth = currentMonth + m;
+  var clone = this.clone();
+  var targetDaysOfMonth = currentDay;
 
-    if (m) {
-        if (targetMonth === 1) {
-            targetDaysOfMonth = leapYear ? 29 : 28;
-        } else {
-            if (m > 0) {
-                clone.d.setMonth(targetMonth + 1, 0);
-            } else {
-                clone.d.setMonth(currentMonth, 0);
-            }
-            targetDaysOfMonth = clone.d.getDate();
-        }
+  if (m) {
+    if (targetMonth === 1) {
+      targetDaysOfMonth = leapYear ? 29 : 28;
+    } else {
+      if (m > 0) {
+        clone.d.setMonth(targetMonth + 1, 0);
+      } else {
+        clone.d.setMonth(currentMonth, 0);
+      }
+      targetDaysOfMonth = clone.d.getDate();
     }
+  }
 
-    this.d.setMonth(targetMonth, Math.min(currentDay, targetDaysOfMonth));
+  this.d.setMonth(targetMonth, Math.min(currentDay, targetDaysOfMonth));
 
-    return this;
+  return this;
 };
 
 /**
@@ -93,9 +93,9 @@ DW.prototype.addMonth = function(m) {
  * @returns {boolean}
  */
 DW.prototype._isLeapYear = function() {
-    var year = this.d.getFullYear();
+  var year = this.d.getFullYear();
 
-    return ((year % 4 === 0) && (year % 100 !== 0)) || !(year % 400);
+  return ((year % 4 === 0) && (year % 100 !== 0)) || !(year % 400);
 };
 
 /**
@@ -107,9 +107,9 @@ DW.prototype._isLeapYear = function() {
  * @returns {DW} wrapper object
  */
 DW.prototype.setHours = function(h, m, s, ms) {
-    this.d.setHours(h, m, s, ms);
+  this.d.setHours(h, m, s, ms);
 
-    return this;
+  return this;
 };
 
 /**
@@ -119,9 +119,9 @@ DW.prototype.setHours = function(h, m, s, ms) {
  * @returns {boolean} is between?
  */
 DW.prototype.isBetween = function(d1, d2) {
-    var safe = this.safe;
+  var safe = this.safe;
 
-    return safe(d1) <= this.d && this.d <= safe(d2);
+  return safe(d1) <= this.d && this.d <= safe(d2);
 };
 
 module.exports = DW;

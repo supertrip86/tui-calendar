@@ -28,80 +28,80 @@ var CLICK_DELAY = 300;
  * @param {Options} [options] - calendar Options
  */
 function TimeCreation(dragHandler, timeGridView, baseController, options) {
-    /**
+  /**
      * Drag handler instance.
      * @type {Drag}
      */
-    this.dragHandler = dragHandler;
+  this.dragHandler = dragHandler;
 
-    /**
+  /**
      * TimeGrid view instance.
      * @type {TimeGrid}
      */
-    this.timeGridView = timeGridView;
+  this.timeGridView = timeGridView;
 
-    /**
+  /**
      * Base controller instance.
      * @type {Base}
      */
-    this.baseController = baseController;
+  this.baseController = baseController;
 
-    /**
+  /**
      * @type {TimeCreationGuide}
      */
-    this.guide = new TimeCreationGuide(this);
+  this.guide = new TimeCreationGuide(this);
 
-    /**
+  /**
      * Temporary function for single drag session's calc.
      * @type {function}
      */
-    this._getScheduleDataFunc = null;
+  this._getScheduleDataFunc = null;
 
-    /**
+  /**
      * Temporary function for drag start data cache.
      * @type {object}
      */
-    this._dragStart = null;
+  this._dragStart = null;
 
-    /**
+  /**
      * @type {boolean}
      */
-    this._requestOnClick = false;
+  this._requestOnClick = false;
 
-    /**
+  /**
      * @type {boolean}
      */
-    this._disableDblClick = options.disableDblClick;
+  this._disableDblClick = options.disableDblClick;
 
-    /**
+  /**
      * @type {boolean}
      */
-    this._disableClick = options.disableClick;
+  this._disableClick = options.disableClick;
 
-    dragHandler.on('dragStart', this._onDragStart, this);
-    dragHandler.on('click', this._onClick, this);
+  dragHandler.on('dragStart', this._onDragStart, this);
+  dragHandler.on('click', this._onClick, this);
 
-    if (this._disableDblClick) {
-        CLICK_DELAY = 0;
-    } else {
-        domevent.on(timeGridView.container, 'dblclick', this._onDblClick, this);
-    }
+  if (this._disableDblClick) {
+    CLICK_DELAY = 0;
+  } else {
+    domevent.on(timeGridView.container, 'dblclick', this._onDblClick, this);
+  }
 }
 
 /**
  * Destroy method
  */
 TimeCreation.prototype.destroy = function() {
-    var timeGridView = this.timeGridView;
+  var timeGridView = this.timeGridView;
 
-    this.guide.destroy();
-    this.dragHandler.off(this);
+  this.guide.destroy();
+  this.dragHandler.off(this);
 
-    if (timeGridView && timeGridView.container) {
-        domevent.off(timeGridView.container, 'dblclick', this._onDblClick, this);
-    }
+  if (timeGridView && timeGridView.container) {
+    domevent.off(timeGridView.container, 'dblclick', this._onDblClick, this);
+  }
 
-    this.dragHandler = this.timeGridView = this.baseController =
+  this.dragHandler = this.timeGridView = this.baseController =
         this._getScheduleDataFunc = this._dragStart = this.guide = null;
 };
 
@@ -111,21 +111,21 @@ TimeCreation.prototype.destroy = function() {
  * @returns {(boolean|Time)} - return Time view instance when satiate condition.
  */
 TimeCreation.prototype.checkExpectedCondition = function(target) {
-    var cssClass = domutil.getClass(target),
-        matches;
+  var cssClass = domutil.getClass(target),
+    matches;
 
-    if (cssClass === config.classname('time-date-schedule-block-wrap')) {
-        target = target.parentNode;
-        cssClass = domutil.getClass(target);
-    }
+  if (cssClass === config.classname('time-date-schedule-block-wrap')) {
+    target = target.parentNode;
+    cssClass = domutil.getClass(target);
+  }
 
-    matches = cssClass.match(config.time.getViewIDRegExp);
+  matches = cssClass.match(config.time.getViewIDRegExp);
 
-    if (!matches || matches.length < 2) {
-        return false;
-    }
+  if (!matches || matches.length < 2) {
+    return false;
+  }
 
-    return util.pick(this.timeGridView.children.items, matches[1]);
+  return util.pick(this.timeGridView.children.items, matches[1]);
 };
 
 /**
@@ -136,28 +136,28 @@ TimeCreation.prototype.checkExpectedCondition = function(target) {
  * @param {function} [revise] - supply function for revise event data before emit.
  */
 TimeCreation.prototype._onDragStart = function(dragStartEventData, overrideEventName, revise) {
-    var target = dragStartEventData.target,
-        result = this.checkExpectedCondition(target),
-        getScheduleDataFunc,
-        eventData;
+  var target = dragStartEventData.target,
+    result = this.checkExpectedCondition(target),
+    getScheduleDataFunc,
+    eventData;
 
-    if (!result) {
-        return;
-    }
+  if (!result) {
+    return;
+  }
 
-    getScheduleDataFunc = this._getScheduleDataFunc = this._retriveScheduleData(result);
-    eventData = this._dragStart = getScheduleDataFunc(dragStartEventData.originEvent);
+  getScheduleDataFunc = this._getScheduleDataFunc = this._retriveScheduleData(result);
+  eventData = this._dragStart = getScheduleDataFunc(dragStartEventData.originEvent);
 
-    if (revise) {
-        revise(eventData);
-    }
+  if (revise) {
+    revise(eventData);
+  }
 
-    this.dragHandler.on({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this.dragHandler.on({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    /**
+  /**
      * @event TimeCreation#timeCreationDragstart
      * @type {object}
      * @property {Time} relatedView - time view instance related with mouse position.
@@ -168,7 +168,7 @@ TimeCreation.prototype._onDragStart = function(dragStartEventData, overrideEvent
      * @property {number} nearestGridY - nearest grid index related with mouseY value.
      * @property {number} nearestGridTimeY - time value for nearestGridY.
      */
-    this.fire(overrideEventName || 'timeCreationDragstart', eventData);
+  this.fire(overrideEventName || 'timeCreationDragstart', eventData);
 };
 
 /**
@@ -179,20 +179,20 @@ TimeCreation.prototype._onDragStart = function(dragStartEventData, overrideEvent
  * @param {function} [revise] - supply function for revise event data before emit.
  */
 TimeCreation.prototype._onDrag = function(dragEventData, overrideEventName, revise) {
-    var getScheduleDataFunc = this._getScheduleDataFunc,
-        eventData;
+  var getScheduleDataFunc = this._getScheduleDataFunc,
+    eventData;
 
-    if (!getScheduleDataFunc) {
-        return;
-    }
+  if (!getScheduleDataFunc) {
+    return;
+  }
 
-    eventData = getScheduleDataFunc(dragEventData.originEvent);
+  eventData = getScheduleDataFunc(dragEventData.originEvent);
 
-    if (revise) {
-        revise(eventData);
-    }
+  if (revise) {
+    revise(eventData);
+  }
 
-    /**
+  /**
      * @event TimeCreation#timeCreationDrag
      * @type {object}
      * @property {Time} relatedView - time view instance related with mouse position.
@@ -203,7 +203,7 @@ TimeCreation.prototype._onDrag = function(dragEventData, overrideEventName, revi
      * @property {number} nearestGridY - nearest grid index related with mouseY value.
      * @property {number} nearestGridTimeY - time value for nearestGridY.
      */
-    this.fire(overrideEventName || 'timeCreationDrag', eventData);
+  this.fire(overrideEventName || 'timeCreationDrag', eventData);
 };
 
 /**
@@ -212,32 +212,32 @@ TimeCreation.prototype._onDrag = function(dragEventData, overrideEventName, revi
  * or TimeCreation#timeCreationClick
  */
 TimeCreation.prototype._createSchedule = function(eventData) {
-    var relatedView = eventData.relatedView,
-        createRange = eventData.createRange,
-        nearestGridTimeY = eventData.nearestGridTimeY,
-        nearestGridEndTimeY = eventData.nearestGridEndTimeY
-            ? eventData.nearestGridEndTimeY
-            : new TZDate(nearestGridTimeY).addMinutes(30),
-        baseDate,
-        dateStart,
-        dateEnd,
-        start,
-        end;
+  var relatedView = eventData.relatedView,
+    createRange = eventData.createRange,
+    nearestGridTimeY = eventData.nearestGridTimeY,
+    nearestGridEndTimeY = eventData.nearestGridEndTimeY
+      ? eventData.nearestGridEndTimeY
+      : new TZDate(nearestGridTimeY).addMinutes(30),
+    baseDate,
+    dateStart,
+    dateEnd,
+    start,
+    end;
 
-    if (!createRange) {
-        createRange = [
-            nearestGridTimeY,
-            nearestGridEndTimeY
-        ];
-    }
+  if (!createRange) {
+    createRange = [
+      nearestGridTimeY,
+      nearestGridEndTimeY
+    ];
+  }
 
-    baseDate = new TZDate(relatedView.getDate());
-    dateStart = datetime.start(baseDate);
-    dateEnd = datetime.getStartOfNextDay(baseDate);
-    start = common.limitDate(createRange[0], dateStart, dateEnd);
-    end = common.limitDate(createRange[1], dateStart, dateEnd);
+  baseDate = new TZDate(relatedView.getDate());
+  dateStart = datetime.start(baseDate);
+  dateEnd = datetime.getStartOfNextDay(baseDate);
+  start = common.limitDate(createRange[0], dateStart, dateEnd);
+  end = common.limitDate(createRange[1], dateStart, dateEnd);
 
-    /**
+  /**
      * @event TimeCreation#beforeCreateSchedule
      * @type {object}
      * @property {boolean} isAllDay - whether schedule is fired in allday view area?
@@ -246,13 +246,13 @@ TimeCreation.prototype._createSchedule = function(eventData) {
      * @property {TimeCreationGuide} guide - TimeCreationGuide instance
      * @property {string} triggerEventName - event name
      */
-    this.fire('beforeCreateSchedule', {
-        isAllDay: false,
-        start: new TZDate(start),
-        end: new TZDate(end),
-        guide: this.guide,
-        triggerEventName: eventData.triggerEvent
-    });
+  this.fire('beforeCreateSchedule', {
+    isAllDay: false,
+    start: new TZDate(start),
+    end: new TZDate(end),
+    guide: this.guide,
+    triggerEventName: eventData.triggerEvent
+  });
 };
 
 /**
@@ -261,31 +261,31 @@ TimeCreation.prototype._createSchedule = function(eventData) {
  * @param {object} dragEndEventData - event data from Drag#dragend
  */
 TimeCreation.prototype._onDragEnd = function(dragEndEventData) {
-    var self = this,
-        dragStart = this._dragStart;
+  var self = this,
+    dragStart = this._dragStart;
 
-    this.dragHandler.off({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this.dragHandler.off({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    /**
+  /**
      * Function for manipulate event data before firing event
      * @param {object} eventData - event data
      */
-    function reviseFunc(eventData) {
-        var range = [
-            dragStart.nearestGridTimeY,
-            eventData.nearestGridTimeY
-        ].sort(array.compare.num.asc);
-        range[1].addMinutes(30);
+  function reviseFunc(eventData) {
+    var range = [
+      dragStart.nearestGridTimeY,
+      eventData.nearestGridTimeY
+    ].sort(array.compare.num.asc);
+    range[1].addMinutes(30);
 
-        eventData.createRange = range;
+    eventData.createRange = range;
 
-        self._createSchedule(eventData);
-    }
+    self._createSchedule(eventData);
+  }
 
-    /**
+  /**
      * @event TimeCreation#timeCreationDragend
      * @type {object}
      * @property {Time} relatedView - time view instance related with mouse position.
@@ -297,9 +297,9 @@ TimeCreation.prototype._onDragEnd = function(dragEndEventData) {
      * @property {number} nearestGridTimeY - time value for nearestGridY.
      * @property {number[]} createRange - milliseconds range between drag start and end to create.
      */
-    this._onDrag(dragEndEventData, 'timeCreationDragend', reviseFunc);
+  this._onDrag(dragEndEventData, 'timeCreationDragend', reviseFunc);
 
-    this._dragStart = this._getScheduleDataFunc = null;
+  this._dragStart = this._getScheduleDataFunc = null;
 };
 
 /**
@@ -308,31 +308,31 @@ TimeCreation.prototype._onDragEnd = function(dragEndEventData) {
  * @param {object} clickEventData - event data from Drag#click.
  */
 TimeCreation.prototype._onClick = function(clickEventData) {
-    var self = this;
-    var condResult, getScheduleDataFunc, eventData;
+  var self = this;
+  var condResult, getScheduleDataFunc, eventData;
 
-    this.dragHandler.off({
-        drag: this._onDrag,
-        dragEnd: this._onDragEnd
-    }, this);
+  this.dragHandler.off({
+    drag: this._onDrag,
+    dragEnd: this._onDragEnd
+  }, this);
 
-    condResult = this.checkExpectedCondition(clickEventData.target);
-    if (!condResult || this._disableClick) {
-        return;
+  condResult = this.checkExpectedCondition(clickEventData.target);
+  if (!condResult || this._disableClick) {
+    return;
+  }
+
+  getScheduleDataFunc = this._retriveScheduleData(condResult);
+  eventData = getScheduleDataFunc(clickEventData.originEvent);
+
+  this._requestOnClick = true;
+  setTimeout(function() {
+    if (self._requestOnClick) {
+      self.fire('timeCreationClick', eventData);
+      self._createSchedule(eventData);
     }
-
-    getScheduleDataFunc = this._retriveScheduleData(condResult);
-    eventData = getScheduleDataFunc(clickEventData.originEvent);
-
-    this._requestOnClick = true;
-    setTimeout(function() {
-        if (self._requestOnClick) {
-            self.fire('timeCreationClick', eventData);
-            self._createSchedule(eventData);
-        }
-        self._requestOnClick = false;
-    }, CLICK_DELAY);
-    this._dragStart = this._getScheduleDataFunc = null;
+    self._requestOnClick = false;
+  }, CLICK_DELAY);
+  this._dragStart = this._getScheduleDataFunc = null;
 };
 
 /**
@@ -340,21 +340,21 @@ TimeCreation.prototype._onClick = function(clickEventData) {
  * @param {MouseEvent} e - Native MouseEvent
  */
 TimeCreation.prototype._onDblClick = function(e) {
-    var condResult, getScheduleDataFunc, eventData;
+  var condResult, getScheduleDataFunc, eventData;
 
-    condResult = this.checkExpectedCondition(e.target);
-    if (!condResult) {
-        return;
-    }
+  condResult = this.checkExpectedCondition(e.target);
+  if (!condResult) {
+    return;
+  }
 
-    getScheduleDataFunc = this._retriveScheduleData(condResult);
-    eventData = getScheduleDataFunc(e);
+  getScheduleDataFunc = this._retriveScheduleData(condResult);
+  eventData = getScheduleDataFunc(e);
 
-    this.fire('timeCreationClick', eventData);
+  this.fire('timeCreationClick', eventData);
 
-    this._createSchedule(eventData);
+  this._createSchedule(eventData);
 
-    this._requestOnClick = false;
+  this._requestOnClick = false;
 };
 
 /**
@@ -362,32 +362,32 @@ TimeCreation.prototype._onDblClick = function(e) {
  * @param {Schedule} schedule - schedule instance
  */
 TimeCreation.prototype.invokeCreationClick = function(schedule) {
-    var opt = this.timeGridView.options,
-        range = datetime.range(
-            opt.renderStartDate,
-            opt.renderEndDate,
-            datetime.MILLISECONDS_PER_DAY),
-        hourStart = opt.hourStart,
-        targetDate = schedule.start;
-    var getScheduleDataFunc, eventData, timeView;
+  var opt = this.timeGridView.options,
+    range = datetime.range(
+      opt.renderStartDate,
+      opt.renderEndDate,
+      datetime.MILLISECONDS_PER_DAY),
+    hourStart = opt.hourStart,
+    targetDate = schedule.start;
+  var getScheduleDataFunc, eventData, timeView;
 
-    util.forEach(range, function(date, index) {
-        if (datetime.isSameDate(date, targetDate)) {
-            timeView = this.timeGridView.children.toArray()[index];
-        }
-    }, this);
-
-    // If start date is not in current date, set start date as first date.
-    if (!timeView) {
-        timeView = this.timeGridView.children.toArray()[0];
+  util.forEach(range, function(date, index) {
+    if (datetime.isSameDate(date, targetDate)) {
+      timeView = this.timeGridView.children.toArray()[index];
     }
+  }, this);
 
-    getScheduleDataFunc = this._retriveScheduleDataFromDate(timeView);
-    eventData = getScheduleDataFunc(schedule.start, schedule.end, hourStart);
+  // If start date is not in current date, set start date as first date.
+  if (!timeView) {
+    timeView = this.timeGridView.children.toArray()[0];
+  }
 
-    this.fire('timeCreationClick', eventData);
+  getScheduleDataFunc = this._retriveScheduleDataFromDate(timeView);
+  eventData = getScheduleDataFunc(schedule.start, schedule.end, hourStart);
 
-    this._createSchedule(eventData);
+  this.fire('timeCreationClick', eventData);
+
+  this._createSchedule(eventData);
 };
 
 timeCore.mixin(TimeCreation);

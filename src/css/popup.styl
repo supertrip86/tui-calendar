@@ -30,14 +30,16 @@
 .{css-prefix}section-title input
     width: 365px
 
-.{css-prefix}button.{css-prefix}section-private
+.{css-prefix}button.{css-prefix}section-attachment
     height: 32px
-    padding: 8px
+    padding: 6px
     font-size: 0
     margin-left: 4px
 
-.{css-prefix}section-private.{css-prefix}public .{css-prefix}ic-private
-    background: url('image/ic-unlock.png') no-repeat
+.{css-prefix}button #{css-prefix}input-attachment
+    display: none
+// .{css-prefix}section-private.{css-prefix}public .{css-prefix}ic-private
+//     background: url('image/ic-unlock.png') no-repeat
 
 .{css-prefix}section-start-date
 .{css-prefix}section-end-date
@@ -68,11 +70,28 @@
         border: none
         padding: 0 0 0 8px
         cursor: pointer
+        height: 20px
     &.{css-prefix}section-location
         display: block
 
         input
             width: 400px
+
+.{css-prefix}popup-section-item.{css-prefix}section-comments
+  height: 100px
+  margin-bottom: 10px
+
+.{css-prefix}popup-section-item #{css-prefix}schedule-comments
+    width: 400px
+    resize: none
+    border: none
+    outline: none
+    height: 100%
+    padding: 6px 8px;
+
+.{css-prefix}popup-section-item #{css-prefix}schedule-comments::placeholder
+  color: #bbb
+  font-weight: 300
 
 .{css-prefix}section-allday .{css-prefix}icon.{css-prefix}ic-checkbox
     margin: 0
@@ -90,7 +109,7 @@
 
 .{css-prefix}popup-section-item
     height: 32px
-    padding: 0 9px 0 12px
+    padding: 0 6px 0 12px
     border: 1px solid #d5d5d5
     display: inline-block
     font-size: 0
@@ -297,18 +316,18 @@
   width: 96px
   height: 36px
   border-radius: 40px
-  background-color: #ff6618
+  background-color: #587CA1
   font-size: 12px
   font-weight: bold
   color: #ffffff
   border: none
 
 .{css-prefix}confirm:hover
-  background-color: #e55b15
+  background-color: #587CA1
   color: #ffffff
 
 .{css-prefix}confirm:active
-  background-color: #d95614
+  background-color: #587CA1
   color: #ffffff
 
 /* icon styles */
@@ -379,8 +398,8 @@ input[type='checkbox'].{css-prefix}checkbox-round + span
 .{css-prefix}popup-detail .{css-prefix}icon
   margin-right: 8px
 
-.{css-prefix}popup-detail .{css-prefix}icon.{css-prefix}ic-location-b
-  top: -2px
+// .{css-prefix}popup-detail .{css-prefix}icon.{css-prefix}ic-location-b
+//   top: -2px
 
 .{css-prefix}popup-detail .{css-prefix}icon.{css-prefix}ic-user-b
   top: -2px
@@ -416,16 +435,19 @@ input[type='checkbox'].{css-prefix}checkbox-round + span
   line-height: 1.6
   word-break: break-all
 
-.{css-prefix}popup-detail .{css-prefix}schedule-private
+.{css-prefix}popup-detail .{css-prefix}schedule-attachment
   display: none
   width: 16px
   height: 16px
-  background: url('image/ic-lock.png') no-repeat 16px
+  // background: url('image/ic-lock.png') no-repeat 16px
 
-.{css-prefix}popup-detail .{css-prefix}schedule-private .{css-prefix}ic-private
-  display: block
+// .{css-prefix}popup-detail .{css-prefix}schedule-private .{css-prefix}ic-private
+//   display: block
 
 .{css-prefix}popup-detail .{css-prefix}section-detail
+  margin-bottom: 16px
+
+.{css-prefix}section-comment
   margin-bottom: 16px
 
 .{css-prefix}popup-detail .{css-prefix}section-button
