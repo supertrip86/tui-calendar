@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.12.11 | Sat Feb 15 2020
+ * @version 1.12.11 | Mon Feb 17 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -692,6 +692,27 @@
 .tui-full-calendar-button #tui-full-calendar-input-attachment {
   display: none;
 }
+.tui-full-calendar-attachments-button {
+  border: none;
+  background-color: transparent;
+  outline: none;
+  display: flex;
+  cursor: pointer;
+  padding: 0;
+  min-width: 0;
+  width: 5%;
+  margin-right: 10px !important;
+}
+.tui-full-calendar-section-attachments-list {
+  margin-bottom: 10px;
+}
+.tui-full-calendar-section-attachments-list > div {
+  display: flex;
+  padding: 4px 0;
+}
+.tui-full-calendar-section-attachments-list div a {
+  width: 90%;
+}
 .tui-full-calendar-section-start-date,
 .tui-full-calendar-section-end-date {
   width: 176px;
@@ -1061,7 +1082,6 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
   top: -1px;
 }
 .tui-full-calendar-popup-detail .tui-full-calendar-content {
-  line-height: 24px;
   height: 24px;
   font-size: 12px;
   line-height: 2;
@@ -1088,10 +1108,10 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
   height: 16px;
 }
 .tui-full-calendar-popup-detail .tui-full-calendar-section-detail {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 .tui-full-calendar-section-comment {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 .tui-full-calendar-popup-detail .tui-full-calendar-section-button {
   border-top: 1px solid #e5e5e5;
@@ -1167,6 +1187,11 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
 }
 .tui-full-calendar-icon.tui-full-calendar-ic-delete {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAFhJREFUKBVjYCARMKKrNzEx2fr//38vkDgjI+O2M2fOeCOrAWtAVoQsicyGaWZCFsTHBtr6H588Tjm4H4yNjfGacPbsWbBaop0Es3JYaQBFDMxjWOitMDEA3EEZfFEISwUAAAAASUVORK5CYII=);
+}
+.tui-full-calendar-attachment-delete {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAFhJREFUKBVjYCARMKKrNzEx2fr//38vkDgjI+O2M2fOeCOrAWtAVoQsicyGaWZCFsTHBtr6H588Tjm4H4yNjfGacPbsWbBaop0Es3JYaQBFDMxjWOitMDEA3EEZfFEISwUAAAAASUVORK5CYII=);
+  width: 13px;
+  height: 13px;
 }
 .tui-full-calendar-icon.tui-full-calendar-ic-arrow-solid-top {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAIFJREFUKBVjYBj+gBmXF2NiYiTV1dV5rl279gWbGiZsgg0NDSw/f/5cCZRbBWJjU4PVRjExsR6g4nAgln/z5g3v1atXd6JrxtAYHh4e+v///z4khZa6urrXgJqvIYkxMCJzgJo0//37dwooxoMsDmR/YWJiMlu5cuV1NPFRLrYQAADMVCaUtbG7XwAAAABJRU5ErkJggg==) no-repeat;

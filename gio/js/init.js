@@ -4,7 +4,7 @@
 /* eslint-env jquery */
 /* global moment, tui, chance */
 
-// (function IfadCalendar(){
+(function IfadCalendar(){
     var ElementPrefix = 'tui-full-calendar-';
     var Calendar = tui.Calendar;
     var CalendarList = [];
@@ -47,12 +47,12 @@
         }
     ];
 
-    SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function() {
+    // SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function() {
         createCalendarList();
         createCalendar(window, Calendar);
         createCalendarMenu();
-        getSchedules();
-    });
+        // getSchedules();
+    // });
     
 
     function createCalendarList() {
@@ -149,7 +149,7 @@
                 cal.deleteSchedule(e.schedule.id, e.schedule.calendarId);
             },
             'afterRenderSchedule': function(e) {
-                var schedule = e.schedule;
+                console.log(e);
             },
             'clickTimezonesCollapseBtn': function(timezonesCollapsed) {
                 if (timezonesCollapsed) {
@@ -407,11 +407,6 @@
             document.getElementById(ElementPrefix + 'input-attachment').click();
         }
 
-        function replaceIcon() {
-            var a = $('#' + ElementPrefix + 'input-attachment').val() != "" ? " " + ElementPrefix + "ic-loaded" : " " + ElementPrefix + "ic-attachment";
-            $('#' + ElementPrefix + 'schedule-attachment span').removeClass().addClass(ElementPrefix + 'icon' + a);
-        }
-
         function prepareToUpdate(e) {
             var schedule = e.schedule;
             var comments = document.getElementById(ElementPrefix + 'schedule-comments') && document.getElementById(ElementPrefix + 'schedule-comments').value;
@@ -461,7 +456,6 @@
             $('#btn-new-schedule').on('click', createNewSchedule);
             $('#dropdownMenu-calendars-list').on('click', onChangeNewScheduleCalendar);
             $('#ifadCalendar').on('click', '#' + ElementPrefix + 'schedule-attachment', triggerUpload);
-            $('#ifadCalendar').on('change', '#' + ElementPrefix + 'input-attachment', replaceIcon);
             window.addEventListener('resize', resizeThrottled);
         }
 
@@ -509,6 +503,7 @@
             schedule['dueDateClass'] = '';
             schedule['comments'] = data[i].comments ? data[i].comments : '';
             schedule['attachments'] = [];
+            schedule['attachmentsUrl'] = 'https://xdesk.ifad.org/sites/opr/Lists/Calendar/Attachments/' + data[i].Id + '/';
             schedule['color'] = data[i].color;
             schedule['bgColor'] = data[i].bgColor;
             schedule['dragBgColor'] = data[i].dragBgColor;
@@ -536,6 +531,7 @@
         schedule['dueDateClass'] = '';
         schedule['comments'] = item.comments ? item.comments : '';
         schedule['attachments'] = [];
+        schedule['attachmentsUrl'] = 'https://xdesk.ifad.org/sites/opr/Lists/Calendar/Attachments/' + (item.Id ? item.Id : 0) + '/';
         schedule['color'] = item.color;
         schedule['bgColor'] = item.bgColor;
         schedule['dragBgColor'] = item.dragBgColor;
@@ -557,8 +553,6 @@
             if (spRequest.readyState === 4 && spRequest.status === 200) {
                 var result = JSON.parse(spRequest.responseText);
                 formatSchedules(result.d.results);
-                console.log(result.d.results);
-                console.log(Schedules);
                 cal.createSchedules(Schedules);
             }
             else if (spRequest.readyState === 4 && spRequest.status !== 200) { 
@@ -593,9 +587,6 @@
         if (calendar) {
             var attachments = [];
             var attachmentsList = document.getElementById(ElementPrefix + 'input-attachment').files;
-            var dateA = scheduleData.start.getDate() + scheduleData.start.getMonth() + scheduleData.start.getFullYear();
-            var dateB = scheduleData.end.getDate() + scheduleData.end.getMonth() + scheduleData.end.getFullYear();
-            var isAllDay = dateA !== dateB ? true : (scheduleData.isAllDay ? true : false);
             if (!!attachmentsList.length) {
                 for (var i = 0; i < attachmentsList.length; i++) {
                     attachments.push(attachmentsList[i].name);
@@ -625,27 +616,34 @@
                     type: 'SP.Data.CalendarListItem'
                 }
             };
-            $("#s4-workspace").addClass("invisible");
-            $("body").append('<div class="spinner"></div>');
-            $.ajax({
-                url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Calendar')/items",
-                type: "POST",
-                contentType: "application/json;odata=verbose",
-                data: JSON.stringify(schedule),
-                headers: {
-                    "Accept": "application/json;odata=verbose",
-                    "X-RequestDigest": $("#__REQUESTDIGEST").val()
-                }
-            }).done(function(data){
-                if ($("#" + ElementPrefix + "input-attachment") && !!$("#" + ElementPrefix + "input-attachment")[0].files.length) {
-                    AddAllAttachments(data.d.Id);
-                }
-                else {
-                    $(".spinner").remove();
-                    $("#s4-workspace").removeClass("invisible");
-                }
-            });
+            cal.createSchedules([formatSingleSchedule(schedule)]);
+            refreshScheduleVisibility();
+            // saveScheduleInSp(schedule);
+
         }
+    }
+
+    function saveScheduleInSp(schedule) {
+        $("#s4-workspace").addClass("invisible");
+        $("body").append('<div class="spinner"></div>');
+        $.ajax({
+            url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Calendar')/items",
+            type: "POST",
+            contentType: "application/json;odata=verbose",
+            data: JSON.stringify(schedule),
+            headers: {
+                "Accept": "application/json;odata=verbose",
+                "X-RequestDigest": $("#__REQUESTDIGEST").val()
+            }
+        }).done(function(data){
+            if ($("#" + ElementPrefix + "input-attachment") && !!$("#" + ElementPrefix + "input-attachment")[0].files.length) {
+                AddAllAttachments(data.d.Id);
+            }
+            else {
+                $(".spinner").remove();
+                $("#s4-workspace").removeClass("invisible");
+            }
+        });
     }
 
     function AddAllAttachments(id) {
@@ -765,4 +763,4 @@
         return deferred.promise();
     }
 
-// })();
+})();

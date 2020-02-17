@@ -17,6 +17,9 @@
         {{/if}}
         {{#if schedule.body}}<div class="{{CSS_PREFIX}}popup-detail-item {{CSS_PREFIX}}popup-detail-item-separate"><span class="{{CSS_PREFIX}}content">{{{popupDetailBody-tmpl schedule}}}</span></div>{{/if}}
     </div>
+    <div class="{{CSS_PREFIX}}section-attachments-list">
+      {{{popupDetailAttachment-tmpl schedule}}}
+    </div>
     <div class="{{CSS_PREFIX}}section-comment">
       <span class="{{CSS_PREFIX}}schedule-comment">{{schedule.comments}}</span>
     </div>

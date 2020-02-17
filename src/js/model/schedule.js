@@ -113,9 +113,9 @@ function Schedule() {
 
   /**
      * SharePoint ID
-     * @type {string}
+     * @type {number}
      */
-  this.spId = '';
+  this.spId = 0;
 
   /**
      * Schedule category(milestone, task, allday, time)
@@ -128,6 +128,12 @@ function Schedule() {
      * @type {string}
      */
   this.comments = '';
+
+  /**
+     * SharePoint site absolute URL
+     * @type {string}
+     */
+  this.attachmentsUrl = '';
 
   /**
      * Classification of work schedules (before work, before lunch, before work)
@@ -257,7 +263,7 @@ Schedule.prototype.init = function(options) {
   this.body = options.body || '';
   this.isAllDay = util.isExisty(options.isAllDay) ? options.isAllDay : false;
   this.isVisible = util.isExisty(options.isVisible) ? options.isVisible : true;
-  this.spId = options.spId || '';
+  this.spId = options.spId || 0;
   this.color = options.color || this.color;
   this.bgColor = options.bgColor || this.bgColor;
   this.dragBgColor = options.dragBgColor || this.dragBgColor;
@@ -267,6 +273,7 @@ Schedule.prototype.init = function(options) {
   this.dueDateClass = options.dueDateClass || '';
   this.customStyle = options.customStyle || '';
   this.comments = options.comments || '';
+  this.attachmentsUrl = options.attachmentsUrl || '';
   // this.location = options.location || '';
   this.attachments = options.attachments || [];
   this.attendees = options.attendees || [];

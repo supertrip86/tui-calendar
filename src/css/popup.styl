@@ -38,6 +38,28 @@
 
 .{css-prefix}button #{css-prefix}input-attachment
     display: none
+
+.{css-prefix}attachments-button
+    border: none
+    background-color: transparent
+    outline: none
+    display: flex
+    cursor: pointer
+    padding: 0
+    min-width: 0
+    width: 5%
+    margin-right: 10px!important
+
+.{css-prefix}section-attachments-list
+    margin-bottom: 10px
+
+.{css-prefix}section-attachments-list > div
+    display: flex
+    padding: 4px 0
+
+.{css-prefix}section-attachments-list div a
+    width: 90%
+
 // .{css-prefix}section-private.{css-prefix}public .{css-prefix}ic-private
 //     background: url('image/ic-unlock.png') no-repeat
 
@@ -164,7 +186,6 @@
 
 .{css-prefix}dropdown-arrow
     background: url('image/ic-arrow-solid-bottom.png') no-repeat
-
 
 .dropdown.open
 .{css-prefix}open
@@ -414,7 +435,6 @@ input[type='checkbox'].{css-prefix}checkbox-round + span
   top: -1px
 
 .{css-prefix}popup-detail .{css-prefix}content
-  line-height: 24px
   height: 24px
   font-size: 12px
   line-height: 2
@@ -445,10 +465,10 @@ input[type='checkbox'].{css-prefix}checkbox-round + span
 //   display: block
 
 .{css-prefix}popup-detail .{css-prefix}section-detail
-  margin-bottom: 16px
+  margin-bottom: 10px
 
 .{css-prefix}section-comment
-  margin-bottom: 16px
+  margin-bottom: 20px
 
 .{css-prefix}popup-detail .{css-prefix}section-button
   border-top: 1px solid #e5e5e5

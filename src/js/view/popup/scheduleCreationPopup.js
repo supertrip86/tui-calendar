@@ -47,6 +47,7 @@ function ScheduleCreationPopup(container, calendars, usageStatistics) {
     this._toggleDropdownMenuView.bind(this),
     this._closeDropdownMenuView.bind(this, null),
     this._closePopup.bind(this),
+    this._onChange.bind(this),
     this._toggleIsAllday.bind(this),
     this._toggleIsPrivate.bind(this),
     this._onClickSaveSchedule.bind(this)
@@ -112,6 +113,42 @@ ScheduleCreationPopup.prototype._closePopup = function(target) {
   }
 
   return false;
+};
+
+/**
+ * Detects changes on attachments input element
+ * @param {HTMLElement} target click event target
+ * @returns {boolean} whether attachments have been added to input
+ */
+ScheduleCreationPopup.prototype._onChange = function() {
+  var target = document.getElementById(config.cssPrefix + 'input-attachment');
+  var icon = document.getElementsByClassName(config.cssPrefix + 'ic-attachment')[0];
+  var schedule = this._schedule;
+  var max = 5;
+  var existingFiles = [];
+  if (target) {
+    target.onchange = function() {
+      if (target.files.length <= max) {
+        if (schedule) {
+          Array.prototype.forEach.call(target.files, function(element) {
+            if (schedule.attachments.indexOf(element.name) > -1) {
+              existingFiles.push(element.name);
+            }
+          });
+        }
+        if (existingFiles.length > 0) {
+          target.value = '';
+          alert('The following files have already been uploaded: ' + existingFiles.join() + ', delete them before proceeding');
+        } else {
+          domutil.addClass(icon, config.cssPrefix + 'ic-loaded');
+          console.log(target.files);
+        }
+      } else {
+        target.value = '';
+        alert('The maximum number of attachments is ' + max);
+      }
+    };
+  }
 };
 
 /**

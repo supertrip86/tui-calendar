@@ -439,7 +439,7 @@ var helpers = {
     }
 
     // return (datetime.format(start, 'YYYY.MM.DD hh:mm tt') + ' - ' + datetime.format(end, endFormat));
-    return (datetime.format(start, dateFormat + ' - hh:mm tt') + datetime.format(end, endFormat));
+    return (datetime.format(start, dateFormat + ' - hh:mm tt ') + datetime.format(end, endFormat));
   },
   'popupDetailLocation-tmpl': function(schedule) {
     return schedule.location;
@@ -449,6 +449,14 @@ var helpers = {
   },
   'popupDetailState-tmpl': function(schedule) {
     return schedule.state || 'Busy';
+  },
+  'popupDetailAttachment-tmpl': function(schedule) {
+    var html = '';
+    schedule.attachments.forEach(function(i) {
+      html += '<div><button type="button" class="' + config.cssPrefix + 'attachments-button"><span class="' + config.cssPrefix + 'attachment-delete"></button></span><a href="' + schedule.attachmentsUrl + i + '">' + i.slice(0, i.lastIndexOf('.')) + '</a></div>';
+    });
+
+    return html;
   },
   'popupDetailRepeat-tmpl': function(schedule) {
     return schedule.recurrenceRule;

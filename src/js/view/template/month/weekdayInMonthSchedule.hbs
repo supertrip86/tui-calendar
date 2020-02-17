@@ -11,7 +11,7 @@
          style="{{month-scheduleBlock this @root.dates @root.scheduleBlockHeight @root.gridHeaderHeight}};
                 margin-top:{{@root.scheduleBlockGutter}}px">
         {{#fi model.isAllDay '||' hasMultiDates}}
-        <div data-schedule-id="{{model.id}}" data-calendar-id="{{model.calendarId}}" data-sp-id="{{model.spId}}" class="{{CSS_PREFIX}}weekday-schedule {{#if model.isFocused}}{{CSS_PREFIX}}weekday-schedule-focused {{/if}}"
+        <div data-schedule-id="{{model.id}}" data-calendar-id="{{model.calendarId}}" class="{{CSS_PREFIX}}weekday-schedule {{#if model.isFocused}}{{CSS_PREFIX}}weekday-schedule-focused {{/if}}"
              style="height:{{@root.scheduleHeight}}px; line-height:{{@root.scheduleHeight}}px; border-radius: {{@root.styles.borderRadius}};
                 {{#unless exceedLeft}}
                     margin-left: {{@root.styles.marginLeft}};
@@ -31,7 +31,7 @@
         </div>
         {{else ~}}
             {{#fi model.category '===' 'time'}}
-                <div data-schedule-id="{{model.id}}" data-calendar-id="{{model.calendarId}}" data-sp-id="{{model.spId}}" class="{{CSS_PREFIX}}weekday-schedule {{CSS_PREFIX}}weekday-schedule-time"
+                <div data-schedule-id="{{model.id}}" data-calendar-id="{{model.calendarId}}" class="{{CSS_PREFIX}}weekday-schedule {{CSS_PREFIX}}weekday-schedule-time"
                     style="height:{{@root.scheduleHeight}}px; line-height:{{@root.scheduleHeight}}px; {{model.customStyle}}">
                     <span class="{{CSS_PREFIX}}weekday-schedule-bullet"
                         style="top: {{@root.styles.scheduleBulletTop}}px;
@@ -54,7 +54,7 @@
                         data-title="{{model.title}}">{{{time-tmpl model}}}</span>
                 </div>
             {{else ~}}
-                <div data-schedule-id="{{model.id}}" data-calendar-id="{{model.calendarId}}" data-sp-id="{{model.spId}}" class="{{CSS_PREFIX}}weekday-schedule {{#if model.isFocused}}{{CSS_PREFIX}}weekday-schedule-focused {{/if}}"
+                <div data-schedule-id="{{model.id}}" data-calendar-id="{{model.calendarId}}" class="{{CSS_PREFIX}}weekday-schedule {{#if model.isFocused}}{{CSS_PREFIX}}weekday-schedule-focused {{/if}}"
                     style="height:{{@root.scheduleHeight}}px; line-height:{{@root.scheduleHeight}}px; border-radius: {{@root.styles.borderRadius}};
                     {{#unless exceedLeft}}
                         margin-left: {{@root.styles.marginLeft}};
