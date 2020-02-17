@@ -141,7 +141,6 @@ ScheduleCreationPopup.prototype._onChange = function() {
           alert('The following files have already been uploaded: ' + existingFiles.join() + ', delete them before proceeding');
         } else {
           domutil.addClass(icon, config.cssPrefix + 'ic-loaded');
-          console.log(target.files);
         }
       } else {
         target.value = '';
