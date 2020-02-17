@@ -124,11 +124,13 @@ ScheduleCreationPopup.prototype._onChange = function() {
   var target = document.getElementById(config.cssPrefix + 'input-attachment');
   var icon = document.getElementsByClassName(config.cssPrefix + 'ic-attachment')[0];
   var schedule = this._schedule;
-  var max = 5;
+  var max = 5 - (schedule ? schedule.attachments.length : 0);
+  var message = '';
   var existingFiles = [];
+  console.log(max);
   if (target) {
     target.onchange = function() {
-      if (target.files.length <= max) {
+      if (target.files.length <= max && max > 0) {
         if (schedule) {
           Array.prototype.forEach.call(target.files, function(element) {
             if (schedule.attachments.indexOf(element.name) > -1) {
@@ -138,15 +140,21 @@ ScheduleCreationPopup.prototype._onChange = function() {
         }
         if (existingFiles.length > 0) {
           target.value = '';
-          alert('The following files have already been uploaded: ' + existingFiles.join() + ', delete them before proceeding');
+          message = 'The following files have already been uploaded: ' + existingFiles.join() + ', delete them before proceeding';
         } else {
           domutil.addClass(icon, config.cssPrefix + 'ic-loaded');
         }
+      } else if (target.files.length <= max && max === 0) {
+        target.value = '';
+        message = 'The maximum number of documents for this event has been reached';
       } else {
         target.value = '';
-        alert('The maximum number of attachments is ' + max);
+        message = 'The maximum number of attachments is ' + max;
       }
     };
+  }
+  if (message.length > 0) {
+    console.log(message);
   }
 };
 

@@ -655,6 +655,7 @@
   position: absolute;
   font-weight: 2.5;
   box-shadow: 0 2px 6px 0 rgba(0,0,0,0.1);
+  color: #444;
   clear: both;
 }
 .tui-full-calendar-popup-container {
@@ -712,6 +713,10 @@
 }
 .tui-full-calendar-section-attachments-list div a {
   width: 90%;
+  font-size: 13px;
+}
+.tui-full-calendar-section-attachments-list div a:hover {
+  text-decoration: none;
 }
 .tui-full-calendar-section-start-date,
 .tui-full-calendar-section-end-date {
