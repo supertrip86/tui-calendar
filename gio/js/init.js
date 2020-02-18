@@ -4,11 +4,12 @@
 /* eslint-env jquery */
 /* global moment, tui, chance */
 
-(function IfadCalendar(){
+// (function IfadCalendar(){
     var ElementPrefix = 'tui-full-calendar-';
     var Calendar = tui.Calendar;
     var CalendarList = [];
     var Schedules = [];
+    var CurrentSchedule = [];
     var CalendarData = [
         {
             "Name": "EMC",
@@ -134,7 +135,8 @@
                 console.log('clickMore', e);
             },
             'clickSchedule': function(e) {
-                console.log('clickSchedule', e);
+                CurrentSchedule.length = 0;
+                CurrentSchedule.push(e.schedule);
             },
             'clickDayname': function(date) {
                 console.log('clickDayname', date);
@@ -456,6 +458,7 @@
             $('#btn-new-schedule').on('click', createNewSchedule);
             $('#dropdownMenu-calendars-list').on('click', onChangeNewScheduleCalendar);
             $('#ifadCalendar').on('click', '#' + ElementPrefix + 'schedule-attachment', triggerUpload);
+            $('#ifadCalendar').on('change', '#' + ElementPrefix + 'input-attachment', attachmentsValidator);
             window.addEventListener('resize', resizeThrottled);
         }
 
@@ -485,6 +488,50 @@
             );
         });
         calendarList.innerHTML = html.join('\n');
+    };
+
+    function attachmentsValidator() {
+        var target = $(this)[0];
+        var max = 5;
+        var message = '';
+        var existingFiles = [];
+        var exceedingFiles = [];
+        if (!!CurrentSchedule.length) {
+            var schedule = CurrentSchedule[0];
+            max -= schedule.attachments.length;
+            if (target.files.length <= max && max > 0) {
+                for (var i = 0; i < target.files.length; i++) {
+                    if (schedule.attachments.indexOf(target.files[i].name) > -1) {
+                        existingFiles.push(target.files[i].name);
+                    }
+                }
+                if (existingFiles.length > 0) {
+                    message = 'The following files have already been uploaded: ' + existingFiles.join();
+                }
+            }
+        }
+        if (target.files.length > max && max === 0) {
+            message = 'No more files can be attached to this event';
+        } else if (target.files.length > max && max > 0) {
+            message = 'You can attach only ' + max + ' more files to this event, you selected ' + target.files.length;
+        }
+        // for (var d = 0; d < target.files.length; d++) {
+        //     var currentSize = target.files[d].size
+        //     // if (target.files[d].size )
+        // }
+        if (message.length > 0) {
+            swal.fire({
+                title: 'Warning',
+                text: message,
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#3085d6',
+                icon: 'warning'
+            });
+            $(this).val('');
+        } else {
+            $('.' + ElementPrefix + 'ic-attachment').addClass(ElementPrefix + 'ic-loaded');
+            CurrentSchedule.length = 0;
+        }
     };
 
     /* CRUD OPERATIONS via SharePoint REST API*/
@@ -763,4 +810,4 @@
         return deferred.promise();
     }
 
-})();
+// })();
