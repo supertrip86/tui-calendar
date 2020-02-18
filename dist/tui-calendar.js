@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.12.11 | Mon Feb 17 2020
+ * @version 1.12.11 | Tue Feb 18 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -19841,7 +19841,6 @@ function ScheduleCreationPopup(container, calendars, usageStatistics) {
     this._toggleDropdownMenuView.bind(this),
     this._closeDropdownMenuView.bind(this, null),
     this._closePopup.bind(this),
-    this._onChange.bind(this),
     this._toggleIsAllday.bind(this),
     this._toggleIsPrivate.bind(this),
     this._onClickSaveSchedule.bind(this)
@@ -19907,49 +19906,6 @@ ScheduleCreationPopup.prototype._closePopup = function(target) {
   }
 
   return false;
-};
-
-/**
- * Detects changes on attachments input element
- * @param {HTMLElement} target click event target
- * @returns {boolean} whether attachments have been added to input
- */
-ScheduleCreationPopup.prototype._onChange = function() {
-  var target = document.getElementById(config.cssPrefix + 'input-attachment');
-  var icon = document.getElementsByClassName(config.cssPrefix + 'ic-attachment')[0];
-  var schedule = this._schedule;
-  var max = 5 - (schedule ? schedule.attachments.length : 0);
-  var message = '';
-  var existingFiles = [];
-  console.log(max);
-  if (target) {
-    target.onchange = function() {
-      if (target.files.length <= max && max > 0) {
-        if (schedule) {
-          Array.prototype.forEach.call(target.files, function(element) {
-            if (schedule.attachments.indexOf(element.name) > -1) {
-              existingFiles.push(element.name);
-            }
-          });
-        }
-        if (existingFiles.length > 0) {
-          target.value = '';
-          message = 'The following files have already been uploaded: ' + existingFiles.join() + ', delete them before proceeding';
-        } else {
-          domutil.addClass(icon, config.cssPrefix + 'ic-loaded');
-        }
-      } else if (target.files.length <= max && max === 0) {
-        target.value = '';
-        message = 'The maximum number of documents for this event has been reached';
-      } else {
-        target.value = '';
-        message = 'The maximum number of attachments is ' + max;
-      }
-    };
-  }
-  if (message.length > 0) {
-    console.log(message);
-  }
 };
 
 /**
