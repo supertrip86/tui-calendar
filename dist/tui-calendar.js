@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.12.11 | Tue Feb 18 2020
+ * @version 1.12.11 | Tue Mar 10 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -17764,6 +17764,12 @@ function Schedule() {
   this.spId = 0;
 
   /**
+     * SharePoint etag
+     * @type {number}
+     */
+  this.etag = 0;
+
+  /**
      * Schedule category(milestone, task, allday, time)
      * @type {string}
      */
@@ -17910,6 +17916,7 @@ Schedule.prototype.init = function(options) {
   this.isAllDay = util.isExisty(options.isAllDay) ? options.isAllDay : false;
   this.isVisible = util.isExisty(options.isVisible) ? options.isVisible : true;
   this.spId = options.spId || 0;
+  this.etag = options.etag || 0;
   this.color = options.color || this.color;
   this.bgColor = options.bgColor || this.bgColor;
   this.dragBgColor = options.dragBgColor || this.dragBgColor;
@@ -19863,6 +19870,7 @@ ScheduleCreationPopup.prototype._onMouseDown = function(mouseDownEvent) {
   if (popupLayer) {
     return;
   }
+  domutil.get(config.cssPrefix + 'input-attachment').value = '';
 
   this.hide();
 };
@@ -19900,6 +19908,7 @@ ScheduleCreationPopup.prototype._closePopup = function(target) {
   var className = config.classname('popup-close');
 
   if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
+    domutil.get(config.cssPrefix + 'input-attachment').value = '';
     this.hide();
 
     return true;
@@ -19995,13 +20004,19 @@ ScheduleCreationPopup.prototype._toggleIsAllday = function(target) {
   var isChecked = domutil.get(config.cssPrefix + 'schedule-allday') && domutil.get(config.cssPrefix + 'schedule-allday').checked;
   var hasCheckbox = domutil.hasClass(target, config.classname('ic-checkbox'));
   var hasAllDayTitle = domutil.hasClass(target, config.classname('allday-title'));
+  var start, end, hrs, allDayStart, allDayEnd;
   if (hasCheckbox || hasAllDayTitle) {
     if (isChecked) {
+      hrs = String(new Date().getHours()) + ':' + String((new Date().getMinutes() > 29) ? '30' : '00');
+      allDayStart = new Date(domutil.get(config.cssPrefix + 'schedule-start-date').value.replace(' - ', ' ') + ' ' + hrs);
+      allDayEnd = moment(allDayStart).add(1, 'hours').toDate();
       domutil.get(config.cssPrefix + 'schedule-allday').checked = false;
-      this._createDatepicker(new Date(domutil.get(config.cssPrefix + 'schedule-start-date').value.replace(' - ', ' ')), new Date(domutil.get(config.cssPrefix + 'schedule-end-date').value.replace(' - ', ' ')), false);
+      this._createDatepicker(allDayStart, allDayEnd, false);
     } else {
+      start = new Date(domutil.get(config.cssPrefix + 'schedule-start-date').value.replace(' - ', ' '));
+      end = new Date(domutil.get(config.cssPrefix + 'schedule-end-date').value.replace(' - ', ' '));
       domutil.get(config.cssPrefix + 'schedule-allday').checked = true;
-      this._createDatepicker(new Date(domutil.get(config.cssPrefix + 'schedule-start-date').value.replace(' - ', ' ')), new Date(domutil.get(config.cssPrefix + 'schedule-end-date').value.replace(' - ', ' ')), true);
+      this._createDatepicker(start, end, true);
     }
   }
 };
@@ -20367,11 +20382,12 @@ ScheduleCreationPopup.prototype._setArrowDirection = function(arrow) {
  */
 ScheduleCreationPopup.prototype._createDatepicker = function(start, end, isAllDay) {
   var cssPrefix = config.cssPrefix;
-  var startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate(), new Date().getHours(), (new Date().getMinutes() > 29) ? '30' : '00');
+  var startDate = start ? start : new Date(start.getFullYear(), start.getMonth(), start.getDate(), new Date().getHours(), (new Date().getMinutes() > 29) ? '30' : '00');
+  var endDate = end ? end : moment(startDate).add(1, 'hours').toDate();
   var startAllDay = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
   var endAllDay = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59);
   var newStart = !isAllDay ? startDate : startAllDay;
-  var newEnd = !isAllDay ? moment(startDate).add(1, 'hours').toDate() : endAllDay;
+  var newEnd = !isAllDay ? endDate : endAllDay;
   var rangePicker = DatePicker.createRangePicker({
     startpicker: {
       date: new TZDate(newStart).toDate(),
@@ -21174,8 +21190,9 @@ var helpers = {
   },
   'popupDetailAttachment-tmpl': function(schedule) {
     var html = '';
+    var button = schedule.isReadOnly ? '' : '<button type="button" class="' + config.cssPrefix + 'attachments-button"><span class="' + config.cssPrefix + 'attachment-delete"></span></button>';
     schedule.attachments.forEach(function(i) {
-      html += '<div><button type="button" class="' + config.cssPrefix + 'attachments-button"><span class="' + config.cssPrefix + 'attachment-delete"></button></span><a target="_blank" href="' + schedule.attachmentsUrl + i + '">' + i.slice(0, i.lastIndexOf('.')) + '</a></div>';
+      html += '<div>' + button + '<a target="_blank" href="' + schedule.attachmentsUrl + i + '">' + i.slice(0, i.lastIndexOf('.')) + '</a></div>';
     });
 
     return html;

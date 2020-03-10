@@ -118,6 +118,12 @@ function Schedule() {
   this.spId = 0;
 
   /**
+     * SharePoint etag
+     * @type {number}
+     */
+  this.etag = 0;
+
+  /**
      * Schedule category(milestone, task, allday, time)
      * @type {string}
      */
@@ -264,6 +270,7 @@ Schedule.prototype.init = function(options) {
   this.isAllDay = util.isExisty(options.isAllDay) ? options.isAllDay : false;
   this.isVisible = util.isExisty(options.isVisible) ? options.isVisible : true;
   this.spId = options.spId || 0;
+  this.etag = options.etag || 0;
   this.color = options.color || this.color;
   this.bgColor = options.bgColor || this.bgColor;
   this.dragBgColor = options.dragBgColor || this.dragBgColor;

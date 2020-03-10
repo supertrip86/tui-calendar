@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.12.11 | Tue Feb 18 2020
+ * @version 1.12.11 | Tue Mar 10 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -714,6 +714,7 @@
 .tui-full-calendar-section-attachments-list div a {
   width: 90%;
   font-size: 13px;
+  display: block;
 }
 .tui-full-calendar-section-attachments-list div a:hover {
   text-decoration: none;
@@ -1195,6 +1196,8 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
 }
 .tui-full-calendar-attachment-delete {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAFhJREFUKBVjYCARMKKrNzEx2fr//38vkDgjI+O2M2fOeCOrAWtAVoQsicyGaWZCFsTHBtr6H588Tjm4H4yNjfGacPbsWbBaop0Es3JYaQBFDMxjWOitMDEA3EEZfFEISwUAAAAASUVORK5CYII=);
+  margin: auto;
+  display: block;
   width: 13px;
   height: 13px;
 }

@@ -69,6 +69,7 @@ ScheduleCreationPopup.prototype._onMouseDown = function(mouseDownEvent) {
   if (popupLayer) {
     return;
   }
+  domutil.get(config.cssPrefix + 'input-attachment').value = '';
 
   this.hide();
 };
@@ -106,6 +107,7 @@ ScheduleCreationPopup.prototype._closePopup = function(target) {
   var className = config.classname('popup-close');
 
   if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
+    domutil.get(config.cssPrefix + 'input-attachment').value = '';
     this.hide();
 
     return true;
@@ -201,13 +203,19 @@ ScheduleCreationPopup.prototype._toggleIsAllday = function(target) {
   var isChecked = domutil.get(config.cssPrefix + 'schedule-allday') && domutil.get(config.cssPrefix + 'schedule-allday').checked;
   var hasCheckbox = domutil.hasClass(target, config.classname('ic-checkbox'));
   var hasAllDayTitle = domutil.hasClass(target, config.classname('allday-title'));
+  var start, end, hrs, allDayStart, allDayEnd;
   if (hasCheckbox || hasAllDayTitle) {
     if (isChecked) {
+      hrs = String(new Date().getHours()) + ':' + String((new Date().getMinutes() > 29) ? '30' : '00');
+      allDayStart = new Date(domutil.get(config.cssPrefix + 'schedule-start-date').value.replace(' - ', ' ') + ' ' + hrs);
+      allDayEnd = moment(allDayStart).add(1, 'hours').toDate();
       domutil.get(config.cssPrefix + 'schedule-allday').checked = false;
-      this._createDatepicker(new Date(domutil.get(config.cssPrefix + 'schedule-start-date').value.replace(' - ', ' ')), new Date(domutil.get(config.cssPrefix + 'schedule-end-date').value.replace(' - ', ' ')), false);
+      this._createDatepicker(allDayStart, allDayEnd, false);
     } else {
+      start = new Date(domutil.get(config.cssPrefix + 'schedule-start-date').value.replace(' - ', ' '));
+      end = new Date(domutil.get(config.cssPrefix + 'schedule-end-date').value.replace(' - ', ' '));
       domutil.get(config.cssPrefix + 'schedule-allday').checked = true;
-      this._createDatepicker(new Date(domutil.get(config.cssPrefix + 'schedule-start-date').value.replace(' - ', ' ')), new Date(domutil.get(config.cssPrefix + 'schedule-end-date').value.replace(' - ', ' ')), true);
+      this._createDatepicker(start, end, true);
     }
   }
 };
@@ -573,11 +581,12 @@ ScheduleCreationPopup.prototype._setArrowDirection = function(arrow) {
  */
 ScheduleCreationPopup.prototype._createDatepicker = function(start, end, isAllDay) {
   var cssPrefix = config.cssPrefix;
-  var startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate(), new Date().getHours(), (new Date().getMinutes() > 29) ? '30' : '00');
+  var startDate = start ? start : new Date(start.getFullYear(), start.getMonth(), start.getDate(), new Date().getHours(), (new Date().getMinutes() > 29) ? '30' : '00');
+  var endDate = end ? end : moment(startDate).add(1, 'hours').toDate();
   var startAllDay = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
   var endAllDay = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59);
   var newStart = !isAllDay ? startDate : startAllDay;
-  var newEnd = !isAllDay ? moment(startDate).add(1, 'hours').toDate() : endAllDay;
+  var newEnd = !isAllDay ? endDate : endAllDay;
   var rangePicker = DatePicker.createRangePicker({
     startpicker: {
       date: new TZDate(newStart).toDate(),

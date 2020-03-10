@@ -452,8 +452,9 @@ var helpers = {
   },
   'popupDetailAttachment-tmpl': function(schedule) {
     var html = '';
+    var button = schedule.isReadOnly ? '' : '<button type="button" class="' + config.cssPrefix + 'attachments-button"><span class="' + config.cssPrefix + 'attachment-delete"></span></button>';
     schedule.attachments.forEach(function(i) {
-      html += '<div><button type="button" class="' + config.cssPrefix + 'attachments-button"><span class="' + config.cssPrefix + 'attachment-delete"></button></span><a target="_blank" href="' + schedule.attachmentsUrl + i + '">' + i.slice(0, i.lastIndexOf('.')) + '</a></div>';
+      html += '<div>' + button + '<a target="_blank" href="' + schedule.attachmentsUrl + i + '">' + i.slice(0, i.lastIndexOf('.')) + '</a></div>';
     });
 
     return html;

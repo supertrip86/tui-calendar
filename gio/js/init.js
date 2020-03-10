@@ -117,6 +117,7 @@
             useCreationPopup: useCreationPopup,
             useDetailPopup: useDetailPopup,
             calendars: CalendarList,
+            isReadOnly: false,
             template: {
                 milestone: function(model) {
                     return '<span class="calendar-font-icon ic-milestone-b"></span> <span style="background-color: ' + model.bgColor + '">' + model.title + '</span>';
