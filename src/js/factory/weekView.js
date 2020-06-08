@@ -93,6 +93,9 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
   var detailView, onShowDetailPopup, onDeleteSchedule, onShowEditPopup, onEditSchedule;
   var taskView = options.taskView;
   var scheduleView = options.scheduleView;
+
+  var baseCalendars = baseController.calendars;
+
   var viewVisibilities = {
     'milestone': util.isArray(taskView) ? util.inArray('milestone', taskView) >= 0 : taskView,
     'task': util.isArray(taskView) ? util.inArray('task', taskView) >= 0 : taskView,
@@ -233,7 +236,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
 
   // binding create schedules event
   if (options.useCreationPopup) {
-    createView = new ScheduleCreationPopup(layoutContainer, baseController.calendars, options.usageStatistics);
+    createView = new ScheduleCreationPopup(layoutContainer, baseCalendars, options.usageStatistics);
 
     onSaveNewSchedule = function(scheduleData) {
       util.extend(scheduleData, {

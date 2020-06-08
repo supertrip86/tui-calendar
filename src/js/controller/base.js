@@ -154,7 +154,7 @@ Base.prototype.updateSchedule = function(schedule, options) {
   var end = options.end || schedule.end;
   var dateA = start.getDate() + start.getMonth() + start.getFullYear();
   var dateB = end.getDate() + end.getMonth() + end.getFullYear();
-
+  console.log(options);
   options = options || {};
 
   if (options.category === 'allday' || dateA !== dateB) {

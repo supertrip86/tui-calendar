@@ -6,6 +6,7 @@
 'use strict';
 
 var domevent = require('./domevent');
+var config = require('../config');
 var Collection = require('./collection');
 var util = require('tui-code-snippet');
 
@@ -163,13 +164,7 @@ domutil = {
      * @returns {HTMLElement} - element finded or null.
      */
   closest: function(el, selector, excludeEl) {
-    var parent;
-
-    if (!el) {
-      return null;
-    }
-
-    parent = el.parentNode;
+    var parent = el.parentNode;
 
     if (!excludeEl && domutil._matcher(el, selector)) {
       return el;
@@ -590,7 +585,7 @@ domutil = {
   }
 };
 
-/* eslint-disable */
+/*eslint-disable*/
 var userSelectProperty = domutil.testProp([
     'userSelect',
     'WebkitUserSelect',
@@ -600,8 +595,7 @@ var userSelectProperty = domutil.testProp([
 ]);
 var supportSelectStart = 'onselectstart' in document;
 var prevSelectStyle = '';
-
-/* eslint-enable */
+/* eslint-enable*/
 
 /**
  * Disable browser's text selection behaviors.
@@ -609,8 +603,8 @@ var prevSelectStyle = '';
  */
 domutil.disableTextSelection = (function() {
   if (supportSelectStart) {
-    return function(dom, onSelectstartHandler) {
-      domevent.on(dom, 'selectstart', onSelectstartHandler || domevent.preventDefault);
+    return function(dom) {
+      domevent.on(dom, 'selectstart', domevent.preventDefault);
     };
   }
 
@@ -627,8 +621,8 @@ domutil.disableTextSelection = (function() {
  */
 domutil.enableTextSelection = (function() {
   if (supportSelectStart) {
-    return function(dom, onSelectstartHandler) {
-      domevent.off(window, 'selectstart', onSelectstartHandler || domevent.preventDefault);
+    return function() {
+      domevent.off(window, 'selectstart', domevent.preventDefault);
     };
   }
 

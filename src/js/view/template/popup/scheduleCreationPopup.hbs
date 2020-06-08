@@ -16,27 +16,34 @@
                 {{/each}}
             </ul>
         </div>
+
+        <div class="{{CSS_PREFIX}}popup-section {{CSS_PREFIX}}dropdown {{CSS_PREFIX}}close {{CSS_PREFIX}}section-ifad">
+            <button type="button" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}dropdown-button {{CSS_PREFIX}}popup-section-item">
+                <span id="{{CSS_PREFIX}}schedule-calendar" class="{{CSS_PREFIX}}content">{{selectedCal.ifad}}</span>
+                <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}dropdown-arrow"></span>
+                </span>
+            </button>
+            <ul class="{{CSS_PREFIX}}dropdown-menu" style="z-index: {{zIndex}}">
+                {{#each ifad}}
+                    <li class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}dropdown-menu-item {{CSS_PREFIX}}popup-section-ifad" data-ifad-id="{{id}}">
+                        <span class="{{CSS_PREFIX}}content {{CSS_PREFIX}}popup-section-ifad" data-ifad-id="{{id}}">{{name}}</span>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+
         <div class="{{CSS_PREFIX}}popup-section">
             <div class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}section-title">
             <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-title"></span>
             <input id="{{CSS_PREFIX}}schedule-title" class="{{CSS_PREFIX}}content" placeholder="{{titlePlaceholder-tmpl}}" value="{{title}}"></span>
             </div>
-
-            {{!-- <button type="button" id="{{CSS_PREFIX}}schedule-private" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}section-private{{#unless isPrivate}} {{CSS_PREFIX}}public{{/unless}}">
-                <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-private"></span>
-            </button> --}}
             
             <button type="button" id="{{CSS_PREFIX}}schedule-attachment" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}section-attachment">
                 <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-attachment"></span>
                 <input type="file" id="{{CSS_PREFIX}}input-attachment" multiple="multiple">
             </button>
         </div>
-        {{!-- <div class="{{CSS_PREFIX}}popup-section">
-            <div class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}section-location">
-            <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-location"></span>
-                <input id="{{CSS_PREFIX}}schedule-location" class="{{CSS_PREFIX}}content" placeholder="{{locationPlaceholder-tmpl}}" value="{{location}}"></span>
-            </div>
-        </div> --}}
+
         <div class="{{CSS_PREFIX}}popup-section">
             <div class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}section-start-date">
                 <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-date"></span>
@@ -55,23 +62,6 @@
                 <span class="{{CSS_PREFIX}}content {{CSS_PREFIX}}allday-title">{{{popupIsAllDay-tmpl}}}</span>
             </div>
         </div>
-        {{!-- <div class="{{CSS_PREFIX}}popup-section {{CSS_PREFIX}}dropdown {{CSS_PREFIX}}close {{CSS_PREFIX}}section-state">
-            <button type="button" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}dropdown-button {{CSS_PREFIX}}popup-section-item">
-                <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-state"></span>
-                <span id="{{CSS_PREFIX}}schedule-state" class="{{CSS_PREFIX}}content">{{#if state}}{{state}}{{else}}{{{popupStateBusy-tmpl}}}{{/if}}</span>
-                <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}dropdown-arrow"></span>
-            </button>
-            <ul class="{{CSS_PREFIX}}dropdown-menu" style="z-index: {{zIndex}}">
-                <li class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}dropdown-menu-item">
-                <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}none"></span>
-                <span class="{{CSS_PREFIX}}content">{{{popupStateBusy-tmpl}}}</span>
-                </li>
-                <li class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}dropdown-menu-item">
-                <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}none"></span>
-                <span class="{{CSS_PREFIX}}content">{{{popupStateFree-tmpl}}}</span>
-                </li>
-            </ul>
-        </div> --}}
         
         <div class="{{CSS_PREFIX}}popup-section">
             <div class="{{CSS_PREFIX}}popup-section-item {{CSS_PREFIX}}section-comments">

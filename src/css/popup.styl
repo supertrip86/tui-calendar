@@ -17,9 +17,6 @@
     font-size: 0
     min-height: 40px
 
-.{css-prefix}section-calendar
-    width: 176px
-
 .{css-prefix}section-calendar.{css-prefix}hide
     height: 21px
     visibility: hidden
@@ -164,7 +161,13 @@
     padding-left: 8px
 
 .{css-prefix}section-calendar .{css-prefix}dropdown-button .{css-prefix}content
-    width: 125px
+    width: 80px
+    text-overflow: ellipsis
+    overflow: hidden
+    top: -1px
+
+.{css-prefix}section-ifad .{css-prefix}dropdown-button .{css-prefix}content
+    width: 80px
     text-overflow: ellipsis
     overflow: hidden
     top: -1px
@@ -181,6 +184,7 @@
 
 .{css-prefix}dropdown
     position: relative
+    display: inline-block
 
 .{css-prefix}dropdown:hover .{css-prefix}dropdown-button
     border: 1px solid #bbbbbb

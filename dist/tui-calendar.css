@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.12.11 | Tue Mar 10 2020
+ * @version 1.12.11 | Mon Jun 08 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -670,9 +670,6 @@
   font-size: 0;
   min-height: 40px;
 }
-.tui-full-calendar-section-calendar {
-  width: 176px;
-}
 .tui-full-calendar-section-calendar.tui-full-calendar-hide {
   height: 21px;
   visibility: hidden;
@@ -818,7 +815,13 @@
   padding-left: 8px;
 }
 .tui-full-calendar-section-calendar .tui-full-calendar-dropdown-button .tui-full-calendar-content {
-  width: 125px;
+  width: 80px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  top: -1px;
+}
+.tui-full-calendar-section-ifad .tui-full-calendar-dropdown-button .tui-full-calendar-content {
+  width: 80px;
   text-overflow: ellipsis;
   overflow: hidden;
   top: -1px;
@@ -835,6 +838,7 @@
 }
 .tui-full-calendar-dropdown {
   position: relative;
+  display: inline-block;
 }
 .tui-full-calendar-dropdown:hover .tui-full-calendar-dropdown-button {
   border: 1px solid #bbb;

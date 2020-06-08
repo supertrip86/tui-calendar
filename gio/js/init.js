@@ -47,6 +47,21 @@
             "BgColor": "#ff4040"
         }
     ];
+    var ifadData = [
+        {
+            name: 'Daje',
+            id: "1"
+        }, {
+            name: 'Forza',
+            id: "2"
+        }, {
+            name: 'Seimejote',
+            id: "3"
+        }, {
+            name: 'Vamonos',
+            id: "4"
+        }
+    ];
 
     // SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function() {
         createCalendarList();
@@ -117,6 +132,7 @@
             useCreationPopup: useCreationPopup,
             useDetailPopup: useDetailPopup,
             calendars: CalendarList,
+            ifad: ifadData,
             isReadOnly: false,
             template: {
                 milestone: function(model) {
@@ -138,6 +154,7 @@
             'clickSchedule': function(e) {
                 CurrentSchedule.length = 0;
                 CurrentSchedule.push(e.schedule);
+                console.log(e);
             },
             'clickDayname': function(date) {
                 console.log('clickDayname', date);
@@ -542,6 +559,7 @@
             var schedule = {};
             schedule['id'] = data[i].idChance;
             schedule['spID'] = data[i].Id;
+            schedule['ifadId'] = data[i].ifadId;
             schedule['calendarId'] = data[i].calendarId;
             schedule['title'] = data[i].Title;
             schedule['isAllDay'] = (data[i].isAllDay == "true") ? true : false;
@@ -570,6 +588,7 @@
         var schedule = {};
         schedule['id'] = item.idChance;
         schedule['spID'] = item.Id;
+        schedule['ifadId'] = item.ifadId;
         schedule['calendarId'] = item.calendarId;
         schedule['title'] = item.Title;
         schedule['isAllDay'] = (item.isAllDay == "true") ? true : false;
@@ -649,6 +668,7 @@
                 fAllDayEvent: scheduleData.isAllDay,
                 fRecurrence: false,
                 bgColor: calendar.bgColor,
+                ifadId: scheduleData.ifadId,
                 borderColor: calendar.borderColor,
                 calendarId: calendar.id,
                 categoryType: scheduleData.isAllDay ? 'allday' : 'time',

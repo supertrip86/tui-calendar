@@ -55,6 +55,8 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
   var onShowCreationPopup, onSaveNewSchedule, onShowEditPopup;
   var detailView, onShowDetailPopup, onDeleteSchedule, onEditSchedule;
 
+  var baseCalendars = baseController.calendars;
+
   monthViewContainer = domutil.appendHTMLElement(
     'div', layoutContainer, config.classname('month'));
 
@@ -115,7 +117,7 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
 
   // binding popup for schedules creation
   if (options.useCreationPopup) {
-    createView = new ScheduleCreationPopup(layoutContainer, baseController.calendars, options.usageStatistics);
+    createView = new ScheduleCreationPopup(layoutContainer, baseCalendars, options.usageStatistics);
 
     onSaveNewSchedule = function(scheduleData) {
       creationHandler.fire('beforeCreateSchedule', util.extend(scheduleData, {

@@ -263,7 +263,7 @@ Schedule.prototype.init = function(options) {
   if (options.category === SCHEDULE_CATEGORY.ALLDAY) {
     options.isAllDay = true;
   }
-
+  console.log(options);
   this.id = options.id || '';
   this.title = options.title || '';
   this.body = options.body || '';
