@@ -102,6 +102,15 @@
         input
             width: 400px
 
+.{css-prefix}popup-section-item.{css-prefix}section-zoom
+  border: none
+  padding: 0 0 0 8px
+  cursor: pointer
+  height: 20px
+
+.{css-prefix}ic-zoom
+  margin: 0!important
+
 .{css-prefix}popup-section-item.{css-prefix}section-comments
   height: 100px
   margin-bottom: 10px
@@ -228,6 +237,9 @@
     cursor: pointer
 
 .{css-prefix}section-calendar .{css-prefix}dropdown-menu-item
+    width: 100%;
+
+.{css-prefix}section-ifad .{css-prefix}dropdown-menu-item
     width: 100%;
 
 .{css-prefix}section-state .{css-prefix}dropdown-menu-item
@@ -469,13 +481,14 @@ input[type='checkbox'].{css-prefix}checkbox-round + span
   display: none
   width: 16px
   height: 16px
-  // background: url('image/ic-lock.png') no-repeat 16px
-
-// .{css-prefix}popup-detail .{css-prefix}schedule-private .{css-prefix}ic-private
-//   display: block
 
 .{css-prefix}popup-detail .{css-prefix}section-detail
   margin-bottom: 10px
+  display: flex
+  justify-content: space-between
+
+.{css-prefix}popup-detail-ifad
+  width: 45%
 
 .{css-prefix}section-comment
   margin-bottom: 20px

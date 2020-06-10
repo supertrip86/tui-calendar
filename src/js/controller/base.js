@@ -64,6 +64,12 @@ function Base(options) {
      * @type {Array.<Calendar>}
      */
   this.calendars = [];
+
+  /**
+     * IFAD list
+     * @type {Array.<IFAD>}
+     */
+  this.ifad = options.ifad;
 }
 
 /**
@@ -154,7 +160,6 @@ Base.prototype.updateSchedule = function(schedule, options) {
   var end = options.end || schedule.end;
   var dateA = start.getDate() + start.getMonth() + start.getFullYear();
   var dateB = end.getDate() + end.getMonth() + end.getFullYear();
-  console.log(options);
   options = options || {};
 
   if (options.category === 'allday' || dateA !== dateB) {
@@ -186,6 +191,16 @@ Base.prototype.updateSchedule = function(schedule, options) {
     schedule.set('comments', options.comments);
   } else if (options.comments === '') {
     schedule.set('comments', '');
+  }
+
+  if (options.zoom === true || options.zoom === false) {
+    schedule.set('zoom', options.zoom);
+  }
+
+  if (options.ifadId) {
+    schedule.set('ifadId', options.ifadId);
+  } else if (options.ifadId === '') {
+    schedule.set('ifadId', '');
   }
 
   if (options.start || options.end) {

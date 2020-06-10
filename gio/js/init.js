@@ -1,9 +1,5 @@
 'use strict';
 
-/* eslint-disable require-jsdoc */
-/* eslint-env jquery */
-/* global moment, tui, chance */
-
 // (function IfadCalendar(){
     var ElementPrefix = 'tui-full-calendar-';
     var Calendar = tui.Calendar;
@@ -148,16 +144,20 @@
         });
 
         cal.on({
-            'clickMore': function(e) {
-                console.log('clickMore', e);
-            },
+            /**
+                * 'clickMore': function(e) {
+                *     console.log('clickMore', e);
+                * },
+                * 'afterRenderSchedule': function(e) {
+                *     console.log('afterRenderSchedule', e);
+                * },
+                * 'clickDayname': function(date) {
+                *     console.log('clickDayname', date);
+                * },
+            */
             'clickSchedule': function(e) {
                 CurrentSchedule.length = 0;
                 CurrentSchedule.push(e.schedule);
-                console.log(e);
-            },
-            'clickDayname': function(date) {
-                console.log('clickDayname', date);
             },
             'beforeCreateSchedule': function(e) {
                 saveNewSchedule(e);
@@ -167,9 +167,6 @@
             },
             'beforeDeleteSchedule': function(e) {
                 cal.deleteSchedule(e.schedule.id, e.schedule.calendarId);
-            },
-            'afterRenderSchedule': function(e) {
-                console.log(e);
             },
             'clickTimezonesCollapseBtn': function(timezonesCollapsed) {
                 if (timezonesCollapsed) {
@@ -282,38 +279,6 @@
                     return;
             }
             setRenderRangeText();
-        }
-
-        function onNewSchedule() {
-            var title = $('#new-schedule-title').val();
-            var location = $('#new-schedule-location').val();
-            var isAllDay = document.getElementById('new-schedule-allday').checked;
-            var start = datePicker.getStartDate();
-            var end = datePicker.getEndDate();
-            var calendar = selectedCalendar ? selectedCalendar : CalendarList[0];
-            if (!title) {
-                return;
-            }
-            cal.createSchedules([{
-                id: String(chance.guid()),
-                calendarId: calendar.id,
-                title: title,
-                isAllDay: isAllDay,
-                start: start,
-                end: end,
-                category: isAllDay ? 'allday' : 'time',
-                dueDateClass: '',
-                color: calendar.color,
-                bgColor: calendar.bgColor,
-                dragBgColor: calendar.bgColor,
-                borderColor: calendar.borderColor,
-                raw: {
-                    location: location
-                },
-                state: 'Busy'
-            }]);
-            // here
-            $('#modal-new-schedule').modal('hide');
         }
 
         function exportCalendar() {
@@ -431,40 +396,10 @@
             var schedule = e.schedule;
             var comments = document.getElementById(ElementPrefix + 'schedule-comments') && document.getElementById(ElementPrefix + 'schedule-comments').value;
             var isAllDay = document.getElementById(ElementPrefix + 'schedule-allday') && document.getElementById(ElementPrefix + 'schedule-allday').checked;
+            var zoom = document.getElementById(ElementPrefix + 'schedule-zoom') && document.getElementById(ElementPrefix + 'schedule-zoom').checked;
             var newAttachments = document.getElementById(ElementPrefix + 'input-attachment') && document.getElementById(ElementPrefix + 'input-attachment').files;
-            if (schedule.comments !== '' && comments === '') {
-                if (!e.changes) {
-                    e.changes = {};
-                }
-                e.changes["comments"] = comments;
-            }
-            if (schedule.isAllDay === true && isAllDay === false) {
-                if (!e.changes) {
-                    e.changes = {};
-                }
-                e.changes["isAllDay"] = false;
-                schedule.category = 'time';
-            }
-            if (newAttachments && !!newAttachments.length) {
-                if (!!schedule.attachments.length) {
-                    for (var i = 0; i < newAttachments.length; i++) {
-                        if (schedule.attachments.indexOf(newAttachments[i].name) == -1) {
-                            schedule.attachments.push(newAttachments[i].name);
-                        }
-                    }
-                } else {
-                    for (var i = 0; i < newAttachments.length; i++) {
-                        schedule.attachments.push(newAttachments[i].name);
-                    }
-                }
-            }
             cal.updateSchedule(schedule.id, schedule.calendarId, e.changes);
             refreshScheduleVisibility();
-            if (!!e.changes) {
-                for (var i = 0; i < Object.keys(e.changes).length; i++) {
-                    e.schedule[Object.keys(e.changes)[i]] = e.changes[Object.keys(e.changes)[i]];
-                }
-            }
         }
 
         function setEventListener() {
@@ -472,7 +407,6 @@
             $('#menu-navi').on('click', onClickNavi);
             $('.dropdown-menu a[role="menuitem"]').on('click', onClickMenu);
             $('#lnb-calendars').on('change', onChangeCalendars);
-            $('#btn-save-schedule').on('click', onNewSchedule);
             $('#btn-new-schedule').on('click', createNewSchedule);
             $('#dropdownMenu-calendars-list').on('click', onChangeNewScheduleCalendar);
             $('#ifadCalendar').on('click', '#' + ElementPrefix + 'schedule-attachment', triggerUpload);
@@ -533,10 +467,6 @@
         } else if (target.files.length > max && max > 0) {
             message = 'You can attach only ' + max + ' more files to this event, you selected ' + target.files.length;
         }
-        // for (var d = 0; d < target.files.length; d++) {
-        //     var currentSize = target.files[d].size
-        //     // if (target.files[d].size )
-        // }
         if (message.length > 0) {
             swal.fire({
                 title: 'Warning',
@@ -560,6 +490,8 @@
             schedule['id'] = data[i].idChance;
             schedule['spID'] = data[i].Id;
             schedule['ifadId'] = data[i].ifadId;
+            schedule['author'] = data[i].Author;
+            schedule['zoom'] = data[i].zoom;
             schedule['calendarId'] = data[i].calendarId;
             schedule['title'] = data[i].Title;
             schedule['isAllDay'] = (data[i].isAllDay == "true") ? true : false;
@@ -589,6 +521,8 @@
         schedule['id'] = item.idChance;
         schedule['spID'] = item.Id;
         schedule['ifadId'] = item.ifadId;
+        schedule['author'] = item.author; //.Author.Title
+        schedule['zoom'] = item.zoom;
         schedule['calendarId'] = item.calendarId;
         schedule['title'] = item.Title;
         schedule['isAllDay'] = (item.isAllDay == "true") ? true : false;
@@ -669,6 +603,8 @@
                 fRecurrence: false,
                 bgColor: calendar.bgColor,
                 ifadId: scheduleData.ifadId,
+                author: 'Giunta, Giovanni',
+                zoom: scheduleData.zoom,
                 borderColor: calendar.borderColor,
                 calendarId: calendar.id,
                 categoryType: scheduleData.isAllDay ? 'allday' : 'time',
@@ -712,123 +648,124 @@
                 $("#s4-workspace").removeClass("invisible");
             }
         });
-    }
 
-    function AddAllAttachments(id) {
-        var data = [];
-        var fileArray = [];
-        $.each($("#" + ElementPrefix + "input-attachment")[0].files, function() {
-            fileArray.push({
-                "Attachment": $(this)[0]
+        function AddAllAttachments(id) {
+            var data = [];
+            var fileArray = [];
+            $.each($("#" + ElementPrefix + "input-attachment")[0].files, function() {
+                fileArray.push({
+                    "Attachment": $(this)[0]
+                });
             });
-        });
-        data.push({
-            "Files": fileArray
-        });
-        var createItemWithAttachments = function(listName, listValues, id) {
-            var fileCountCheck = 0;
-            var fileNames;
-            var context = new SP.ClientContext.get_current();
+            data.push({
+                "Files": fileArray
+            });
+            var createItemWithAttachments = function(listName, listValues, id) {
+                var fileCountCheck = 0;
+                var fileNames;
+                var context = new SP.ClientContext.get_current();
+                var dfd = $.Deferred();
+                var targetList = context.get_web().get_lists().getByTitle(listName);
+                context.load(targetList);
+                var itemCreateInfo = new SP.ListItemCreationInformation();
+                context.executeQueryAsync(
+                    function() {
+                        if (listValues[0].Files.length !== 0) {
+                            if (fileCountCheck <= listValues[0].Files.length - 1) {
+                                loopFileUpload(listName, id, listValues, fileCountCheck);
+                            }
+                        } else {
+                            dfd.resolve(fileCountCheck);
+                        }
+                    },
+                    function(sender, args) {
+                        throw new TypeError('Error occured' + args.get_message());
+                    });
+                return dfd.promise();
+            };
+            createItemWithAttachments("Calendar", data, id);
+        }
+
+        function loopFileUpload(listName, id, listValues, fileCountCheck) {
             var dfd = $.Deferred();
-            var targetList = context.get_web().get_lists().getByTitle(listName);
-            context.load(targetList);
-            var itemCreateInfo = new SP.ListItemCreationInformation();
-            context.executeQueryAsync(
-                function() {
-                    if (listValues[0].Files.length !== 0) {
+            uploadFile(listName, id, listValues[0].Files[fileCountCheck].Attachment).then(
+                function(data) {
+                    var objcontext = new SP.ClientContext();
+                    var targetList = objcontext.get_web().get_lists().getByTitle(listName);
+                    var listItem = targetList.getItemById(id);
+                    objcontext.load(listItem);
+                    objcontext.executeQueryAsync(function() {
+                        fileCountCheck++;
                         if (fileCountCheck <= listValues[0].Files.length - 1) {
                             loopFileUpload(listName, id, listValues, fileCountCheck);
+                        } else {
+                            getSingleSchedule(id);
                         }
-                    } else {
-                        dfd.resolve(fileCountCheck);
-                    }
-                },
-                function(sender, args) {
-                    throw new TypeError('Error occured' + args.get_message());
-                });
-            return dfd.promise();
-        };
-        createItemWithAttachments("Calendar", data, id);
-    }
-
-    function loopFileUpload(listName, id, listValues, fileCountCheck) {
-        var dfd = $.Deferred();
-        uploadFile(listName, id, listValues[0].Files[fileCountCheck].Attachment).then(
-            function(data) {
-                var objcontext = new SP.ClientContext();
-                var targetList = objcontext.get_web().get_lists().getByTitle(listName);
-                var listItem = targetList.getItemById(id);
-                objcontext.load(listItem);
-                objcontext.executeQueryAsync(function() {
-                    fileCountCheck++;
-                    if (fileCountCheck <= listValues[0].Files.length - 1) {
-                        loopFileUpload(listName, id, listValues, fileCountCheck);
-                    } else {
-                        getSingleSchedule(id);
-                    }
-                },
-                function(sender, args) {
-                    throw new TypeError("Reload List Item - Fail" + args.get_message());
-                });
-            },
-            function(sender, args) {
-                throw new TypeError("Not uploaded");
-                dfd.reject(sender, args);
-            }
-        );
-        return dfd.promise();
-    }
-
-    function uploadFile(listName, id, file) {
-        var deferred = $.Deferred();
-        var fileName = file.name;
-        getFileBuffer(file).then(
-            function(buffer) {
-                var bytes = new Uint8Array(buffer);
-                var binary = '';
-                for (var b = 0; b < bytes.length; b++) {
-                    binary += String.fromCharCode(bytes[b]);
-                }
-                $.getScript("/_layouts/15/SP.RequestExecutor.js", function() {
-                    var createitem = new SP.RequestExecutor(_spPageContextInfo.webServerRelativeUrl);
-                    createitem.executeAsync({
-                        url: _spPageContextInfo.webServerRelativeUrl + "/_api/web/lists/GetByTitle('" + listName + "')/items(" + id + ")/AttachmentFiles/add(FileName='" + file.name + "')",
-                        method: "POST",
-                        binaryStringRequestBody: true,
-                        body: binary,
-                        success: fsucc,
-                        error: ferr,
-                        state: "Update"
+                    },
+                    function(sender, args) {
+                        throw new TypeError("Reload List Item - Fail" + args.get_message());
                     });
+                },
+                function(sender, args) {
+                    throw new TypeError("Not uploaded");
+                    dfd.reject(sender, args);
+                }
+            );
+            return dfd.promise();
+        }
 
-                    function fsucc(data) {
-                        deferred.resolve(data);
+        function uploadFile(listName, id, file) {
+            var deferred = $.Deferred();
+            var fileName = file.name;
+            getFileBuffer(file).then(
+                function(buffer) {
+                    var bytes = new Uint8Array(buffer);
+                    var binary = '';
+                    for (var b = 0; b < bytes.length; b++) {
+                        binary += String.fromCharCode(bytes[b]);
                     }
+                    $.getScript("/_layouts/15/SP.RequestExecutor.js", function() {
+                        var createitem = new SP.RequestExecutor(_spPageContextInfo.webServerRelativeUrl);
+                        createitem.executeAsync({
+                            url: _spPageContextInfo.webServerRelativeUrl + "/_api/web/lists/GetByTitle('" + listName + "')/items(" + id + ")/AttachmentFiles/add(FileName='" + file.name + "')",
+                            method: "POST",
+                            binaryStringRequestBody: true,
+                            body: binary,
+                            success: fsucc,
+                            error: ferr,
+                            state: "Update"
+                        });
 
-                    function ferr(data) {
-                        throw new TypeError(fileName + "not uploaded error");
-                        deferred.reject(data);
-                    }
-                });
-            },
-            function(err) {
-                deferred.reject(err);
-            }
-        );
-        return deferred.promise();
-    }
+                        function fsucc(data) {
+                            deferred.resolve(data);
+                        }
 
-    function getFileBuffer(file) {
-        var deferred = $.Deferred();
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            deferred.resolve(e.target.result);
-        };
-        reader.onerror = function(e) {
-            deferred.reject(e.target.error);
-        };
-        reader.readAsArrayBuffer(file);
-        return deferred.promise();
+                        function ferr(data) {
+                            throw new TypeError(fileName + "not uploaded error");
+                            deferred.reject(data);
+                        }
+                    });
+                },
+                function(err) {
+                    deferred.reject(err);
+                }
+            );
+            return deferred.promise();
+        }
+
+        function getFileBuffer(file) {
+            var deferred = $.Deferred();
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                deferred.resolve(e.target.result);
+            };
+            reader.onerror = function(e) {
+                deferred.reject(e.target.error);
+            };
+            reader.readAsArrayBuffer(file);
+            return deferred.promise();
+        }
+
     }
 
 // })();

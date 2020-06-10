@@ -31,7 +31,7 @@
         </div>
         {{else ~}}
             {{#fi model.category '===' 'time'}}
-                <div data-schedule-id="{{model.id}}" data-calendar-id="{{model.calendarId}}" class="{{CSS_PREFIX}}weekday-schedule {{CSS_PREFIX}}weekday-schedule-time"
+                <div data-schedule-id="{{model.id}}" data-calendar-id="{{model.calendarId}}" class="{{CSS_PREFIX}}weekday-schedule {{CSS_PREFIX}}weekday-schedule-time {{#if model.zoom}}{{CSS_PREFIX}}weekday-schedule-zoom{{/if}}"
                     style="height:{{@root.scheduleHeight}}px; line-height:{{@root.scheduleHeight}}px; {{model.customStyle}}">
                     <span class="{{CSS_PREFIX}}weekday-schedule-bullet"
                         style="top: {{@root.styles.scheduleBulletTop}}px;

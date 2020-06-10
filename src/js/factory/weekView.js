@@ -95,6 +95,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
   var scheduleView = options.scheduleView;
 
   var baseCalendars = baseController.calendars;
+  var baseIfad = baseController.ifad;
 
   var viewVisibilities = {
     'milestone': util.isArray(taskView) ? util.inArray('milestone', taskView) >= 0 : taskView,
@@ -236,8 +237,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
 
   // binding create schedules event
   if (options.useCreationPopup) {
-    createView = new ScheduleCreationPopup(layoutContainer, baseCalendars, options.usageStatistics);
-
+    createView = new ScheduleCreationPopup(layoutContainer, baseCalendars, baseIfad, options.usageStatistics);
     onSaveNewSchedule = function(scheduleData) {
       util.extend(scheduleData, {
         useCreationPopup: true
@@ -261,7 +261,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
 
   // binding popup for schedule detail
   if (options.useDetailPopup) {
-    detailView = new ScheduleDetailPopup(layoutContainer, baseController.calendars);
+    detailView = new ScheduleDetailPopup(layoutContainer, baseController.calendars, baseController.ifad);
     onShowDetailPopup = function(eventData) {
       var scheduleId = eventData.schedule.calendarId;
       eventData.calendar = common.find(baseController.calendars, function(calendar) {
@@ -270,6 +270,10 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
 
       if (options.isReadOnly) {
         eventData.schedule = util.extend({}, eventData.schedule, {isReadOnly: true});
+      }
+
+      if (baseController.ifad.length) {
+        eventData.ifad = baseController.ifad;
       }
 
       detailView.render(eventData);

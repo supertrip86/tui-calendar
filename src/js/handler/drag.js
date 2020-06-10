@@ -7,7 +7,6 @@
 var util = require('tui-code-snippet');
 var domutil = require('../common/domutil');
 var domevent = require('../common/domevent');
-var config = require('../config');
 
 /**
  * @constructor
@@ -95,8 +94,8 @@ Drag.prototype._toggleDragEvent = function(toBind) {
     method = 'enable';
   }
 
-  domutil[method + 'TextSelection'](container, preventDefaultWhenNotPopup);
-  domutil[method + 'ImageDrag'](container, preventDefaultWhenNotPopup);
+  domutil[method + 'TextSelection'](container);
+  domutil[method + 'ImageDrag'](container);
   domevent[domMethod](global.document, {
     mousemove: this._onMouseMove,
     mouseup: this._onMouseUp
@@ -110,7 +109,7 @@ Drag.prototype._toggleDragEvent = function(toBind) {
  */
 Drag.prototype._getEventData = function(mouseEvent) {
   return {
-    target: domevent.getEventTarget(mouseEvent),
+    target: mouseEvent.target || mouseEvent.srcElement,
     originEvent: mouseEvent
   };
 };
@@ -166,7 +165,7 @@ Drag.prototype._onMouseMove = function(mouseMoveEvent) {
 
   distance = this.options.distance;
   // prevent automatic scrolling.
-  preventDefaultWhenNotPopup(mouseMoveEvent);
+  domutil.preventDefaultWhenNotPopup(mouseMoveEvent);
 
   if (this._distance < distance) {
     this._distance += 1;
@@ -240,19 +239,6 @@ Drag.prototype._onMouseUp = function(mouseUpEvent) {
 
   this._clearData();
 };
-
-/**
- * If the target is not a popup, it prevents the default.
- * @method
- * @param {MouseEvent} event - Mouse event object
- */
-function preventDefaultWhenNotPopup(event) {
-  var popup = domutil.closest(event.target, config.classname('.popup'));
-
-  if (!popup) {
-    domevent.preventDefault(event);
-  }
-}
 
 util.CustomEvents.mixin(Drag);
 

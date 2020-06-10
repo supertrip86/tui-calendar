@@ -56,6 +56,7 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
   var detailView, onShowDetailPopup, onDeleteSchedule, onEditSchedule;
 
   var baseCalendars = baseController.calendars;
+  var baseIfad = baseController.ifad;
 
   monthViewContainer = domutil.appendHTMLElement(
     'div', layoutContainer, config.classname('month'));
@@ -117,7 +118,7 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
 
   // binding popup for schedules creation
   if (options.useCreationPopup) {
-    createView = new ScheduleCreationPopup(layoutContainer, baseCalendars, options.usageStatistics);
+    createView = new ScheduleCreationPopup(layoutContainer, baseCalendars, baseIfad, options.usageStatistics);
 
     onSaveNewSchedule = function(scheduleData) {
       creationHandler.fire('beforeCreateSchedule', util.extend(scheduleData, {
@@ -129,7 +130,8 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
 
   // binding popup for schedule detail
   if (options.useDetailPopup) {
-    detailView = new ScheduleDetailPopup(layoutContainer, baseController.calendars);
+    detailView = new ScheduleDetailPopup(layoutContainer, baseController.calendars, baseController.ifad);
+
     onShowDetailPopup = function(eventData) {
       var scheduleId = eventData.schedule.calendarId;
       eventData.calendar = common.find(baseController.calendars, function(calendar) {
@@ -140,6 +142,9 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
         eventData.schedule = util.extend({}, eventData.schedule, {isReadOnly: true});
       }
 
+      if (baseController.ifad.length) {
+        eventData.ifad = baseController.ifad;
+      }
       detailView.render(eventData);
     };
     onDeleteSchedule = function(eventData) {

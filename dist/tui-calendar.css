@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.12.11 | Mon Jun 08 2020
+ * @version 1.12.11 | Wed Jun 10 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -82,6 +82,9 @@
 }
 .tui-full-calendar-month-week-item .tui-full-calendar-weekday-schedule {
   margin: 0 10px;
+}
+.tui-full-calendar-month-week-item .tui-full-calendar-weekday-schedule-zoom .tui-full-calendar-weekday-schedule-title {
+  color: #2d8cff !important;
 }
 .tui-full-calendar-month-week-item .tui-full-calendar-today {
   background: none;
@@ -756,6 +759,15 @@
 .tui-full-calendar-popup-section-item.tui-full-calendar-section-location input {
   width: 400px;
 }
+.tui-full-calendar-popup-section-item.tui-full-calendar-section-zoom {
+  border: none;
+  padding: 0 0 0 8px;
+  cursor: pointer;
+  height: 20px;
+}
+.tui-full-calendar-ic-zoom {
+  margin: 0 !important;
+}
 .tui-full-calendar-popup-section-item.tui-full-calendar-section-comments {
   height: 100px;
   margin-bottom: 10px;
@@ -881,6 +893,9 @@
   cursor: pointer;
 }
 .tui-full-calendar-section-calendar .tui-full-calendar-dropdown-menu-item {
+  width: 100%;
+}
+.tui-full-calendar-section-ifad .tui-full-calendar-dropdown-menu-item {
   width: 100%;
 }
 .tui-full-calendar-section-state .tui-full-calendar-dropdown-menu-item {
@@ -1119,6 +1134,11 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
 }
 .tui-full-calendar-popup-detail .tui-full-calendar-section-detail {
   margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.tui-full-calendar-popup-detail-ifad {
+  width: 45%;
 }
 .tui-full-calendar-section-comment {
   margin-bottom: 20px;

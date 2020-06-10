@@ -430,15 +430,12 @@ var helpers = {
   },
   'popupDetailDate-tmpl': function(isAllDay, start, end) {
     var isSameDate = datetime.isSameDate(start, end);
-    // var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'hh:mm tt';
     var dateFormat = 'DD/MM/YYYY';
     var endFormat = (isSameDate ? '' : dateFormat) + ' - hh:mm tt';
     if (isAllDay) {
-      // return datetime.format(start, 'YYYY.MM.DD') + (isSameDate ? '' : ' - ' + datetime.format(end, 'YYYY.MM.DD'));
       return datetime.format(start, dateFormat) + (isSameDate ? '' : ' - ' + datetime.format(end, dateFormat));
     }
 
-    // return (datetime.format(start, 'YYYY.MM.DD hh:mm tt') + ' - ' + datetime.format(end, endFormat));
     return (datetime.format(start, dateFormat + ' - hh:mm tt ') + datetime.format(end, endFormat));
   },
   'popupDetailLocation-tmpl': function(schedule) {

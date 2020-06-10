@@ -17,7 +17,7 @@ var tmpl = require('../template/popup/scheduleDetailPopup.hbs');
  * @extends {View}
  * @param {HTMLElement} container - container element
  */
-function ScheduleDetailPopup(container) {
+function ScheduleDetailPopup(container, calendars, ifad) {
   View.call(this, container);
   /**
      * @type {FloatingLayer}
@@ -31,6 +31,7 @@ function ScheduleDetailPopup(container) {
   this._viewModel = null;
   this._schedule = null;
   this._calendar = null;
+  this._ifad = ifad;
 
   domevent.on(container, 'click', this._onClick, this);
 }
@@ -117,10 +118,13 @@ ScheduleDetailPopup.prototype._onClickDeleteSchedule = function(target) {
  */
 ScheduleDetailPopup.prototype.render = function(viewModel) {
   var layer = this.layer;
+  var ifad = this.filterIfad('id', viewModel.schedule.ifadId);
   var self = this;
+
   layer.setContent(tmpl({
     schedule: viewModel.schedule,
-    calendar: viewModel.calendar
+    calendar: viewModel.calendar,
+    ifad: ifad
   }));
   layer.show();
   this._setPopupPositionAndArrowDirection(viewModel.event);
@@ -326,6 +330,19 @@ ScheduleDetailPopup.prototype.refresh = function() {
   if (this._viewModel) {
     this.layer.setContent(this.tmpl(this._viewModel));
   }
+};
+
+ScheduleDetailPopup.prototype.filterIfad = function(arg, par) {
+  var ifad = this._ifad;
+  var selected;
+
+  ifad.forEach(function(el) {
+    if (el[arg] === par) {
+      selected = el;
+    }
+  });
+
+  return selected;
 };
 
 module.exports = ScheduleDetailPopup;

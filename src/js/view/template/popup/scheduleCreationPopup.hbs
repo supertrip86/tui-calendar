@@ -17,9 +17,9 @@
             </ul>
         </div>
 
-        <div class="{{CSS_PREFIX}}popup-section {{CSS_PREFIX}}dropdown {{CSS_PREFIX}}close {{CSS_PREFIX}}section-ifad">
+        <div class="{{CSS_PREFIX}}popup-section {{CSS_PREFIX}}dropdown {{CSS_PREFIX}}close {{CSS_PREFIX}}section-ifad{{#unless ifad.length}} {{CSS_PREFIX}}hide{{/unless}}">
             <button type="button" class="{{CSS_PREFIX}}button {{CSS_PREFIX}}dropdown-button {{CSS_PREFIX}}popup-section-item">
-                <span id="{{CSS_PREFIX}}schedule-calendar" class="{{CSS_PREFIX}}content">{{selectedCal.ifad}}</span>
+                <span id="{{CSS_PREFIX}}schedule-ifad" class="{{CSS_PREFIX}}content">{{selectedIfad.name}}</span>
                 <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}dropdown-arrow"></span>
                 </span>
             </button>
@@ -30,6 +30,12 @@
                     </li>
                 {{/each}}
             </ul>
+        </div>
+
+        <div class="tui-full-calendar-popup-section-item tui-full-calendar-section-zoom">
+            <input id="tui-full-calendar-schedule-zoom" type="checkbox" class="tui-full-calendar-checkbox-square"{{#if zoom}} checked{{/if}}>
+            <span class="tui-full-calendar-icon tui-full-calendar-ic-zoom"></span>
+            <span class="tui-full-calendar-content tui-full-calendar-zoom">Zoom</span>
         </div>
 
         <div class="{{CSS_PREFIX}}popup-section">

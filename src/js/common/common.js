@@ -326,13 +326,14 @@ module.exports = {
   getScheduleChanges: function(schedule, propNames, data) {
     var changes = {};
     var dateProps = ['start', 'end'];
-
     util.forEach(propNames, function(propName) {
       if (dateProps.indexOf(propName) > -1) {
         if (datetime.compare(schedule[propName], data[propName])) {
           changes[propName] = data[propName];
         }
       } else if (data[propName] && schedule[propName] !== data[propName]) {
+        changes[propName] = data[propName];
+      } else if (data[propName] !== schedule[propName]) {
         changes[propName] = data[propName];
       }
     });

@@ -136,6 +136,24 @@ function Schedule() {
   this.comments = '';
 
   /**
+     * Schedule author
+     * @type {string}
+     */
+  this.author = '';
+
+  /**
+     * Schedule zoom
+     * @type {bool}
+     */
+  this.zoom = '';
+
+  /**
+     * Schedule IFAD id
+     * @type {number}
+     */
+  this.ifadId = 0;
+
+  /**
      * SharePoint site absolute URL
      * @type {string}
      */
@@ -263,7 +281,6 @@ Schedule.prototype.init = function(options) {
   if (options.category === SCHEDULE_CATEGORY.ALLDAY) {
     options.isAllDay = true;
   }
-  console.log(options);
   this.id = options.id || '';
   this.title = options.title || '';
   this.body = options.body || '';
@@ -280,18 +297,17 @@ Schedule.prototype.init = function(options) {
   this.dueDateClass = options.dueDateClass || '';
   this.customStyle = options.customStyle || '';
   this.comments = options.comments || '';
+  this.zoom = options.zoom || false;
+  this.ifadId = options.ifadId || 0;
   this.attachmentsUrl = options.attachmentsUrl || '';
-  // this.location = options.location || '';
   this.attachments = options.attachments || [];
   this.attendees = options.attendees || [];
   this.recurrenceRule = options.recurrenceRule || '';
-  // this.isPrivate = options.isPrivate || false;
   this.isPending = options.isPending || false;
   this.isFocused = options.isFocused || false;
   this.isReadOnly = options.isReadOnly || false;
   this.goingDuration = options.goingDuration || 0;
   this.comingDuration = options.comingDuration || 0;
-  // this.state = options.state || '';
 
   if (this.isAllDay) {
     this.setAllDayPeriod(options.start, options.end);
@@ -370,6 +386,14 @@ Schedule.prototype.equals = function(schedule) {
   }
 
   if (this.comments !== schedule.comments) {
+    return false;
+  }
+
+  if (this.zoom !== schedule.zoom) {
+    return false;
+  }
+
+  if (this.ifadId !== schedule.ifadId) {
     return false;
   }
 
