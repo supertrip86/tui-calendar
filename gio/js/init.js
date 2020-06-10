@@ -543,7 +543,7 @@
                 schedule['attachments'].push(item.AttachmentFiles.results[d].FileName);
             }
         }
-        return schedule
+        return schedule;
     }
 
     function getSchedules() {

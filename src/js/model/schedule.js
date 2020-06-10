@@ -298,6 +298,7 @@ Schedule.prototype.init = function(options) {
   this.customStyle = options.customStyle || '';
   this.comments = options.comments || '';
   this.zoom = options.zoom || false;
+  this.author = options.author || this.author;
   this.ifadId = options.ifadId || 0;
   this.attachmentsUrl = options.attachmentsUrl || '';
   this.attachments = options.attachments || [];
