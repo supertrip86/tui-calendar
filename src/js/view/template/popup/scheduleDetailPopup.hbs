@@ -6,7 +6,6 @@
       </div>
       <div class="{{CSS_PREFIX}}popup-detail-date {{CSS_PREFIX}}content">{{{popupDetailDate-tmpl schedule.isAllDay schedule.start schedule.end}}}</div>
     </div>
-    {{log schedule}}
     <div class="{{CSS_PREFIX}}section-detail">
         {{#if schedule.recurrenceRule}}<div class="{{CSS_PREFIX}}popup-detail-item"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-repeat-b"></span><span class="{{CSS_PREFIX}}content">{{{popupDetailRepeat-tmpl schedule}}}</span></div>{{/if}}
         {{#if schedule.attendees}}<div class="{{CSS_PREFIX}}popup-detail-item {{CSS_PREFIX}}popup-detail-item-indent"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-user-b"></span><span class="{{CSS_PREFIX}}content">{{{popupDetailUser-tmpl schedule}}}</span></div>{{/if}}

@@ -394,10 +394,20 @@
 
         function prepareToUpdate(e) {
             var schedule = e.schedule;
-            var comments = document.getElementById(ElementPrefix + 'schedule-comments') && document.getElementById(ElementPrefix + 'schedule-comments').value;
-            var isAllDay = document.getElementById(ElementPrefix + 'schedule-allday') && document.getElementById(ElementPrefix + 'schedule-allday').checked;
-            var zoom = document.getElementById(ElementPrefix + 'schedule-zoom') && document.getElementById(ElementPrefix + 'schedule-zoom').checked;
             var newAttachments = document.getElementById(ElementPrefix + 'input-attachment') && document.getElementById(ElementPrefix + 'input-attachment').files;
+            if (newAttachments && !!newAttachments.length) {
+                if (!!schedule.attachments.length) {
+                    for (var i = 0; i < newAttachments.length; i++) {
+                        if (schedule.attachments.indexOf(newAttachments[i].name) == -1) {
+                            schedule.attachments.push(newAttachments[i].name);
+                        }
+                    }
+                } else {
+                    for (var i = 0; i < newAttachments.length; i++) {
+                        schedule.attachments.push(newAttachments[i].name);
+                    }
+                }
+            }
             cal.updateSchedule(schedule.id, schedule.calendarId, e.changes);
             refreshScheduleVisibility();
         }

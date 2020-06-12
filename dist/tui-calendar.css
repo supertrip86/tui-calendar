@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.12.11 | Wed Jun 10 2020
+ * @version 1.12.11 | Fri Jun 12 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -1142,6 +1142,13 @@ input[type='checkbox'].tui-full-calendar-checkbox-round + span {
 }
 .tui-full-calendar-section-comment {
   margin-bottom: 20px;
+}
+.tui-full-calendar-section-author {
+  margin-bottom: 15px;
+  margin-right: 10px;
+  text-align: right;
+  font-size: 12px;
+  color: #999;
 }
 .tui-full-calendar-popup-detail .tui-full-calendar-section-button {
   border-top: 1px solid #e5e5e5;

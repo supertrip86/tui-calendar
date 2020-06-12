@@ -166,6 +166,14 @@ Base.prototype.updateSchedule = function(schedule, options) {
     options.isAllDay = true;
   }
 
+  if (options.start || options.end) {
+    if (options.isAllDay) {
+      schedule.setAllDayPeriod(start, end);
+    } else {
+      schedule.setTimePeriod(start, end);
+    }
+  }
+
   if (!util.isUndefined(options.isAllDay)) {
     schedule.set('isAllDay', options.isAllDay);
     schedule.set('category', 'allday');
@@ -201,14 +209,6 @@ Base.prototype.updateSchedule = function(schedule, options) {
     schedule.set('ifadId', options.ifadId);
   } else if (options.ifadId === '') {
     schedule.set('ifadId', '');
-  }
-
-  if (options.start || options.end) {
-    if (schedule.isAllDay) {
-      schedule.setAllDayPeriod(start, end);
-    } else {
-      schedule.setTimePeriod(start, end);
-    }
   }
 
   if (options.color) {
